@@ -1,0 +1,35 @@
+{
+  "name": "silloura-tailwind-register",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start"
+  },
+  "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "firebase": "^11.6.0",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.5.0",
+    "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.4",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.4.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
