@@ -13,13 +13,14 @@ public class Post {
 
     private String userId;
     private String post;
-    private String description; // ✅ New
-    private List<String> tags; // ✅ New
-    private String date; // ✅ New (can be ISO string or formatted date)
+    private String description;
+    private List<String> tags;
+    private String date;
     private int likes;
 
-    private List<String> imageBase64List;
-    private String videoBase64;
+    // ✅ Replace base64 fields with Firebase-hosted URLs
+    private List<String> imageUrls;
+    private String videoUrl;
 
     // --- Getters ---
     public String getPostId() {
@@ -50,12 +51,12 @@ public class Post {
         return likes;
     }
 
-    public List<String> getImageBase64List() {
-        return imageBase64List;
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
-    public String getVideoBase64() {
-        return videoBase64;
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
     // --- Setters ---
@@ -87,11 +88,11 @@ public class Post {
         this.likes = likes;
     }
 
-    public void setImageBase64List(List<String> imageBase64List) {
-        this.imageBase64List = imageBase64List;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 
-    public void setVideoBase64(String videoBase64) {
-        this.videoBase64 = videoBase64;
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import HomePostList from './posts/HomePostList'
+import AddPost from './posts/AddPost';
+import PostList from './posts/PostList';
+import AddJob from './posts/AddJob';
+import ViewJobs from './posts/ViewJobs';
+import ViewApplicants from './posts/ViewApplicants';
+
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -88,6 +96,7 @@ const Dashboard = () => {
               <li><button onClick={() => navigate('/learning-plans')} className="text-sm text-blue-600 hover:underline">Learning Plans</button></li>
               <li><button onClick={() => navigate('/progress-evaluation')} className="text-sm text-blue-600 hover:underline">Progress Evaluation</button></li>
               <li><button onClick={() => navigate('/notifications')} className="text-sm text-blue-600 hover:underline">Notifications</button></li>
+              <PostList/>
             </ul>
           </div>
         </div>
@@ -95,7 +104,8 @@ const Dashboard = () => {
         {/* Middle Feed Section */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow p-6 text-center text-gray-400 border border-dashed border-gray-300">
-            Posts section goes here 📝
+            <AddJob/>
+            <ViewJobs/>
           </div>
         </div>
       </div>

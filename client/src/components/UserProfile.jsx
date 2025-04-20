@@ -192,6 +192,21 @@ const UserProfile = () => {
               ) : <li className="text-gray-400">No Website</li>}
             </ul>
           </div>
+
+          {/* ✅ Display full user info */}
+          <div className="pt-6 border-t">
+            <h3 className="font-semibold text-gray-800 mb-2">Full User Info</h3>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p><strong>ID:</strong> {user.id}</p>
+              <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>Role:</strong> {user.role}</p>
+              <p><strong>Auth Provider:</strong> {user.authProvider}</p>
+              <p><strong>Verified:</strong> {user.isVerified ? "Yes" : "No"}</p>
+              <p><strong>Mobile:</strong> {user.mobile || "N/A"}</p>
+              <p><strong>Created At:</strong> {user.createdAt?.slice(0, 10) || "N/A"}</p>
+              <p><strong>Updated At:</strong> {user.updatedAt?.slice(0, 10) || "N/A"}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

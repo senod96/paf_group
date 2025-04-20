@@ -11,7 +11,8 @@ public class Education implements Serializable {
     private Date endDate;
     private String description;
 
-    public Education() {}
+    public Education() {
+    }
 
     public String getInstitution() {
         return institution;

@@ -6,17 +6,20 @@ import Dashboard from './components/Dashboard';
 import ViewUserProfile from './components/Vieewuserprofile';
 import Register from './components/Register';
 import Login from './components/Login';
+import AddPost from './components/posts/AddPost';
+import ViewApplicants from './components/posts/ViewApplicants'; // ✅ Add this
 
 function App() {
   return (
     <Router>
       <Routes>
-      <Route path="/profile" element={<UserProfile />} />
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/edit" element={<EditUserForm />} />
         <Route path="/profile/:id" element={<ViewUserProfile />} />
+        <Route path="/applicants/:jobId" element={<ViewApplicants />} /> {/* ✅ New route */}
       </Routes>
     </Router>
   );
