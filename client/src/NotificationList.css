@@ -1,0 +1,345 @@
+.notification-app {
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.notification-header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.notification-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+
+.notification-tabs button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: #666;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.notification-tabs button.active {
+    color: #0a66c2;
+    border-bottom: 2px solid #0a66c2;
+    font-weight: 600;
+}
+
+.notification-item {
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.notification-item.unread {
+    background-color: #f0f8ff;
+    border-left: 3px solid #1da1f2;
+}
+
+.notification-item.expanded {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.notification-item:hover {
+    background-color: #f5faff;
+}
+
+.unread-indicator {
+    position: absolute;
+    left: 8px;
+    top: 18px;
+    width: 8px;
+    height: 8px;
+    background-color: #1da1f2;
+    border-radius: 50%;
+}
+
+.notification-content {
+    margin-left: 20px;
+}
+
+.notification-message {
+    margin: 0 0 8px 0;
+    color: #000;
+    font-weight: 500;
+}
+
+.notification-details {
+    margin-top: 12px;
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.follow-request-details {
+    margin-top: 12px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.request-message {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.sender-profile {
+    margin: 16px 0;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.sender-profile h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.profile-info {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.profile-info p {
+    margin: 6px 0;
+}
+
+.follow-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.follow-actions p {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #555;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.action-button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.action-button.accept {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.action-button.accept:hover {
+    background-color: #3e8e41;
+}
+
+.action-button.reject {
+    background-color: #f44336;
+    color: white;
+}
+
+.action-button.reject:hover {
+    background-color: #d32f2f;
+}
+
+.notification-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.notification-time {
+    color: #666;
+    font-size: 13px;
+    text-align: right;
+}
+
+.notification-time-short {
+    color: #999;
+    font-size: 13px;
+}
+
+.notification-actions {
+    position: relative;
+}
+
+.dots-button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 8px;
+    line-height: 1;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    min-width: 180px;
+}
+
+.dropdown-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f5f5f5;
+}
+
+.post-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 12px 0;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 32px 0;
+    color: #999;
+    font-size: 15px;
+}
+
+.follow-system {
+    margin-top: 32px;
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+.sender-interface {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.sender-interface select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.sender-interface button {
+    padding: 8px 16px;
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.sender-interface button:hover {
+    background-color: #0959a6;
+}
+
+.sender-interface button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+/* Mention Notification Styles */
+.mention-section {
+    margin-top: 20px;
+}
+
+.mention-item {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #fff;
+    border-left: 4px solid transparent;
+}
+
+.mention-item.unread {
+    border-left: 4px solid #1E5FF4;
+    background-color: #f8f9fa;
+}
+
+.mention-item:hover {
+    background-color: #f1f1f1;
+}
+
+.mention-content {
+    margin-bottom: 8px;
+}
+
+.comment-preview {
+    margin-top: 8px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-style: italic;
+    color: #555;
+}
+
+.mention-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #777;
+    font-size: 0.9em;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.delete-button:hover {
+    color: #ff4444;
+}
