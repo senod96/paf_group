@@ -29,13 +29,13 @@ public class PostController {
                 .orElseThrow(() -> new RuntimeException("Post not found with ID: " + id));
     }
 
-    // ✅ Create a new post (now using imageUrls and videoUrl)
+    // ✅ Create a new post
     @PostMapping
     public Post createPost(@RequestBody Post post) {
         return postRepository.save(post);
     }
 
-    // ✅ Search posts by keyword in the 'post' title
+    // ✅ Search posts by keyword in the 'post' content
     @GetMapping("/search")
     public List<Post> searchPosts(@RequestParam("q") String query) {
         return postRepository.findByPostContainingIgnoreCase(query);
@@ -54,10 +54,8 @@ public class PostController {
             existingPost.setTags(updatedPost.getTags());
             existingPost.setDate(updatedPost.getDate());
             existingPost.setLikes(updatedPost.getLikes());
-
-            // ✅ Use Firebase URL fields instead of base64
-            existingPost.setImageUrls(updatedPost.getImageUrls());
-            existingPost.setVideoUrl(updatedPost.getVideoUrl());
+            existingPost.setImageBase64List(updatedPost.getImageBase64List());
+            existingPost.setVideoBase64(updatedPost.getVideoBase64());
 
             return postRepository.save(existingPost);
         } else {
@@ -72,7 +70,6 @@ public class PostController {
         optionalPost.ifPresent(postRepository::delete);
     }
 
-    // ✅ Like post using MongoDB _id (not postId)
     @PutMapping("/{id}/like")
     public Post likePost(@PathVariable String id) {
         return postRepository.findById(id)

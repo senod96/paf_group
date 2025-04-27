@@ -154,7 +154,7 @@ public class UserController {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setFrom(FROM_EMAIL);
         mail.setTo(user.getEmail());
-        mail.setSubject("Verify your Silloura account");
+        mail.setSubject("Verify your Skillora account");
         mail.setText("Hi " + user.getName() + ",\n\nClick to verify your account:\n" +
                 APP_URL + "/verify?token=" + token + "\n\nThanks!");
 
