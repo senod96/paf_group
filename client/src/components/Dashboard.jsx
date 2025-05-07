@@ -6,6 +6,7 @@ import PostList from './posts/PostList';
 import AddJob from './posts/AddJob';
 import ViewJobs from './posts/ViewJobs';
 import ViewApplicants from './posts/ViewApplicants';
+import SearchPost from './posts/SearchPost';
 
 
 
@@ -103,7 +104,10 @@ const Dashboard = () => {
         {/* Middle Feed Section */}
         <div className="lg:col-span-2 space-y-6 ">
           <div className=" rounded-lg shadow p-6 text-center text-gray-400 border border-dashed border-gray-300 bg-indigo-300">
-            <HomePostList/>
+            <SearchPost/>
+            <ViewJobs/>
+            <AddJob/>
+              <HomePostList/>
           </div>
         </div>
       </div>

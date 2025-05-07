@@ -1,9 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.JobPost;
 import com.example.backend.model.JobApplication;
-import com.example.backend.repository.JobPostRepository;
+import com.example.backend.model.JobPost;
 import com.example.backend.repository.JobApplicationRepository;
+import com.example.backend.repository.JobPostRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,43 +25,54 @@ public class JobApplicationController {
     @Autowired
     private JobApplicationRepository jobApplicationRepository;
 
-    // ✅ Upload and process CV
     @PostMapping("/{jobId}/apply")
     public ResponseEntity<String> uploadCvAndAnalyze(
             @PathVariable String jobId,
             @RequestParam("userId") String userId,
+            @RequestParam("fullName") String fullName,
+            @RequestParam("address") String address,
+            @RequestParam("workExperience") String workExperience,
+            @RequestParam("age") int age,
+            @RequestParam("gender") String gender,
+            @RequestParam("contactNumber") String contactNumber,
+            @RequestParam("email") String email,
             @RequestParam("cv") MultipartFile file) {
 
         try {
             JobPost job = jobPostRepository.findById(jobId)
                     .orElseThrow(() -> new RuntimeException("Job not found"));
 
-            // Extract text using PDFBox
-            PDDocument doc = PDDocument.load(file.getInputStream());
+            // Extract text from CV
+            PDDocument document = PDDocument.load(file.getInputStream());
             PDFTextStripper stripper = new PDFTextStripper();
-            String text = stripper.getText(doc).toLowerCase();
-            doc.close();
+            String extractedText = stripper.getText(document).toLowerCase();
+            document.close();
 
-            // Match keywords from skillsNeeded + workExperience
-            String[] jobKeywords = (job.getSkillsNeeded() + "," + job.getWorkExperience())
-                    .toLowerCase().split(",");
+            // Match keywords
+            String[] jobKeywords = (job.getSkillsNeeded() + "," + job.getWorkExperience()).toLowerCase().split(",");
             int matchCount = 0;
             for (String keyword : jobKeywords) {
-                if (!keyword.trim().isEmpty() && text.contains(keyword.trim())) {
+                if (!keyword.trim().isEmpty() && extractedText.contains(keyword.trim())) {
                     matchCount++;
                 }
             }
 
-            // Save application
+            // Create application object
             JobApplication app = new JobApplication();
             app.setUserId(userId);
             app.setJobId(jobId);
-            app.setText(text);
+            app.setFullName(fullName);
+            app.setAddress(address);
+            app.setWorkExperience(workExperience);
+            app.setAge(age);
+            app.setGender(gender);
+            app.setContactNumber(contactNumber);
+            app.setEmail(email);
+            app.setText(extractedText);
             app.setMatchingKeywords(matchCount);
-            app.setPosition(0); // Will be assigned in top5 endpoint
+            app.setPosition(0); // unranked
 
             jobApplicationRepository.save(app);
-
             return ResponseEntity.ok("Uploaded and processed successfully");
 
         } catch (Exception e) {
@@ -70,18 +81,14 @@ public class JobApplicationController {
         }
     }
 
-    // ✅ Get top 5 ranked applicants
     @GetMapping("/{jobId}/top5")
     public List<JobApplication> getTop5Applicants(@PathVariable String jobId) {
         List<JobApplication> all = jobApplicationRepository.findByJobId(jobId);
-
-        // Sort by matchingKeywords descending
         List<JobApplication> top5 = all.stream()
-                .sorted((a, b) -> b.getMatchingKeywords() - a.getMatchingKeywords())
+                .sorted((a, b) -> Integer.compare(b.getMatchingKeywords(), a.getMatchingKeywords()))
                 .limit(5)
                 .collect(Collectors.toList());
 
-        // Assign rank (position) to top 5
         for (int i = 0; i < top5.size(); i++) {
             top5.get(i).setPosition(i + 1);
         }
@@ -89,7 +96,6 @@ public class JobApplicationController {
         return top5;
     }
 
-    // ✅ (Optional) Get all applicants for a job
     @GetMapping("/{jobId}/all")
     public List<JobApplication> getAllApplicants(@PathVariable String jobId) {
         return jobApplicationRepository.findByJobId(jobId);
