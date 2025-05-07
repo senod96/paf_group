@@ -11,22 +11,32 @@ const PostSlider = ({ images }) => {
   });
 
   return (
-    <div style={{ position: "relative", width: "600px", height: "500px", overflow: "hidden" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        maxHeight: "600px",
+        overflow: "hidden",
+      }}
+    >
       <div
         ref={sliderRef}
         className="keen-slider"
-        style={{ height: "100%", width: "100%" }}
+        style={{
+          height: "100%",
+          width: "100%",
+        }}
       >
         {images.map((img, i) => (
           <div
             key={i}
             className="keen-slider__slide"
             style={{
-              height: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              // ❌ DO NOT manually set width here
+              width: "100%",
+              height: "100%",
             }}
           >
             <img
@@ -34,8 +44,8 @@ const PostSlider = ({ images }) => {
               alt={`slide-${i}`}
               style={{
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
+                maxHeight: "600px",
+                objectFit: "contain",
               }}
             />
           </div>
