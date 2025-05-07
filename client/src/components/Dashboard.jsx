@@ -96,7 +96,6 @@ const Dashboard = () => {
               <li><button onClick={() => navigate('/learning-plans')} className="text-sm text-blue-600 hover:underline">Learning Plans</button></li>
               <li><button onClick={() => navigate('/progress-evaluation')} className="text-sm text-blue-600 hover:underline">Progress Evaluation</button></li>
               <li><button onClick={() => navigate('/notifications')} className="text-sm text-blue-600 hover:underline">Notifications</button></li>
-              <PostList/>
             </ul>
           </div>
         </div>
@@ -104,8 +103,7 @@ const Dashboard = () => {
         {/* Middle Feed Section */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow p-6 text-center text-gray-400 border border-dashed border-gray-300">
-            <AddJob/>
-            <ViewJobs/>
+            <HomePostList/>
           </div>
         </div>
       </div>
