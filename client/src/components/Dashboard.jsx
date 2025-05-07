@@ -101,8 +101,8 @@ const Dashboard = () => {
         </div>
 
         {/* Middle Feed Section */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-lg shadow p-6 text-center text-gray-400 border border-dashed border-gray-300">
+        <div className="lg:col-span-2 space-y-6 ">
+          <div className=" rounded-lg shadow p-6 text-center text-gray-400 border border-dashed border-gray-300 bg-indigo-300">
             <HomePostList/>
           </div>
         </div>
