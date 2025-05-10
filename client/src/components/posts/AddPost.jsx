@@ -60,7 +60,9 @@ const AddPost = () => {
       let videoUrl = null;
 
       if (imageFiles.length > 0) {
-        imageUrls = await Promise.all(imageFiles.map(file => uploadImageToFirebase(file)));
+        imageUrls = await Promise.all(
+          imageFiles.map((file) => uploadImageToFirebase(file))
+        );
       } else if (videoFile) {
         videoUrl = await uploadImageToFirebase(videoFile);
       }
@@ -69,8 +71,11 @@ const AddPost = () => {
         userId,
         post,
         description,
-        tags: tags.split(",").map(tag => tag.trim()).filter(Boolean),
-        likes: 0,
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        likes: 0, // Automatically set to 0
         imageUrls,
         videoUrl,
         date: new Date().toISOString(),
@@ -97,63 +102,63 @@ const AddPost = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 rounded-2xl shadow-xl bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-800 dark:to-gray-900 dark:text-white">
-      <h2 className="text-3xl font-bold mb-6 text-blue-700 dark:text-indigo-300">📸 Share a New Post</h2>
+    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-xl shadow-lg font-sans">
+      <h2 className="text-3xl font-extrabold mb-6 text-blue-700">📸 Share a New Post</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 text-lg">
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Post Title</label>
+          <label className="block text-blue-700 font-semibold mb-2">Post Title</label>
           <input
             type="text"
             value={post}
             onChange={(e) => setPost(e.target.value)}
             required
-            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
           />
         </div>
 
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Desssscription</label>
+          <label className="block text-blue-700 font-semibold mb-2">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
             rows={4}
-            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
           />
         </div>
 
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Tags (comma separated)</label>
+          <label className="block text-blue-700 font-semibold mb-2">Tags (comma separated)</label>
           <input
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="e.g., ui, engineering"
-            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
           />
         </div>
 
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Upload Images (up to 3)</label>
+          <label className="block text-blue-700 font-semibold mb-2">Upload Images (up to 3)</label>
           <input
             type="file"
             accept="image/*"
             multiple
             disabled={!!videoFile}
             onChange={handleImageChange}
-            className="w-full text-sm"
+            className="w-full"
           />
         </div>
 
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Or Upload Video</label>
+          <label className="block text-blue-700 font-semibold mb-2">Or Upload Video</label>
           <input
             type="file"
             accept="video/*"
             disabled={imageFiles.length > 0}
             onChange={handleVideoChange}
-            className="w-full text-sm"
+            className="w-full"
           />
         </div>
 
@@ -180,12 +185,12 @@ const AddPost = () => {
           </div>
         )}
 
-        {error && <p className="text-red-500 dark:text-red-400 text-sm font-medium">{error}</p>}
-        {success && <p className="text-green-600 dark:text-green-400 text-sm font-medium">{success}</p>}
+        {error && <p className="text-red-600 text-base font-medium">{error}</p>}
+        {success && <p className="text-green-600 text-base font-medium">{success}</p>}
 
         <button
           type="submit"
-          className="w-full py-3 rounded-lg text-white font-semibold text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 hover:brightness-110 transition shadow-md"
+          className="w-full py-3 rounded-lg text-white font-bold text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 hover:brightness-110 transition"
         >
           🚀 Share Post
         </button>
