@@ -5,11 +5,8 @@ const AddPost = () => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
-      if (stored?.startsWith("{")) {
-        return JSON.parse(stored);
-      } else {
-        return { id: stored };
-      }
+      if (stored?.startsWith("{")) return JSON.parse(stored);
+      return { id: stored };
     } catch {
       return null;
     }
@@ -20,7 +17,6 @@ const AddPost = () => {
   const [post, setPost] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
-  const [likes, setLikes] = useState(0);
   const [imageFiles, setImageFiles] = useState([]);
   const [videoFile, setVideoFile] = useState(null);
   const [error, setError] = useState("");
@@ -81,7 +77,7 @@ const AddPost = () => {
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean),
-        likes: parseInt(likes),
+        likes: 0,
         imageUrls,
         videoUrl,
         date: new Date().toISOString(),
@@ -98,121 +94,119 @@ const AddPost = () => {
       setPost("");
       setDescription("");
       setTags("");
-      setLikes(0);
       setImageFiles([]);
       setVideoFile(null);
       setSuccess("✅ Post added successfully!");
     } catch (err) {
       console.error("Post creation failed:", err);
-      setError("Failed to upload post.");
+      setError("❌ Failed to upload post.");
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow font-sans">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">Create a New Post</h2>
+    <div className="min-h-screen dark:bg-gray-900 bg-gray-100 p-6 flex justify-center items-start">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-2xl space-y-6">
+        <h2 className="text-2xl font-bold text-center text-gray-700 dark:text-gray-200">📝 Create a New Post</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Post Title:</label>
-          <input
-            type="text"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
-            required
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Description:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            rows={4}
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Tags (comma separated):</label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="e.g., engineering, ui, backend"
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Likes (optional):</label>
-          <input
-            type="number"
-            value={likes}
-            onChange={(e) => setLikes(e.target.value)}
-            min="0"
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Upload Images (max 3):</label>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            disabled={!!videoFile}
-            onChange={handleImageChange}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Or Upload Video:</label>
-          <input
-            type="file"
-            accept="video/*"
-            disabled={imageFiles.length > 0}
-            onChange={handleVideoChange}
-            className="w-full"
-          />
-        </div>
-
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-600 text-sm">{success}</p>}
-
-        {imageFiles.length > 0 && (
-          <div className="flex gap-2 flex-wrap mt-2">
-            {imageFiles.map((file, i) => (
-              <img
-                key={i}
-                src={URL.createObjectURL(file)}
-                alt={`preview-${i}`}
-                className="w-24 h-24 object-cover border rounded"
-              />
-            ))}
-          </div>
-        )}
-
-        {videoFile && (
-          <div className="mt-2">
-            <video
-              src={URL.createObjectURL(videoFile)}
-              controls
-              className="w-full max-w-md border rounded"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Post Title */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Post Title</label>
+            <input
+              type="text"
+              value={post}
+              onChange={(e) => setPost(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
+              required
             />
           </div>
-        )}
 
-        <button
-          type="submit"
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Add Post
-        </button>
-      </form>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
+              rows={4}
+              required
+            />
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
+            <input
+              type="text"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="e.g., frontend, devops, ai"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
+            />
+          </div>
+
+          {/* Upload */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Upload Images (max 3)</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                disabled={!!videoFile}
+                onChange={handleImageChange}
+                className="w-full text-sm"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Upload Video</label>
+              <input
+                type="file"
+                accept="video/*"
+                disabled={imageFiles.length > 0}
+                onChange={handleVideoChange}
+                className="w-full text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Error and Success */}
+          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+          {success && <p className="text-green-500 text-center text-sm">{success}</p>}
+
+          {/* Preview */}
+          {imageFiles.length > 0 && (
+            <div className="flex gap-3 mt-2">
+              {imageFiles.map((file, i) => (
+                <img
+                  key={i}
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  className="w-24 h-24 rounded object-cover border"
+                />
+              ))}
+            </div>
+          )}
+          {videoFile && (
+            <div className="mt-2">
+              <video
+                src={URL.createObjectURL(videoFile)}
+                controls
+                className="w-full rounded border"
+              />
+            </div>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-lg transition duration-300"
+          >
+            ➕ Add Post
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

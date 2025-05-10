@@ -72,7 +72,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 font-inter p-4">
+    <div className="dark:bg-gray-900 dark:text-gray-100 min-h-screen flex items-center justify-center bg-gray-50 font-inter p-4">
       <form onSubmit={handleSubmit} className="bg-white shadow-md p-8 rounded-lg w-full max-w-lg space-y-4">
         <h2 className="text-xl font-bold text-center text-blue-600">Create your account</h2>
 
@@ -124,7 +124,7 @@ const Register = () => {
           required
         />
 
-        <div className="pt-2">
+        <div className="dark:bg-gray-900 dark:text-gray-100 pt-2">
           <label className="block font-medium text-gray-700 mb-2">Education</label>
           {form.education.map((edu, idx) => (
             <div key={idx} className="space-y-2 mb-4">
@@ -140,7 +140,7 @@ const Register = () => {
                 onChange={(e) => handleEducationChange(idx, 'institution', e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               />
-              <div className="flex gap-2">
+              <div className="dark:bg-gray-900 dark:text-gray-100 flex gap-2">
                 <input
                   type="date"
                   value={edu.startDate}
