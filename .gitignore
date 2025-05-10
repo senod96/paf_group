@@ -1,20 +1,54 @@
-# Java/Spring
+# Java / Spring Boot
 target/
 *.class
 *.jar
 *.war
 *.log
 
-# Node/React
+# Node / React
 node_modules/
-dist/
 build/
+dist/
 .env
+.env.local
+.env.production
+.env.development
+.npmrc
+yarn.lock
 
-# IDEs
+# OAuth credentials / Secrets
+# (Make sure you never commit sensitive client IDs or secrets)
+credentials.json
+firebase-adminsdk.json
+
+# IDEs and Editor Settings
 .idea/
-*.iml
 .vscode/
+*.iml
 
-# OS
+# Operating System files
 .DS_Store
+Thumbs.db
+
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage / Test output
+coverage/
+test-output/
+cypress/videos/
+cypress/screenshots/
+
+# Spring Boot specific
+hs_err_pid*.log
+
+# GitHub specific
+*.orig
+
+# Others (optional but good)
+tmp/
+temp/
+.cache/
