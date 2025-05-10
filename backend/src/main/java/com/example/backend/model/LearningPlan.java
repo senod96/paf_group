@@ -15,7 +15,10 @@ public class LearningPlan {
     private String userId;
     private Date createdAt;
     private Date updatedAt;
-
+    private String type; // "site" or "my"
+    private String image; // badge or plan preview image
+    private String parentId; // reference to original site plan (optional)
+    private String badge; // URL of the badge image
     private List<PlanItem> plans;
 
     // Inner class 1: Main Plan item
@@ -57,7 +60,21 @@ public class LearningPlan {
     }
 
     // === LearningPlan getters/setters ===
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+    public String getBadge() {
+        return badge;
+    }
+    
+    public void setBadge(String badge) {
+        this.badge = badge;
+    }
+    
+    public String getParentId() { return parentId; }
+    public void setParentId(String parentId) { this.parentId = parentId; }
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 

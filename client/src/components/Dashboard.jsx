@@ -85,6 +85,8 @@ const Dashboard = () => {
               <li><button onClick={() => navigate('/collob')} className="text-sm hover:underline">Collaboration</button></li>
               <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
               <li><button onClick={() => navigate('/upcoming')} className="text-sm hover:underline">Upcoming Events</button></li>
+              <li><button onClick={() => navigate('/availablelearning')} className="text-sm hover:underline">Available Learning Plans</button></li>
+              
             </ul>
 
 

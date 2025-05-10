@@ -145,9 +145,7 @@ const HomePostList = () => {
 
   return (
     <Box sx={{ mt: 4, maxWidth: "600px", mx: "auto" }}>
-      <Typography variant="h5" gutterBottom>
-        Explore Posts
-      </Typography>
+    
       <Grid container spacing={3} direction="column">
         {posts.map((post) => (
           <Grid item xs={12} key={post.postId}>

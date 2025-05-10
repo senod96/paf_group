@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import PostList from './posts/PostList';
+import badgeImg from './badge.png';
+
 
 const UserPublicProfile = () => {
   const { id } = useParams(); // userId in URL
@@ -116,7 +118,7 @@ const UserPublicProfile = () => {
       {/* Banner */}
       <Navbar/>
       <div
-        className="h-40 w-full bg-cover bg-center rounded-t-xl"
+        className="h-48 w-128 bg-cover bg-center rounded-t-xl"
         style={{
           backgroundImage: user.backgroundImage
             ? `url(${user.backgroundImage})`
@@ -141,9 +143,16 @@ const UserPublicProfile = () => {
           {user.subscriptionType === 'premium' && <span>👑</span>}
           {user.name}
           {user.subscriptionType === 'premium' && (
-            <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
-              Premium
-            </span>
+            <>
+              <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
+                Premium
+              </span>
+              <img
+                src={badgeImg} 
+                alt="Badge"
+                className="w-8 h-8 ml-1"
+              />
+            </>
           )}
         </h2>
         <p className="text-blue-600">{user.headline}</p>
