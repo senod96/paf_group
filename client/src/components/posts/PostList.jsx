@@ -10,7 +10,6 @@ import {
   CardMedia,
   Typography,
   Chip,
-  Grid,
   Button,
   Modal,
 } from "@mui/material";
@@ -19,8 +18,7 @@ const PostList = () => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
-      if (stored?.startsWith("{")) return JSON.parse(stored);
-      return { id: stored };
+      return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
     } catch {
       return null;
     }
@@ -31,7 +29,6 @@ const PostList = () => {
   const [commentCounts, setCommentCounts] = useState({});
   const [commentRefresh, setCommentRefresh] = useState({});
   const [openCommentPostId, setOpenCommentPostId] = useState(null);
-  const [expandedMedia, setExpandedMedia] = useState(null);
   const [editingPostId, setEditingPostId] = useState(null);
 
   const fetchCommentsCount = async (postId) => {
@@ -40,7 +37,6 @@ const PostList = () => {
       const data = await res.json();
       return data.length;
     } catch (err) {
-      console.error("Error fetching comment count:", err);
       return 0;
     }
   };
@@ -53,9 +49,9 @@ const PostList = () => {
       setPosts(userPosts);
 
       const counts = await Promise.all(userPosts.map((post) => fetchCommentsCount(post.postId)));
-
       const countMap = {};
       const refreshMap = {};
+
       userPosts.forEach((post, idx) => {
         countMap[post.postId] = counts[idx];
         refreshMap[post.postId] = 0;
@@ -64,7 +60,7 @@ const PostList = () => {
       setCommentCounts(countMap);
       setCommentRefresh(refreshMap);
     } catch (err) {
-      console.error("Error fetching posts:", err);
+      console.error("Fetch error:", err);
     }
   };
 
@@ -72,44 +68,31 @@ const PostList = () => {
     fetchAllPosts();
   }, []);
 
-  const handleDelete = async (postId) => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      try {
-        await fetch(`http://localhost:8080/api/posts/${postId}`, {
-          method: "DELETE",
-        });
-        setPosts((prev) => prev.filter((p) => p.postId !== postId));
-      } catch (err) {
-        console.error("Error deleting post:", err);
-      }
+  const handleLike = async (postId) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like`, { method: "PUT" });
+      const updated = await res.json();
+      setPosts((prev) =>
+        prev.map((p) => (p.postId === postId ? { ...p, likes: updated.likes } : p))
+      );
+    } catch (err) {
+      console.error("Like error:", err);
     }
   };
 
-  const handleLike = async (postId) => {
+  const handleDelete = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
-        method: "PUT",
-      });
-      const updatedPost = await res.json();
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.postId === postId ? { ...post, likes: updatedPost.likes } : post
-        )
-      );
+      await fetch(`http://localhost:8080/api/posts/${postId}`, { method: "DELETE" });
+      setPosts((prev) => prev.filter((p) => p.postId !== postId));
     } catch (err) {
-      console.error("Error liking post:", err);
+      console.error("Delete error:", err);
     }
   };
 
   const handleCommentAdded = (postId) => {
-    setCommentCounts((prev) => ({
-      ...prev,
-      [postId]: (prev[postId] || 0) + 1,
-    }));
-    setCommentRefresh((prev) => ({
-      ...prev,
-      [postId]: prev[postId] + 1,
-    }));
+    setCommentCounts((prev) => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
+    setCommentRefresh((prev) => ({ ...prev, [postId]: prev[postId] + 1 }));
   };
 
   const handleEditSuccess = () => {
@@ -118,162 +101,135 @@ const PostList = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, maxWidth: "600px", mx: "auto" }}>
-      <Typography variant="h5" gutterBottom>
+    <Box className="max-w-4xl mx-auto p-4 font-sans">
+      <Typography variant="h5" gutterBottom className="text-purple-800 font-bold text-2xl mb-4">
         My Posts
       </Typography>
-      <Grid container spacing={3} direction="column">
-        {posts.map((post) => (
-          <Grid item xs={12} key={post.postId}>
-            {editingPostId === post.postId ? (
-              <UpdatePost postId={post.postId} onUpdateSuccess={handleEditSuccess} />
-            ) : (
-              <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-                {/* Media Display */}
-                {post.videoUrl ? (
-                  <CardMedia
-                    component="video"
-                    src={post.videoUrl}
-                    autoPlay
-                    loop
-                    muted
-                    sx={{ height: 400 }}
-                  />
-                ) : post.imageUrls?.length > 1 ? (
-                  <PostSlider images={post.imageUrls} />
-                ) : post.imageUrls?.length === 1 ? (
-                  <CardMedia
-                    component="img"
-                    src={post.imageUrls[0]}
-                    alt="Post image"
-                    sx={{ height: 400, objectFit: "cover" }}
-                  />
-                ) : (
-                  <CardMedia
-                    component="img"
-                    src="https://via.placeholder.com/800x300?text=No+Media"
-                    alt="No media"
-                  />
+
+      {posts.map((post, index) => (
+        <Card
+          key={post.postId}
+          className={`rounded-md shadow-md border mb-10 pb-4 ${
+            index % 2 === 0 ? "bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100" : "bg-white"
+          }`}
+        >
+          {editingPostId === post.postId ? (
+            <UpdatePost postId={post.postId} onUpdateSuccess={handleEditSuccess} />
+          ) : (
+            <>
+              {post.videoUrl ? (
+                <CardMedia
+                  component="video"
+                  src={post.videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  className="w-full max-h-[500px] object-contain"
+                />
+              ) : post.imageUrls?.length > 1 ? (
+                <PostSlider images={post.imageUrls} />
+              ) : post.imageUrls?.length === 1 ? (
+                <CardMedia
+                  component="img"
+                  src={post.imageUrls[0]}
+                  alt="Post media"
+                  className="w-full max-h-[500px] object-contain"
+                />
+              ) : (
+                <CardMedia
+                  component="img"
+                  src="https://via.placeholder.com/800x300?text=No+Media"
+                  alt="No media"
+                  className="w-full object-contain"
+                />
+              )}
+
+              <CardContent className="px-6 py-4">
+                {post.resharedComment && (
+                  <Typography className="italic text-sm text-gray-500 mb-1">
+                    {post.resharedComment}
+                  </Typography>
+                )}
+                {post.originalUserId && (
+                  <Typography className="text-xs text-gray-400 mb-1">
+                    🔁 Reshared from: {post.originalUserId}
+                  </Typography>
                 )}
 
-                {/* Post Content */}
-                <CardContent>
-                  {post.resharedComment && (
-                    <Typography
-                      variant="body2"
-                      sx={{ mb: 1, fontStyle: "italic", color: "gray" }}
-                    >
-                      {post.resharedComment}
-                    </Typography>
-                  )}
-
-                  {post.originalUserId && (
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "text.secondary", display: "block", mb: 1 }}
-                    >
-                      Originally posted by: {post.originalUserId}
-                    </Typography>
-                  )}
-
-                  <Typography variant="h6">{post.post}</Typography>
-
-                  {post.description?.includes("Reshared from") ? (
-  <>
-                <Typography variant="body2" sx={{ whiteSpace: "pre-line", mt: 1 }}>
-                   {post.description.split("Reshared from")[0].trim()}
+                <Typography variant="h6" className="text-purple-800 font-bold text-lg">
+                  {post.post}
                 </Typography>
-                 <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
-                 🔁 from {post.description.split("Reshared from")[1]?.replace("test-user-id:", "").trim()}
-                   </Typography>
-                  </>
-) : (
-  <Typography variant="body2" sx={{ mt: 1 }}>
-    {post.description}
-  </Typography>
-)}
+                <Typography className="text-sm text-gray-700 mt-2 whitespace-pre-line">
+                  {post.description}
+                </Typography>
 
-
-                  <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-                    <Button variant="outlined" onClick={() => handleLike(post.postId)}>
-                      ❤️ {post.likes}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => setOpenCommentPostId(post.postId)}
-                    >
-                      💬 {commentCounts[post.postId] || 0}
-                    </Button>
-                  </Box>
-
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block", mt: 1 }}
-                    color="text.secondary"
+                <Box className="flex items-center gap-4 mt-4">
+                  <Button onClick={() => handleLike(post.postId)} className="text-pink-600 font-semibold">
+                    ❤️ {post.likes}
+                  </Button>
+                  <Button
+                    onClick={() => setOpenCommentPostId(post.postId)}
+                    className="text-blue-600 font-semibold"
                   >
-                    {post.date}
-                  </Typography>
+                    💬 {commentCounts[post.postId] || 0}
+                  </Button>
+                </Box>
 
-                  <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    {post.tags?.map((tag, idx) => (
-                      <Chip key={idx} label={tag} size="small" />
-                    ))}
-                  </Box>
-
-                  <CommentList
-                    postId={post.postId}
-                    refreshTrigger={commentRefresh[post.postId] || 0}
-                  />
-
-                  <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
-                    <Button
+                <Box className="mt-4 flex gap-2 flex-wrap">
+                  {post.tags?.map((tag, i) => (
+                    <Chip
+                      key={i}
+                      label={`#${tag}`}
+                      size="small"
                       variant="outlined"
-                      color="primary"
-                      onClick={() => setEditingPostId(post.postId)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDelete(post.postId)}
-                    >
-                      Delete
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            )}
+                      style={{ color: "#9333ea", borderColor: "#9333ea" }}
+                    />
+                  ))}
+                </Box>
 
-            {/* Comment Modal */}
-            <Modal
-              open={openCommentPostId === post.postId}
-              onClose={() => setOpenCommentPostId(null)}
-              sx={{ display: "flex", alignItems: "flex-end", justifyContent: "center" }}
-            >
-              <Box
-                sx={{
-                  width: "100%",
-                  maxWidth: 600,
-                  bgcolor: "background.paper",
-                  borderRadius: "12px 12px 0 0",
-                  boxShadow: 24,
-                  p: 2,
-                  mb: 1,
-                }}
-              >
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Add Comment
-                </Typography>
-                <AddComment
+                <Typography className="text-xs text-gray-500 mt-3">{post.date}</Typography>
+
+                <CommentList
                   postId={post.postId}
-                  onCommentAdded={() => handleCommentAdded(post.postId)}
+                  refreshTrigger={commentRefresh[post.postId] || 0}
                 />
-              </Box>
-            </Modal>
-          </Grid>
-        ))}
-      </Grid>
+
+                <Box className="mt-4 flex gap-3">
+                  <Button
+                    variant="outlined"
+                    className="text-purple-700 border-purple-700"
+                    onClick={() => setEditingPostId(post.postId)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    className="text-red-600 border-red-600"
+                    onClick={() => handleDelete(post.postId)}
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              </CardContent>
+            </>
+          )}
+
+          <Modal
+            open={openCommentPostId === post.postId}
+            onClose={() => setOpenCommentPostId(null)}
+          >
+            <Box className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl mx-auto mt-24">
+              <Typography variant="h6" className="mb-2 text-purple-800">
+                💬 Add Comment
+              </Typography>
+              <AddComment
+                postId={post.postId}
+                onCommentAdded={() => handleCommentAdded(post.postId)}
+              />
+            </Box>
+          </Modal>
+        </Card>
+      ))}
     </Box>
   );
 };

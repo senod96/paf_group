@@ -5,22 +5,16 @@ const AddPost = () => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
-      if (stored?.startsWith("{")) {
-        return JSON.parse(stored);
-      } else {
-        return { id: stored };
-      }
+      return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
     } catch {
       return null;
     }
   });
 
   const userId = user?.id || "";
-
   const [post, setPost] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
-  const [likes, setLikes] = useState(0);
   const [imageFiles, setImageFiles] = useState([]);
   const [videoFile, setVideoFile] = useState(null);
   const [error, setError] = useState("");
@@ -66,9 +60,7 @@ const AddPost = () => {
       let videoUrl = null;
 
       if (imageFiles.length > 0) {
-        imageUrls = await Promise.all(
-          imageFiles.map((file) => uploadImageToFirebase(file))
-        );
+        imageUrls = await Promise.all(imageFiles.map(file => uploadImageToFirebase(file)));
       } else if (videoFile) {
         videoUrl = await uploadImageToFirebase(videoFile);
       }
@@ -77,11 +69,8 @@ const AddPost = () => {
         userId,
         post,
         description,
-        tags: tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean),
-        likes: parseInt(likes),
+        tags: tags.split(",").map(tag => tag.trim()).filter(Boolean),
+        likes: 0,
         imageUrls,
         videoUrl,
         date: new Date().toISOString(),
@@ -98,7 +87,6 @@ const AddPost = () => {
       setPost("");
       setDescription("");
       setTags("");
-      setLikes(0);
       setImageFiles([]);
       setVideoFile(null);
       setSuccess("✅ Post added successfully!");
@@ -109,108 +97,97 @@ const AddPost = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow font-sans">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">Create a New Post</h2>
+    <div className="max-w-3xl mx-auto mt-10 p-8 rounded-2xl shadow-xl bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-800 dark:to-gray-900 dark:text-white">
+      <h2 className="text-3xl font-bold mb-6 text-blue-700 dark:text-indigo-300">📸 Share a New Post</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Post Title:</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Post Title</label>
           <input
             type="text"
             value={post}
             onChange={(e) => setPost(e.target.value)}
             required
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Description:</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
             rows={4}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Tags (comma separated):</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Tags (comma separated)</label>
           <input
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="e.g., engineering, ui, backend"
-            className="w-full border px-3 py-2 rounded"
+            placeholder="e.g., ui, engineering"
+            className="w-full border border-blue-300 dark:border-indigo-600 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Likes (optional):</label>
-          <input
-            type="number"
-            value={likes}
-            onChange={(e) => setLikes(e.target.value)}
-            min="0"
-            className="w-full border px-3 py-2 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Upload Images (max 3):</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Upload Images (up to 3)</label>
           <input
             type="file"
             accept="image/*"
             multiple
             disabled={!!videoFile}
             onChange={handleImageChange}
-            className="w-full"
+            className="w-full text-sm"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-600 mb-1">Or Upload Video:</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Or Upload Video</label>
           <input
             type="file"
             accept="video/*"
             disabled={imageFiles.length > 0}
             onChange={handleVideoChange}
-            className="w-full"
+            className="w-full text-sm"
           />
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {success && <p className="text-green-600 text-sm">{success}</p>}
-
         {imageFiles.length > 0 && (
-          <div className="flex gap-2 flex-wrap mt-2">
-            {imageFiles.map((file, i) => (
+          <div className="flex flex-wrap gap-4 mt-4">
+            {imageFiles.map((file, idx) => (
               <img
-                key={i}
+                key={idx}
                 src={URL.createObjectURL(file)}
-                alt={`preview-${i}`}
-                className="w-24 h-24 object-cover border rounded"
+                alt="preview"
+                className="w-28 h-28 object-cover rounded-lg border"
               />
             ))}
           </div>
         )}
 
         {videoFile && (
-          <div className="mt-2">
+          <div className="mt-4">
             <video
               src={URL.createObjectURL(videoFile)}
               controls
-              className="w-full max-w-md border rounded"
+              className="w-full max-w-lg rounded-lg border"
             />
           </div>
         )}
 
+        {error && <p className="text-red-500 dark:text-red-400 text-sm font-medium">{error}</p>}
+        {success && <p className="text-green-600 dark:text-green-400 text-sm font-medium">{success}</p>}
+
         <button
           type="submit"
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          className="w-full py-3 rounded-lg text-white font-semibold text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 hover:brightness-110 transition shadow-md"
         >
-          Add Post
+          🚀 Share Post
         </button>
       </form>
     </div>

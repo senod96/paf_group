@@ -7,7 +7,8 @@ import ViewUserProfile from './components/Vieewuserprofile';
 import Register from './components/Register';
 import Login from './components/Login';
 import AddPost from './components/posts/AddPost';
-import ViewApplicants from './components/posts/ViewApplicants'; // ✅ Add this
+import ViewApplicants from './components/posts/ViewApplicants'; 
+import JobApplicationPage from './pages/JobApplicationPage';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/edit" element={<EditUserForm />} />
+        <Route path="/jobs" element={<JobApplicationPage />} />
+        <Route path="/applicants/:jobId" element={<ViewApplicants />} />
         <Route path="/profile/:id" element={<ViewUserProfile />} />
         <Route path="/applicants/:jobId" element={<ViewApplicants />} /> {/* ✅ New route */}
       </Routes>

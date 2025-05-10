@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const AddComment = ({ postId, onCommentAdded }) => {
   const [comment, setComment] = useState("");
-  const [commentorId, setCommentorId] = useState("");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    const id = stored?.startsWith("{") ? JSON.parse(stored).id : stored;
+    setUserId(id);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!userId) {
+      console.error("User ID not found in localStorage.");
+      return;
+    }
+
     const newComment = {
       postId,
       comment,
-      commentorId,
+      commentorId: userId,
       likes: 0,
     };
 
@@ -24,7 +35,6 @@ const AddComment = ({ postId, onCommentAdded }) => {
       if (!res.ok) throw new Error("Failed to post comment");
 
       setComment("");
-      setCommentorId("");
       if (onCommentAdded) onCommentAdded();
     } catch (err) {
       console.error("Error adding comment:", err);
@@ -32,24 +42,23 @@ const AddComment = ({ postId, onCommentAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <input
-        value={commentorId}
-        onChange={(e) => setCommentorId(e.target.value)}
-        placeholder="Your ID"
-        style={{ padding: "10px", borderRadius: "6px" }}
-        required
-      />
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-3 font-sans text-lg"
+    >
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Add a comment..."
-        rows={2}
-        style={{ padding: "10px", borderRadius: "6px" }}
+        rows={3}
+        className="p-3 border border-gray-300 rounded-lg text-gray-800"
         required
       />
-      <button type="submit" style={{ padding: "8px", marginTop: "8px" }}>
-        Send
+      <button
+        type="submit"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+      >
+        Send Comment
       </button>
     </form>
   );

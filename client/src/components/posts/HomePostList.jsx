@@ -1,3 +1,4 @@
+// All imports remain the same
 import React, { useEffect, useState } from "react";
 import AddComment from "./AddComment";
 import CommentList from "./CommentList";
@@ -13,7 +14,6 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-
 import profileImg from "./pfp.jpg";
 
 const HomePostList = () => {
@@ -31,10 +31,10 @@ const HomePostList = () => {
   const [commentCounts, setCommentCounts] = useState({});
   const [commentRefresh, setCommentRefresh] = useState({});
   const [openCommentPostId, setOpenCommentPostId] = useState(null);
-  const [expandedMedia, setExpandedMedia] = useState(null);
   const [reshareModalOpen, setReshareModalOpen] = useState(false);
   const [reshareTargetPost, setReshareTargetPost] = useState(null);
   const [reshareComment, setReshareComment] = useState("");
+  const [expandedMedia, setExpandedMedia] = useState(null);
 
   const fetchCommentsCount = async (postId) => {
     try {
@@ -138,30 +138,33 @@ const HomePostList = () => {
   };
 
   return (
-    <Box>
+    <Box className="font-sans px-4 py-6 bg-white dark:bg-gray-900 min-h-screen transition-all">
       {posts.map((post, index) => (
         <Card
           key={post.postId}
-          className={`rounded-none shadow-md w-full border-t border-gray-200 mb-8 pb-6 ${
-            index % 2 === 0 ? "bg-blue-50" : "bg-white"
-          }`}
+          className={`rounded-2xl shadow-lg w-full border mb-10 transition-all ${
+            index % 2 === 0
+              ? "bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-800 dark:to-gray-900"
+              : "bg-white dark:bg-gray-800"
+          } border-gray-200 dark:border-gray-700`}
         >
-          <Box className="flex items-center gap-3 px-4 pt-3 pb-4">
+          <Box className="flex items-center gap-4 px-6 pt-4 pb-2">
             <img
               src={profileImg}
               alt="Profile"
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-14 h-14 rounded-full object-cover border-2 border-indigo-400"
             />
             <Box>
-              <Typography className="text-sm font-semibold text-gray-800">
+              <Typography className="text-md font-semibold text-gray-800 dark:text-white">
                 {post.userId}
               </Typography>
-              <Typography className="text-xs text-gray-500">
-                Created at – {formatDate(post.date)}
+              <Typography className="text-xs text-gray-500 dark:text-gray-400">
+                {formatDate(post.date)}
               </Typography>
             </Box>
           </Box>
 
+          {/* Media */}
           {post.videoUrl ? (
             <CardMedia
               component="video"
@@ -170,7 +173,7 @@ const HomePostList = () => {
               loop
               muted
               playsInline
-              className="w-full object-contain"
+              className="w-full max-h-[500px] object-contain"
             />
           ) : post.imageUrls?.length > 1 ? (
             <PostSlider images={post.imageUrls} />
@@ -179,7 +182,7 @@ const HomePostList = () => {
               component="img"
               src={post.imageUrls[0]}
               alt="Post"
-              className="w-full object-contain"
+              className="w-full max-h-[500px] object-contain"
             />
           ) : (
             <CardMedia
@@ -190,36 +193,48 @@ const HomePostList = () => {
             />
           )}
 
-          <CardContent className="px-4 pb-4">
-            <Typography variant="h6" className="text-base font-bold text-gray-800">
+          {/* Content */}
+          <CardContent className="px-6 pb-4">
+            <Typography className="text-xl font-bold text-indigo-800 dark:text-indigo-300">
               {post.post}
             </Typography>
-            <Typography className="text-sm text-gray-700 mt-1 whitespace-pre-line">
+            <Typography className="text-sm text-gray-700 dark:text-gray-300 mt-2 whitespace-pre-line">
               {post.description}
             </Typography>
 
-            <Box className="flex items-center gap-3 mt-3">
-              <Button onClick={() => handleLike(post.postId)} variant="outlined" color="error">
+            <Box className="flex items-center gap-4 mt-4">
+              <Button onClick={() => handleLike(post.postId)} className="text-indigo-600 dark:text-indigo-400 font-medium">
                 ❤️ {post.likes}
               </Button>
-              <Button onClick={() => openCommentPopup(post.postId)} variant="outlined" color="info">
+              <Button onClick={() => openCommentPopup(post.postId)} className="text-blue-600 dark:text-blue-400 font-medium">
                 💬 {commentCounts[post.postId] || 0}
               </Button>
-              <Button onClick={() => handleReshareOpen(post)} variant="outlined" color="primary">
+              <Button onClick={() => handleReshareOpen(post)} className="text-purple-600 dark:text-purple-400 font-medium">
                 🔁 Reshare
               </Button>
             </Box>
 
-            <Box className="flex gap-2 flex-wrap mt-2">
+            <Box className="flex gap-2 flex-wrap mt-4">
               {post.tags?.map((tag, i) => (
-                <Chip key={i} label={tag} size="small" variant="outlined" color="primary" />
+                <Chip
+                  key={i}
+                  label={`#${tag}`}
+                  size="small"
+                  variant="outlined"
+                  style={{
+                    color: "#6366f1",
+                    borderColor: "#6366f1",
+                    fontWeight: "500",
+                  }}
+                />
               ))}
             </Box>
           </CardContent>
 
+          {/* Comment Modal */}
           <Modal open={openCommentPostId === post.postId} onClose={closeCommentPopup}>
-            <Box className="bg-white rounded-lg shadow-xl p-5 w-full max-w-xl mx-auto mt-24">
-              <Typography variant="h6" className="mb-2">
+            <Box className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-xl mx-auto mt-24">
+              <Typography variant="h6" className="mb-2 text-purple-800 dark:text-purple-300">
                 💬 Comment on "{post.post}"
               </Typography>
               <AddComment postId={post.postId} onCommentAdded={() => handleCommentAdded(post.postId)} />
@@ -231,9 +246,12 @@ const HomePostList = () => {
         </Card>
       ))}
 
+      {/* Reshare Modal */}
       <Modal open={reshareModalOpen} onClose={() => setReshareModalOpen(false)}>
-        <Box className="bg-white rounded-lg shadow-lg p-6 max-w-xl mx-auto mt-24">
-          <Typography variant="h6" className="mb-2">Add your comment for resharing</Typography>
+        <Box className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 max-w-xl mx-auto mt-24">
+          <Typography variant="h6" className="mb-3 text-purple-800 dark:text-purple-300">
+            Add your comment for resharing
+          </Typography>
           <TextField
             fullWidth
             multiline
@@ -242,15 +260,22 @@ const HomePostList = () => {
             value={reshareComment}
             onChange={(e) => setReshareComment(e.target.value)}
             className="mb-4"
+            InputProps={{
+              className: "dark:text-white",
+            }}
           />
-          <Button onClick={handleReshareConfirm} variant="contained" color="primary" fullWidth>
+          <Button
+            onClick={handleReshareConfirm}
+            className="bg-gradient-to-r from-blue-600 to-indigo-500 text-white px-4 py-2 rounded w-full hover:brightness-110"
+          >
             Confirm Reshare
           </Button>
         </Box>
       </Modal>
 
+      {/* Expanded Media Modal */}
       <Modal open={!!expandedMedia} onClose={() => setExpandedMedia(null)}>
-        <Box className="w-full max-w-5xl mx-auto mt-16 bg-white p-4 rounded-lg shadow-lg">
+        <Box className="w-full max-w-5xl mx-auto mt-16 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
           {expandedMedia?.type === "video" && (
             <video src={expandedMedia.content} controls className="w-full" />
           )}
