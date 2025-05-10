@@ -113,7 +113,7 @@ const AddPost = () => {
         </div>
 
         <div>
-          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Description</label>
+          <label className="block text-blue-700 dark:text-indigo-300 font-medium mb-2">Desssscription</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
