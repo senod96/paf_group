@@ -9,11 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(
-    origins = "http://localhost:3000",
-    allowCredentials = "true",
-    allowedHeaders = "*"
-)
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+
 @RestController
 @RequestMapping("/api/follow-requests")
 public class FollowRequestController {
@@ -78,6 +75,8 @@ public class FollowRequestController {
         FollowRequest req = requestRepo.findById(id).orElseThrow();
         req.setStatus("rejected");
         requestRepo.save(req);
+       
         return "Request rejected";
     }
+    
 }

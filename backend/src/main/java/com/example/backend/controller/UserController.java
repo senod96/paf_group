@@ -1,7 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.controller.UserController.ErrorResponse;
-import com.example.backend.controller.UserController.LoginRequest;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +11,19 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/users")
-
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
-
-
 public class UserController {
 
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    private final String FROM_EMAIL = "bandaralahiru9@gmail.com";
+    private final String APP_URL = "http://localhost:3000";
+
+    // === LOGIN ===
     @PostMapping("/login")
     public Object login(@RequestBody LoginRequest request) {
         Optional<User> userOpt = userRepo.findByEmail(request.getEmail());
@@ -44,7 +49,6 @@ public class UserController {
         private String email;
         private String password;
 
-        // Getters & Setters
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
 
@@ -58,15 +62,7 @@ public class UserController {
         public String getMessage() { return message; }
     }
 
-    @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    private final String FROM_EMAIL = "bandaralahiru9@gmail.com"; 
-    private final String APP_URL = "http://localhost:3000"; 
-
+    // === CRUD & SEARCH ===
     @GetMapping
     public List<User> getAllUsers() {
         return userRepo.findAll();
@@ -81,6 +77,9 @@ public class UserController {
     public User createUser(@RequestBody User user) {
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
+        if (user.getSubscriptionType() == null) {
+            user.setSubscriptionType("free");
+        }
         return userRepo.save(user);
     }
 
@@ -103,6 +102,7 @@ public class UserController {
             user.setLinks(updatedUser.getLinks());
             user.setMobile(updatedUser.getMobile());
             user.setUpdatedAt(new Date());
+            user.setSubscriptionType(updatedUser.getSubscriptionType() != null ? updatedUser.getSubscriptionType() : user.getSubscriptionType());
             return userRepo.save(user);
         }).orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -112,6 +112,7 @@ public class UserController {
         userRepo.deleteById(id);
     }
 
+    // === FOLLOW / UNFOLLOW ===
     @PostMapping("/{id}/follow/{targetId}")
     public User followUser(@PathVariable String id, @PathVariable String targetId) {
         User user = userRepo.findById(id).orElseThrow();
@@ -136,6 +137,7 @@ public class UserController {
         return userRepo.save(user);
     }
 
+    // === REGISTRATION & VERIFICATION ===
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
         if (userRepo.findByEmail(user.getEmail()).isPresent()) {
@@ -145,6 +147,7 @@ public class UserController {
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
         user.setVerified(false);
+        user.setSubscriptionType("free");
 
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
@@ -176,6 +179,7 @@ public class UserController {
         return "❌ Invalid or expired token.";
     }
 
+    // === GOOGLE LOGIN ===
     @PostMapping("/google-login")
     public User googleLogin(@RequestBody User googleUser) {
         Optional<User> existing = userRepo.findByEmail(googleUser.getEmail());
@@ -184,7 +188,19 @@ public class UserController {
         googleUser.setVerified(true);
         googleUser.setCreatedAt(new Date());
         googleUser.setUpdatedAt(new Date());
+        googleUser.setSubscriptionType("free");
+
         return userRepo.save(googleUser);
     }
 
+    // === SUBSCRIPTION UPDATE ===
+    @PutMapping("/{id}/subscription")
+    public User updateSubscription(@PathVariable String id, @RequestBody Map<String, String> body) {
+        String newType = body.get("subscriptionType");
+        return userRepo.findById(id).map(user -> {
+            user.setSubscriptionType(newType);
+            user.setUpdatedAt(new Date());
+            return userRepo.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

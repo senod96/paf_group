@@ -15,8 +15,8 @@ public class User {
 
     private String name;
     private String email;
-    private String password; 
-    private String mobile;   
+    private String password;
+    private String mobile;
     private String authProvider;
 
     private String profilePicture;
@@ -24,7 +24,7 @@ public class User {
     private String role;
 
     private boolean isVerified;
-    private String verificationToken; // for email verification
+    private String verificationToken;
 
     private String headline;
     private String bio;
@@ -39,13 +39,15 @@ public class User {
 
     private Links links;
 
+    private String subscriptionType = "free"; // NEW FIELD
+
     private Date createdAt = new Date();
     private Date updatedAt = new Date();
 
     public User() {}
 
     // ==== GETTERS AND SETTERS ====
-    
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -105,6 +107,9 @@ public class User {
 
     public Links getLinks() { return links; }
     public void setLinks(Links links) { this.links = links; }
+
+    public String getSubscriptionType() { return subscriptionType; }
+    public void setSubscriptionType(String subscriptionType) { this.subscriptionType = subscriptionType; }
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
