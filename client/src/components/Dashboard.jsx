@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import AddPost from './posts/AddPost';
 import HomePostList from './posts/HomePostList'
+import SearchPost from './posts/SearchPost';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -96,6 +96,7 @@ const Dashboard = () => {
         {/* Posts Section */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400 border border-dashed border-gray-300 dark:border-gray-600">
+            <SearchPost/>
             <HomePostList/>
           </div>
 
