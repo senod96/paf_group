@@ -11,6 +11,7 @@ import ProjectDashboard from './components/ProjectDashboard';
 import UserPublicProfile from './components/UserPublicProfile';
 import AddPost from './components/posts/AddPost';
 import ViewJobs from './components/posts/ViewJobs'
+import JobApplicationPage from './pages/JobApplicationPage';
 
 import ProgressAnalytics from './components/ProgressAnalytics';
 import LearningPlanDetails from './components/LearningPlanDetails';
@@ -38,7 +39,7 @@ function App() {
       <Routes>
       <Route path="/upcoming" element={<UpcomingTasks />} />
       <Route path="/addquiz" element={<QuizWrapper />} />
-      <Route path="/jobapplications" element={<ViewJobs/>}/>
+      <Route path="/jobapplications" element={<JobApplicationPage/>}/>
       <Route path="/" element={<LandingPage />} />
       <Route path="/notifications" element={<NotificationComponent userId={currentUserId} />} />
       <Route path="/addpost" element={<AddPost/>}/>
