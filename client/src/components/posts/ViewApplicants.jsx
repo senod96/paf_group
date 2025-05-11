@@ -79,6 +79,7 @@ const ViewApplicants = () => {
         </div>
       ))}
     </div>
+    
   );
 };
 
