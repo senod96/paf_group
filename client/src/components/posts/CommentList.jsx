@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import coursePfp from "./course.webp"; // Ensure this image exists in the same folder
+import coursePfp from "./course.webp"; // Make sure this image exists
 
-const CommentList = ({ postId, show = true, onClose = () => {}, refreshTrigger = 0 }) => {
+const CommentList = ({ postId, refreshTrigger = 0 }) => {
   const [comments, setComments] = useState([]);
   const [expanded, setExpanded] = useState(false);
 
@@ -17,25 +17,14 @@ const CommentList = ({ postId, show = true, onClose = () => {}, refreshTrigger =
       }
     };
 
-    if (show) fetchComments();
-  }, [postId, refreshTrigger, show]);
-
-  if (!show) return null;
+    fetchComments();
+  }, [postId, refreshTrigger]);
 
   const visibleComments = expanded ? comments : comments.slice(0, 3);
   const hasMore = comments.length > 3;
 
   return (
-    <div className="mt-5 font-sans relative bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-800 dark:to-gray-900 dark:text-white rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-5">
-      <button
-        onClick={onClose}
-        className="absolute top-3 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition text-sm"
-      >
-        ✖
-      </button>
-
-      <h4 className="text-xl font-semibold text-blue-700 dark:text-indigo-300 mb-4">💬 Comments</h4>
-
+    <div className="mt-4">
       {comments.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">No comments yet.</p>
       ) : (
@@ -44,18 +33,20 @@ const CommentList = ({ postId, show = true, onClose = () => {}, refreshTrigger =
             {visibleComments.map((comment) => (
               <li
                 key={comment.commentId}
-                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-3 shadow-sm flex items-start gap-3"
+                className="flex items-start gap-3"
               >
                 <img
                   src={coursePfp}
                   alt="profile"
-                  className="w-9 h-9 rounded-full object-cover border border-gray-300 dark:border-gray-500"
+                  className="w-9 h-9 rounded-full object-cover"
                 />
-                <div className="flex justify-between items-start w-full">
-                  <span className="text-sm text-gray-800 dark:text-gray-200">{comment.comment}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-3 whitespace-nowrap">
-                    ❤️ {comment.likes}
-                  </span>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                    {comment.comment}
+                  </p>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-1">
+                    <span>👍 {comment.likes}</span>
+                  </div>
                 </div>
               </li>
             ))}
@@ -64,9 +55,9 @@ const CommentList = ({ postId, show = true, onClose = () => {}, refreshTrigger =
           {hasMore && (
             <button
               onClick={() => setExpanded((prev) => !prev)}
-              className="mt-4 text-sm text-blue-600 dark:text-indigo-400 hover:underline"
+              className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
-              {expanded ? "Show less" : "See more"}
+              {expanded ? "Show less" : "See more comments"}
             </button>
           )}
         </>

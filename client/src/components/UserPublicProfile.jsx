@@ -230,6 +230,17 @@ const UserPublicProfile = () => {
           </div>
         )}
 
+        {/* Job Opportunities Link */}
+      <div className="mt-6">
+      <h3 className="font-semibold mb-1">Job Section</h3>
+        <a
+        href="/jobapplications"
+        className="inline-block mt-2 bg-gradient-to-r from-blue-600 to-indigo-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:brightness-110"
+        >
+        View My Jobs & Applicants
+        </a>
+      </div>
+
         {/* Links */}
         {user.links && (
           <div className="mt-6">

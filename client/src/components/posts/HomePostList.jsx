@@ -1,4 +1,3 @@
-// All imports remain the same
 import React, { useEffect, useState } from "react";
 import AddComment from "./AddComment";
 import CommentList from "./CommentList";
@@ -11,8 +10,6 @@ import {
   Typography,
   Chip,
   Button,
-  Modal,
-  TextField,
 } from "@mui/material";
 import profileImg from "./pfp.jpg";
 
@@ -34,7 +31,6 @@ const HomePostList = () => {
   const [reshareModalOpen, setReshareModalOpen] = useState(false);
   const [reshareTargetPost, setReshareTargetPost] = useState(null);
   const [reshareComment, setReshareComment] = useState("");
-  const [expandedMedia, setExpandedMedia] = useState(null);
 
   const fetchCommentsCount = async (postId) => {
     try {
@@ -94,32 +90,9 @@ const HomePostList = () => {
     setReshareModalOpen(true);
   };
 
-  const handleReshareConfirm = async () => {
-    if (!reshareTargetPost) return;
-    const newPost = {
-      ...reshareTargetPost,
-      postId: undefined,
-      userId: currentUserId,
-      date: new Date().toISOString(),
-      description: `${reshareComment}\n\nReshared from ${reshareTargetPost.userId}: ${reshareTargetPost.description}`,
-      likes: 0,
-    };
-    try {
-      await fetch("http://localhost:8080/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
-      });
-      alert("Post reshared!");
-      setReshareModalOpen(false);
-      fetchAllPosts();
-    } catch (err) {
-      console.error("Reshare failed", err);
-    }
+  const handleCommentToggle = (postId) => {
+    setOpenCommentPostId((prevId) => (prevId === postId ? null : postId));
   };
-
-  const openCommentPopup = (postId) => setOpenCommentPostId(postId);
-  const closeCommentPopup = () => setOpenCommentPostId(null);
 
   const handleCommentAdded = (postId) => {
     setCommentCounts((prev) => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
@@ -138,30 +111,32 @@ const HomePostList = () => {
   };
 
   return (
-    <Box className="font-sans px-4 py-6 bg-white dark:bg-gray-900 min-h-screen transition-all">
-      {posts.map((post, index) => (
+    <Box className="font-sans px-4 py-8 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
+      {posts.map((post) => (
         <Card
           key={post.postId}
-          className={`rounded-2xl shadow-lg w-full border mb-10 transition-all ${
-            index % 2 === 0
-              ? "bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-800 dark:to-gray-900"
-              : "bg-white dark:bg-gray-800"
-          } border-gray-200 dark:border-gray-700`}
+          className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
         >
-          <Box className="flex items-center gap-4 px-6 pt-4 pb-2">
-            <img
-              src={profileImg}
-              alt="Profile"
-              className="w-14 h-14 rounded-full object-cover border-2 border-indigo-400"
-            />
-            <Box>
-              <Typography className="text-md font-semibold text-gray-800 dark:text-white">
-                {post.userId}
-              </Typography>
-              <Typography className="text-xs text-gray-500 dark:text-gray-400">
-                {formatDate(post.date)}
-              </Typography>
+          {/* Profile Header */}
+          <Box className="flex items-center justify-between p-4">
+            <Box className="flex items-center gap-4">
+              <img
+                src={profileImg}
+                alt="Profile"
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              <Box>
+                <Typography className="text-md font-semibold text-gray-800 dark:text-white">
+                  {post.userId}
+                </Typography>
+                <Typography className="text-xs text-gray-500 dark:text-gray-400">
+                  {formatDate(post.date)}
+                </Typography>
+              </Box>
             </Box>
+            <Button size="small" variant="outlined" className="text-blue-600 border-blue-600">
+              Follow
+            </Button>
           </Box>
 
           {/* Media */}
@@ -173,7 +148,7 @@ const HomePostList = () => {
               loop
               muted
               playsInline
-              className="w-full max-h-[500px] object-contain"
+              className="w-full max-h-[400px] object-cover border-t border-b"
             />
           ) : post.imageUrls?.length > 1 ? (
             <PostSlider images={post.imageUrls} />
@@ -182,111 +157,71 @@ const HomePostList = () => {
               component="img"
               src={post.imageUrls[0]}
               alt="Post"
-              className="w-full max-h-[500px] object-contain"
+              className="w-full max-h-[400px] object-cover border-t border-b"
             />
           ) : (
             <CardMedia
               component="img"
               src="https://via.placeholder.com/800x300?text=No+Media"
               alt="No media"
-              className="w-full object-contain"
+              className="w-full object-contain border-t border-b"
             />
           )}
 
           {/* Content */}
-          <CardContent className="px-6 pb-4">
-            <Typography className="text-xl font-bold text-indigo-800 dark:text-indigo-300">
-              {post.post}
-            </Typography>
-            <Typography className="text-sm text-gray-700 dark:text-gray-300 mt-2 whitespace-pre-line">
+          <CardContent className="px-6 pb-2">
+            <Typography className="text-gray-700 dark:text-gray-300 text-base mt-2 whitespace-pre-line">
               {post.description}
             </Typography>
 
-            <Box className="flex items-center gap-4 mt-4">
-              <Button onClick={() => handleLike(post.postId)} className="text-indigo-600 dark:text-indigo-400 font-medium">
-                ❤️ {post.likes}
-              </Button>
-              <Button onClick={() => openCommentPopup(post.postId)} className="text-blue-600 dark:text-blue-400 font-medium">
-                💬 {commentCounts[post.postId] || 0}
-              </Button>
-              <Button onClick={() => handleReshareOpen(post)} className="text-purple-600 dark:text-purple-400 font-medium">
-                🔁 Reshare
-              </Button>
-            </Box>
-
+            {/* Tags */}
             <Box className="flex gap-2 flex-wrap mt-4">
-              {post.tags?.map((tag, i) => (
+              {post.tags?.map((tag, idx) => (
                 <Chip
-                  key={i}
+                  key={idx}
                   label={`#${tag}`}
                   size="small"
                   variant="outlined"
                   style={{
-                    color: "#6366f1",
-                    borderColor: "#6366f1",
+                    color: "#3b82f6",
+                    borderColor: "#3b82f6",
                     fontWeight: "500",
+                    fontSize: "13px",
+                    padding: "4px",
+                    borderRadius: "9999px",
                   }}
                 />
               ))}
             </Box>
           </CardContent>
 
-          {/* Comment Modal */}
-          <Modal open={openCommentPostId === post.postId} onClose={closeCommentPopup}>
-            <Box className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-full max-w-xl mx-auto mt-24">
-              <Typography variant="h6" className="mb-2 text-purple-800 dark:text-purple-300">
-                💬 Comment on "{post.post}"
+          {/* Action Buttons */}
+          <Box className="flex items-center justify-around text-sm border-t p-3">
+            <Button onClick={() => handleLike(post.postId)} className="text-gray-600 dark:text-gray-300">
+              👍 Like {post.likes}
+            </Button>
+            <Button onClick={() => handleCommentToggle(post.postId)} className="text-gray-600 dark:text-gray-300">
+              💬 Comment {commentCounts[post.postId] || 0}
+            </Button>
+            <Button onClick={() => handleReshareOpen(post)} className="text-gray-600 dark:text-gray-300">
+              🔁 Repost
+            </Button>
+          </Box>
+
+          {/* Inline Comment Section */}
+          {openCommentPostId === post.postId && (
+            <Box className="px-6 py-4 border-t">
+              <Typography variant="h6" className="text-md mb-2 text-indigo-700">
+                Comments
               </Typography>
               <AddComment postId={post.postId} onCommentAdded={() => handleCommentAdded(post.postId)} />
               <div className="mt-4">
                 <CommentList postId={post.postId} refreshTrigger={commentRefresh[post.postId]} />
               </div>
             </Box>
-          </Modal>
+          )}
         </Card>
       ))}
-
-      {/* Reshare Modal */}
-      <Modal open={reshareModalOpen} onClose={() => setReshareModalOpen(false)}>
-        <Box className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 max-w-xl mx-auto mt-24">
-          <Typography variant="h6" className="mb-3 text-purple-800 dark:text-purple-300">
-            Add your comment for resharing
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            placeholder="Type something..."
-            value={reshareComment}
-            onChange={(e) => setReshareComment(e.target.value)}
-            className="mb-4"
-            InputProps={{
-              className: "dark:text-white",
-            }}
-          />
-          <Button
-            onClick={handleReshareConfirm}
-            className="bg-gradient-to-r from-blue-600 to-indigo-500 text-white px-4 py-2 rounded w-full hover:brightness-110"
-          >
-            Confirm Reshare
-          </Button>
-        </Box>
-      </Modal>
-
-      {/* Expanded Media Modal */}
-      <Modal open={!!expandedMedia} onClose={() => setExpandedMedia(null)}>
-        <Box className="w-full max-w-5xl mx-auto mt-16 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
-          {expandedMedia?.type === "video" && (
-            <video src={expandedMedia.content} controls className="w-full" />
-          )}
-          {expandedMedia?.type === "image" && (
-            <img src={expandedMedia.content} alt="Expanded" className="w-full" />
-          )}
-          {expandedMedia?.type === "slider" && (
-            <PostSlider images={expandedMedia.content} />
-          )}
-        </Box>
-      </Modal>
     </Box>
   );
 };

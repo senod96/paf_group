@@ -80,7 +80,7 @@ const Dashboard = () => {
             <ul className="space-y-2 text-blue-600 dark:text-blue-400">
               <li><button onClick={() => navigate('/addpost')} className="text-sm hover:underline">Upload posts</button></li>
               <li><button onClick={() => navigate('/learning-plans')} className="text-sm hover:underline">Learning Plans</button></li>
-              <li><button onClick={() => navigate('/jobapplications')} className="text-sm hover:underline">View Jobs</button></li>
+              <li><button onClick={() => navigate('/applyjob')} className="text-sm hover:underline">View Jobs</button></li>
               <li><button onClick={() => navigate('/analytics')} className="text-sm hover:underline">Progress Evaluation</button></li>
               <li><button onClick={() => navigate('/collob')} className="text-sm hover:underline">Collaboration</button></li>
               <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
@@ -95,10 +95,10 @@ const Dashboard = () => {
 
         {/* Posts Section */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400 border border-dashed border-gray-300 dark:border-gray-600">
-            <SearchPost/>
-            <HomePostList/>
-          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow py-6 text-center text-gray-500 dark:text-gray-400 border border-dashed border-gray-300 dark:border-gray-600">
+  <SearchPost/>
+  <HomePostList/>
+</div>
 
        
         </div>
