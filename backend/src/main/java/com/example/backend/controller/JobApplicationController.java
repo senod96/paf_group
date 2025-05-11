@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*", methods = {
+        RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS
+})
 @RestController
 @RequestMapping("/applications")
 public class JobApplicationController {
@@ -25,24 +27,31 @@ public class JobApplicationController {
     @Autowired
     private JobApplicationRepository jobApplicationRepository;
 
-    // ✅ Upload and process CV
+    // ✅ Upload and process CV and form fields
     @PostMapping("/{jobId}/apply")
     public ResponseEntity<String> uploadCvAndAnalyze(
             @PathVariable String jobId,
             @RequestParam("userId") String userId,
+            @RequestParam("fullName") String fullName,
+            @RequestParam("address") String address,
+            @RequestParam("workExperience") String workExperience,
+            @RequestParam("age") int age,
+            @RequestParam("gender") String gender,
+            @RequestParam("contactNumber") String contactNumber,
+            @RequestParam("email") String email,
             @RequestParam("cv") MultipartFile file) {
 
         try {
             JobPost job = jobPostRepository.findById(jobId)
                     .orElseThrow(() -> new RuntimeException("Job not found"));
 
-            // Extract text using PDFBox
+            // ✅ Extract text from uploaded CV
             PDDocument doc = PDDocument.load(file.getInputStream());
             PDFTextStripper stripper = new PDFTextStripper();
             String text = stripper.getText(doc).toLowerCase();
             doc.close();
 
-            // Match keywords from skillsNeeded + workExperience
+            // ✅ Match keywords
             String[] jobKeywords = (job.getSkillsNeeded() + "," + job.getWorkExperience())
                     .toLowerCase().split(",");
             int matchCount = 0;
@@ -52,13 +61,21 @@ public class JobApplicationController {
                 }
             }
 
-            // Save application
+            // ✅ Save full application
             JobApplication app = new JobApplication();
             app.setUserId(userId);
             app.setJobId(jobId);
             app.setText(text);
             app.setMatchingKeywords(matchCount);
-            app.setPosition(0); // Will be assigned in top5 endpoint
+            app.setPosition(0); // default position
+
+            app.setFullName(fullName);
+            app.setAddress(address);
+            app.setWorkExperience(workExperience);
+            app.setAge(age);
+            app.setGender(gender);
+            app.setContactNumber(contactNumber);
+            app.setEmail(email);
 
             jobApplicationRepository.save(app);
 
@@ -75,13 +92,11 @@ public class JobApplicationController {
     public List<JobApplication> getTop5Applicants(@PathVariable String jobId) {
         List<JobApplication> all = jobApplicationRepository.findByJobId(jobId);
 
-        // Sort by matchingKeywords descending
         List<JobApplication> top5 = all.stream()
                 .sorted((a, b) -> b.getMatchingKeywords() - a.getMatchingKeywords())
                 .limit(5)
                 .collect(Collectors.toList());
 
-        // Assign rank (position) to top 5
         for (int i = 0; i < top5.size(); i++) {
             top5.get(i).setPosition(i + 1);
         }
@@ -89,9 +104,25 @@ public class JobApplicationController {
         return top5;
     }
 
-    // ✅ (Optional) Get all applicants for a job
+    // ✅ Get all applicants sorted by keyword matches
     @GetMapping("/{jobId}/all")
     public List<JobApplication> getAllApplicants(@PathVariable String jobId) {
-        return jobApplicationRepository.findByJobId(jobId);
+        List<JobApplication> all = jobApplicationRepository.findByJobId(jobId);
+
+        return all.stream()
+                .sorted((a, b) -> b.getMatchingKeywords() - a.getMatchingKeywords())
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Delete an applicant
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<String> deleteApplicant(@PathVariable String applicationId) {
+        Optional<JobApplication> optionalApplication = jobApplicationRepository.findById(applicationId);
+        if (optionalApplication.isPresent()) {
+            jobApplicationRepository.deleteById(applicationId);
+            return ResponseEntity.ok("Applicant deleted successfully");
+        } else {
+            return ResponseEntity.status(404).body("Applicant not found");
+        }
     }
 }

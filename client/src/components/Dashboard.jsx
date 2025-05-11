@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import HomePostList from './posts/HomePostList'
+import HomePostList from './posts/HomePostList';
 import SearchPost from './posts/SearchPost';
 
 const Dashboard = () => {
@@ -16,14 +16,12 @@ const Dashboard = () => {
       if (searchTerm.trim() !== '') {
         handleSearch();
       } else {
-        setResults([]); // Clear if input is empty
+        setResults([]);
       }
-    }, 300); // debounce delay
-  
+    }, 300);
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
-  
- 
+
   const handleSearch = async () => {
     try {
       const res = await fetch(`http://localhost:8080/api/users/search?name=${searchTerm}`);
@@ -33,11 +31,11 @@ const Dashboard = () => {
       console.error('Search failed:', err);
     }
   };
+
   const handleProfileClick = (id) => {
-      localStorage.setItem('viewingUser', id); // 🔥 store clicked user's ID under a separate key
-      navigate(`/profile/${id}`);
+    localStorage.setItem('viewingUser', id);
+    navigate(`/profile/${id}`);
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-inter">
@@ -86,21 +84,15 @@ const Dashboard = () => {
               <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
               <li><button onClick={() => navigate('/upcoming')} className="text-sm hover:underline">Upcoming Events</button></li>
               <li><button onClick={() => navigate('/availablelearning')} className="text-sm hover:underline">Available Learning Plans</button></li>
-              
             </ul>
-
-
           </div>
         </div>
 
         {/* Posts Section */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow py-6 text-center text-gray-500 dark:text-gray-400 border border-dashed border-gray-300 dark:border-gray-600">
-  <SearchPost/>
-  <HomePostList/>
-</div>
-
-       
+          {/* No white box here */}
+          <SearchPost />
+          <HomePostList />
         </div>
       </div>
     </div>
