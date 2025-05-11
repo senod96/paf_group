@@ -27,7 +27,7 @@ export default function AdminDashboard() {
     localStorage.getItem("theme") === "dark"
   );
 
-  // Apply dark mode class
+  // Apply dark mode class lahiru
   useEffect(() => {
     const root = window.document.documentElement;
     if (darkMode) {
