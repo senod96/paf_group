@@ -3,6 +3,7 @@ import AddComment from "./AddComment";
 import CommentList from "./CommentList";
 import PostSlider from "./PostSlider";
 import UpdatePost from "./UpdatePost";
+import { motion } from "framer-motion";
 import {
   Box,
   Card,
@@ -11,7 +12,6 @@ import {
   Typography,
   Chip,
   Button,
-  Modal,
 } from "@mui/material";
 
 const PostList = () => {
@@ -36,7 +36,7 @@ const PostList = () => {
       const res = await fetch(`http://localhost:8080/api/comments/post/${postId}`);
       const data = await res.json();
       return data.length;
-    } catch (err) {
+    } catch {
       return 0;
     }
   };
@@ -68,15 +68,20 @@ const PostList = () => {
     fetchAllPosts();
   }, []);
 
-  const handleLike = async (postId) => {
+  const handleLikeToggle = async (postId) => {
+    const storedUser = localStorage.getItem("user");
+    const userId = storedUser?.startsWith("{") ? JSON.parse(storedUser).id : storedUser;
+
     try {
-      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like`, { method: "PUT" });
-      const updated = await res.json();
+      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like?userId=${userId}`, {
+        method: "PUT",
+      });
+      const updatedPost = await res.json();
       setPosts((prev) =>
-        prev.map((p) => (p.postId === postId ? { ...p, likes: updated.likes } : p))
+        prev.map((p) => (p.postId === postId ? { ...p, likes: updatedPost.likes, likedBy: updatedPost.likedBy } : p))
       );
     } catch (err) {
-      console.error("Like error:", err);
+      console.error("Like toggle error:", err);
     }
   };
 
@@ -101,135 +106,127 @@ const PostList = () => {
   };
 
   return (
-    <Box className="max-w-4xl mx-auto p-4 font-sans">
-      <Typography variant="h5" gutterBottom className="text-purple-800 font-bold text-2xl mb-4">
+    <Box className="font-sans px-4 py-8 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center text-gray-800 dark:text-white">
+      <Typography variant="h5" className="text-2xl font-bold mb-6">
         My Posts
       </Typography>
 
-      {posts.map((post, index) => (
-        <Card
-          key={post.postId}
-          className={`rounded-md shadow-md border mb-10 pb-4 ${
-            index % 2 === 0 ? "bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100" : "bg-white"
-          }`}
-        >
-          {editingPostId === post.postId ? (
-            <UpdatePost postId={post.postId} onUpdateSuccess={handleEditSuccess} />
-          ) : (
-            <>
-              {post.videoUrl ? (
-                <CardMedia
-                  component="video"
-                  src={post.videoUrl}
-                  autoPlay
-                  loop
-                  muted
-                  className="w-full max-h-[500px] object-contain"
-                />
-              ) : post.imageUrls?.length > 1 ? (
-                <PostSlider images={post.imageUrls} />
-              ) : post.imageUrls?.length === 1 ? (
-                <CardMedia
-                  component="img"
-                  src={post.imageUrls[0]}
-                  alt="Post media"
-                  className="w-full max-h-[500px] object-contain"
-                />
-              ) : (
-                <CardMedia
-                  component="img"
-                  src="https://via.placeholder.com/800x300?text=No+Media"
-                  alt="No media"
-                  className="w-full object-contain"
-                />
-              )}
+      {posts.map((post) => {
+        const hasLiked = post.likedBy?.includes(currentUserId);
 
-              <CardContent className="px-6 py-4">
-                {post.resharedComment && (
-                  <Typography className="italic text-sm text-gray-500 mb-1">
-                    {post.resharedComment}
-                  </Typography>
-                )}
-                {post.originalUserId && (
-                  <Typography className="text-xs text-gray-400 mb-1">
-                    🔁 Reshared from: {post.originalUserId}
-                  </Typography>
-                )}
-
-                <Typography variant="h6" className="text-purple-800 font-bold text-lg">
-                  {post.post}
-                </Typography>
-                <Typography className="text-sm text-gray-700 mt-2 whitespace-pre-line">
-                  {post.description}
-                </Typography>
-
-                <Box className="flex items-center gap-4 mt-4">
-                  <Button onClick={() => handleLike(post.postId)} className="text-pink-600 font-semibold">
-                    ❤️ {post.likes}
-                  </Button>
-                  <Button
-                    onClick={() => setOpenCommentPostId(post.postId)}
-                    className="text-blue-600 font-semibold"
-                  >
-                    💬 {commentCounts[post.postId] || 0}
-                  </Button>
-                </Box>
-
-                <Box className="mt-4 flex gap-2 flex-wrap">
-                  {post.tags?.map((tag, i) => (
-                    <Chip
-                      key={i}
-                      label={`#${tag}`}
-                      size="small"
-                      variant="outlined"
-                      style={{ color: "#9333ea", borderColor: "#9333ea" }}
-                    />
-                  ))}
-                </Box>
-
-                <Typography className="text-xs text-gray-500 mt-3">{post.date}</Typography>
-
-                <CommentList
-                  postId={post.postId}
-                  refreshTrigger={commentRefresh[post.postId] || 0}
-                />
-
-                <Box className="mt-4 flex gap-3">
-                  <Button
-                    variant="outlined"
-                    className="text-purple-700 border-purple-700"
-                    onClick={() => setEditingPostId(post.postId)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    className="text-red-600 border-red-600"
-                    onClick={() => handleDelete(post.postId)}
-                  >
-                    Delete
-                  </Button>
-                </Box>
-              </CardContent>
-            </>
-          )}
-
-          <Modal
-            open={openCommentPostId === post.postId}
-            onClose={() => setOpenCommentPostId(null)}
+        return (
+          <motion.div
+            key={post.postId}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-2xl"
           >
-            <Box className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl mx-auto mt-24">
-              <Typography variant="h6" className="mb-2 text-purple-800">
-                💬 Add Comment
-              </Typography>
-              <AddComment
-                postId={post.postId}
-                onCommentAdded={() => handleCommentAdded(post.postId)}
-              />
-            </Box>
-          </Modal>
-        </Card>
-      ))}
+            <Card className="bg-white dark:bg-gray-800 rounded-lg shadow-md mb-10 overflow-hidden border border-gray-300 dark:border-gray-700">
+              {editingPostId === post.postId ? (
+                <UpdatePost postId={post.postId} onUpdateSuccess={handleEditSuccess} />
+              ) : (
+                <>
+                  {/* Media */}
+                  {post.videoUrl ? (
+                    <CardMedia
+                      component="video"
+                      src={post.videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      className="w-full max-h-[400px] object-cover"
+                    />
+                  ) : post.imageUrls?.length > 1 ? (
+                    <PostSlider images={post.imageUrls} />
+                  ) : post.imageUrls?.length === 1 ? (
+                    <CardMedia
+                      component="img"
+                      src={post.imageUrls[0]}
+                      alt="Post media"
+                      className="w-full max-h-[400px] object-cover"
+                    />
+                  ) : (
+                    <CardMedia
+                      component="img"
+                      src="https://via.placeholder.com/800x300?text=No+Media"
+                      alt="No media"
+                      className="w-full object-cover"
+                    />
+                  )}
+
+                  <CardContent className="px-6 py-4">
+                    <Typography variant="h6" className="text-xl font-semibold">
+                      {post.post}
+                    </Typography>
+
+                    <Typography className="text-sm text-gray-700 dark:text-gray-300 mt-3 whitespace-pre-line leading-relaxed">
+                      {post.description}
+                    </Typography>
+
+                    <Box className="flex gap-2 flex-wrap mt-4">
+                      {post.tags?.map((tag, idx) => (
+                        <Chip
+                          key={idx}
+                          label={`#${tag}`}
+                          size="small"
+                          variant="outlined"
+                          style={{
+                            color: "#3b82f6",
+                            borderColor: "#3b82f6",
+                            fontWeight: "500",
+                          }}
+                        />
+                      ))}
+                    </Box>
+
+                    <Box className="flex items-center gap-6 mt-6">
+                      <Button
+                        onClick={() => handleLikeToggle(post.postId)}
+                        className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600 dark:text-gray-300"}`}
+                      >
+                        {hasLiked ? "👍 Liked" : "👍 Like"} {post.likes}
+                      </Button>
+                      <Button
+                        onClick={() => setOpenCommentPostId(post.postId)}
+                        className="text-gray-600 dark:text-gray-300 font-semibold"
+                      >
+                        💬 {commentCounts[post.postId] || 0}
+                      </Button>
+                    </Box>
+
+                    <Typography className="text-xs text-gray-400 dark:text-gray-500 mt-4">{post.date}</Typography>
+
+                    {openCommentPostId === post.postId && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+                        <AddComment postId={post.postId} onCommentAdded={() => handleCommentAdded(post.postId)} />
+                        <CommentList postId={post.postId} refreshTrigger={commentRefresh[post.postId]} />
+                      </motion.div>
+                    )}
+
+                    <Box className="flex gap-4 mt-6">
+                      <Button
+                        variant="outlined"
+                        onClick={() => setEditingPostId(post.postId)}
+                        className="text-blue-600 border-blue-600"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleDelete(post.postId)}
+                        className="text-red-500 border-red-500"
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </>
+              )}
+            </Card>
+          </motion.div>
+        );
+      })}
     </Box>
   );
 };

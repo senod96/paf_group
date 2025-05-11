@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddComment from "./AddComment";
 import CommentList from "./CommentList";
 import PostSlider from "./PostSlider";
+import { motion } from "framer-motion";
 import {
   Box,
   Card,
@@ -28,6 +29,7 @@ const HomePostList = () => {
   const [commentCounts, setCommentCounts] = useState({});
   const [commentRefresh, setCommentRefresh] = useState({});
   const [openCommentPostId, setOpenCommentPostId] = useState(null);
+  const [userMap, setUserMap] = useState({});
   const [reshareModalOpen, setReshareModalOpen] = useState(false);
   const [reshareTargetPost, setReshareTargetPost] = useState(null);
   const [reshareComment, setReshareComment] = useState("");
@@ -58,9 +60,22 @@ const HomePostList = () => {
         countMap[post.postId] = counts[idx];
         refreshMap[post.postId] = 0;
       });
-
       setCommentCounts(countMap);
       setCommentRefresh(refreshMap);
+
+      // Fetch usernames
+      const userIds = [...new Set(visiblePosts.map(p => p.userId))];
+      const users = await Promise.all(
+        userIds.map(id =>
+          fetch(`http://localhost:8080/api/users/${id}`).then(res => res.json())
+        )
+      );
+      const map = {};
+      users.forEach(user => {
+        map[user.id] = user.name;
+      });
+      setUserMap(map);
+
     } catch (err) {
       console.error("Error loading posts", err);
     }
@@ -71,16 +86,25 @@ const HomePostList = () => {
   }, []);
 
   const handleLike = async (postId) => {
+    const storedUser = localStorage.getItem("user");
+    const currentUserId = storedUser?.startsWith("{") ? JSON.parse(storedUser).id : storedUser;
+
     try {
-      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like`, {
+      const res = await fetch(`http://localhost:8080/api/posts/${postId}/like?userId=${currentUserId}`, {
         method: "PUT",
       });
-      const updated = await res.json();
+
+      if (!res.ok) {
+        const errorMsg = await res.text();
+        throw new Error(errorMsg);
+      }
+
+      const updatedPost = await res.json();
       setPosts((prev) =>
-        prev.map((p) => (p.postId === postId ? { ...p, likes: updated.likes } : p))
+        prev.map((p) => (p.postId === postId ? { ...p, likes: updatedPost.likes, likedBy: updatedPost.likedBy } : p))
       );
     } catch (err) {
-      console.error("Like failed", err);
+      console.error("Like/Unlike failed:", err);
     }
   };
 
@@ -88,6 +112,35 @@ const HomePostList = () => {
     setReshareTargetPost(post);
     setReshareComment("");
     setReshareModalOpen(true);
+  };
+
+  const handleReshareConfirm = async () => {
+    if (!reshareTargetPost) return;
+
+    const newPost = {
+      post: reshareTargetPost.post,
+      description: `${reshareComment}\n\nReshared from ${userMap[reshareTargetPost.userId] || reshareTargetPost.userId}: ${reshareTargetPost.description}`,
+      tags: reshareTargetPost.tags,
+      userId: currentUserId,
+      date: new Date().toISOString(),
+      imageUrls: reshareTargetPost.imageUrls,
+      videoUrl: reshareTargetPost.videoUrl,
+      likes: 0,
+      likedBy: [],
+    };
+
+    try {
+      await fetch("http://localhost:8080/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPost),
+      });
+      alert("Post reshared!");
+      setReshareModalOpen(false);
+      fetchAllPosts();
+    } catch (err) {
+      console.error("Error resharing post:", err);
+    }
   };
 
   const handleCommentToggle = (postId) => {
@@ -112,116 +165,174 @@ const HomePostList = () => {
 
   return (
     <Box className="font-sans px-4 py-8 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
-      {posts.map((post) => (
-        <Card
-          key={post.postId}
-          className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
-        >
-          {/* Profile Header */}
-          <Box className="flex items-center justify-between p-4">
-            <Box className="flex items-center gap-4">
-              <img
-                src={profileImg}
-                alt="Profile"
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <Box>
-                <Typography className="text-md font-semibold text-gray-800 dark:text-white">
-                  {post.userId}
-                </Typography>
-                <Typography className="text-xs text-gray-500 dark:text-gray-400">
-                  {formatDate(post.date)}
-                </Typography>
-              </Box>
-            </Box>
-            <Button size="small" variant="outlined" className="text-blue-600 border-blue-600">
-              Follow
-            </Button>
-          </Box>
+      {posts.map((post) => {
+        const hasLiked = post.likedBy?.includes(currentUserId);
+        const userName = userMap[post.userId] || post.userId;
 
-          {/* Media */}
-          {post.videoUrl ? (
-            <CardMedia
-              component="video"
-              src={post.videoUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full max-h-[400px] object-cover border-t border-b"
-            />
-          ) : post.imageUrls?.length > 1 ? (
-            <PostSlider images={post.imageUrls} />
-          ) : post.imageUrls?.length === 1 ? (
-            <CardMedia
-              component="img"
-              src={post.imageUrls[0]}
-              alt="Post"
-              className="w-full max-h-[400px] object-cover border-t border-b"
-            />
-          ) : (
-            <CardMedia
-              component="img"
-              src="https://via.placeholder.com/800x300?text=No+Media"
-              alt="No media"
-              className="w-full object-contain border-t border-b"
-            />
-          )}
-
-          {/* Content */}
-          <CardContent className="px-6 pb-2">
-            <Typography className="text-gray-700 dark:text-gray-300 text-base mt-2 whitespace-pre-line">
-              {post.description}
-            </Typography>
-
-            {/* Tags */}
-            <Box className="flex gap-2 flex-wrap mt-4">
-              {post.tags?.map((tag, idx) => (
-                <Chip
-                  key={idx}
-                  label={`#${tag}`}
-                  size="small"
-                  variant="outlined"
-                  style={{
-                    color: "#3b82f6",
-                    borderColor: "#3b82f6",
-                    fontWeight: "500",
-                    fontSize: "13px",
-                    padding: "4px",
-                    borderRadius: "9999px",
-                  }}
+        return (
+          <Card
+            key={post.postId}
+            className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
+          >
+            {/* Profile Header */}
+            <Box className="flex items-center justify-between p-4">
+              <Box className="flex items-center gap-4">
+                <img
+                  src={profileImg}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover"
                 />
-              ))}
+                <Box>
+                  <Typography className="text-lg font-semibold text-gray-800 dark:text-white">
+                    {userName}
+                  </Typography>
+                  <Typography className="text-sm text-gray-500 dark:text-gray-400">
+                    {formatDate(post.date)}
+                  </Typography>
+                </Box>
+              </Box>
+              <Button size="small" variant="outlined" className="text-blue-600 border-blue-600">
+                Follow
+              </Button>
             </Box>
-          </CardContent>
 
-          {/* Action Buttons */}
-          <Box className="flex items-center justify-around text-sm border-t p-3">
-            <Button onClick={() => handleLike(post.postId)} className="text-gray-600 dark:text-gray-300">
-              👍 Like {post.likes}
-            </Button>
-            <Button onClick={() => handleCommentToggle(post.postId)} className="text-gray-600 dark:text-gray-300">
-              💬 Comment {commentCounts[post.postId] || 0}
-            </Button>
-            <Button onClick={() => handleReshareOpen(post)} className="text-gray-600 dark:text-gray-300">
-              🔁 Repost
-            </Button>
-          </Box>
+            {/* Media */}
+            {post.videoUrl ? (
+              <CardMedia
+                component="video"
+                src={post.videoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full max-h-[400px] object-cover border-t border-b"
+              />
+            ) : post.imageUrls?.length > 1 ? (
+              <PostSlider images={post.imageUrls} />
+            ) : post.imageUrls?.length === 1 ? (
+              <CardMedia
+                component="img"
+                src={post.imageUrls[0]}
+                alt="Post"
+                className="w-full max-h-[400px] object-cover border-t border-b"
+              />
+            ) : (
+              <CardMedia
+                component="img"
+                src="https://via.placeholder.com/800x300?text=No+Media"
+                alt="No media"
+                className="w-full object-contain border-t border-b"
+              />
+            )}
 
-          {/* Inline Comment Section */}
-          {openCommentPostId === post.postId && (
-            <Box className="px-6 py-4 border-t">
-              <Typography variant="h6" className="text-md mb-2 text-indigo-700">
-                Comments
+            {/* Content */}
+            <CardContent className="px-6 pb-2">
+              <Typography className="text-[17px] text-gray-700 dark:text-gray-300 mt-2 whitespace-pre-line leading-relaxed">
+                {post.description}
               </Typography>
-              <AddComment postId={post.postId} onCommentAdded={() => handleCommentAdded(post.postId)} />
-              <div className="mt-4">
-                <CommentList postId={post.postId} refreshTrigger={commentRefresh[post.postId]} />
-              </div>
+
+              {/* Tags */}
+              <Box className="flex gap-2 flex-wrap mt-4">
+                {post.tags?.map((tag, idx) => (
+                  <Chip
+                    key={idx}
+                    label={`#${tag}`}
+                    size="small"
+                    variant="outlined"
+                    style={{
+                      color: "#3b82f6",
+                      borderColor: "#3b82f6",
+                      fontWeight: "500",
+                      fontSize: "14px",
+                      padding: "4px",
+                      borderRadius: "9999px",
+                    }}
+                  />
+                ))}
+              </Box>
+            </CardContent>
+
+            {/* Action Buttons */}
+            <Box className="flex items-center justify-around text-base border-t p-3">
+              <motion.button
+                whileTap={{ scale: 0.8 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                onClick={() => handleLike(post.postId)}
+                className={`font-semibold ${
+                  hasLiked ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
+                }`}
+              >
+                {hasLiked ? "👍 Liked" : "👍 Like"} {post.likes}
+              </motion.button>
+
+              <Button
+                onClick={() => handleCommentToggle(post.postId)}
+                className="text-gray-600 dark:text-gray-300 font-semibold"
+              >
+                💬 Comment {commentCounts[post.postId] || 0}
+              </Button>
+              <Button
+                onClick={() => handleReshareOpen(post)}
+                className="text-gray-600 dark:text-gray-300 font-semibold"
+              >
+                🔁 Repost
+              </Button>
             </Box>
-          )}
-        </Card>
-      ))}
+
+            {/* Inline Comment Section (with fade animation) */}
+            {openCommentPostId === post.postId && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="px-6 py-4 border-t"
+              >
+                <Typography variant="h6" className="text-md mb-2 text-indigo-700">
+                  Comments
+                </Typography>
+                <AddComment postId={post.postId} onCommentAdded={() => handleCommentAdded(post.postId)} />
+                <div className="mt-4">
+                  <CommentList postId={post.postId} refreshTrigger={commentRefresh[post.postId]} />
+                </div>
+              </motion.div>
+            )}
+          </Card>
+        );
+      })}
+
+      {/* Reshare Modal */}
+      {reshareModalOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Reshare Post</h2>
+            <textarea
+              value={reshareComment}
+              onChange={(e) => setReshareComment(e.target.value)}
+              rows={3}
+              className="w-full p-3 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-4"
+              placeholder="Add your thoughts..."
+            />
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setReshareModalOpen(false)}
+                className="text-gray-600 dark:text-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReshareConfirm}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Reshare
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </Box>
   );
 };

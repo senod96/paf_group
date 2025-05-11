@@ -24,27 +24,27 @@ const CommentList = ({ postId, refreshTrigger = 0 }) => {
   const hasMore = comments.length > 3;
 
   return (
-    <div className="mt-4">
+    <div className="mt-6">
       {comments.length === 0 ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400">No comments yet.</p>
+        <p className="text-base text-gray-600 dark:text-gray-400">No comments yet.</p>
       ) : (
         <>
-          <ul className="space-y-4">
+          <ul className="space-y-5">
             {visibleComments.map((comment) => (
               <li
                 key={comment.commentId}
-                className="flex items-start gap-3"
+                className="flex items-start gap-4"
               >
                 <img
                   src={coursePfp}
                   alt="profile"
-                  className="w-9 h-9 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex-1">
-                  <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                  <p className="text-[15px] text-gray-800 dark:text-gray-100 font-medium">
                     {comment.comment}
                   </p>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-1">
+                  <div className="text-[13px] text-gray-500 dark:text-gray-400 flex items-center gap-3 mt-1">
                     <span>👍 {comment.likes}</span>
                   </div>
                 </div>
