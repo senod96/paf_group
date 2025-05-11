@@ -269,7 +269,7 @@ const HomePostList = () => {
                 onClick={() => handleCommentToggle(post.postId)}
                 className="text-gray-600 dark:text-gray-300 font-semibold"
               >
-                💬 Comment {commentCounts[post.postId] || 0}
+                💬 Comments {commentCounts[post.postId] || 0}
               </Button>
               <Button
                 onClick={() => handleReshareOpen(post)}
