@@ -5,15 +5,13 @@ const AddPost = () => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
-      if (stored?.startsWith("{")) return JSON.parse(stored);
-      return { id: stored };
+      return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
     } catch {
       return null;
     }
   });
 
   const userId = user?.id || "";
-
   const [post, setPost] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
@@ -77,7 +75,7 @@ const AddPost = () => {
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean),
-        likes: 0,
+        likes: 0, // Automatically set to 0
         imageUrls,
         videoUrl,
         date: new Date().toISOString(),
@@ -99,114 +97,104 @@ const AddPost = () => {
       setSuccess("✅ Post added successfully!");
     } catch (err) {
       console.error("Post creation failed:", err);
-      setError("❌ Failed to upload post.");
+      setError("Failed to upload post.");
     }
   };
 
   return (
-    <div className="min-h-screen dark:bg-gray-900 bg-gray-100 p-6 flex justify-center items-start">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-2xl space-y-6">
-        <h2 className="text-2xl font-bold text-center text-gray-700 dark:text-gray-200">📝 Create a New Post</h2>
+    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-xl shadow-lg font-sans">
+      <h2 className="text-3xl font-extrabold mb-6 text-blue-700">📸 Share a New Post</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Post Title */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Post Title</label>
-            <input
-              type="text"
-              value={post}
-              onChange={(e) => setPost(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
-              required
+      <form onSubmit={handleSubmit} className="space-y-6 text-lg">
+        <div>
+          <label className="block text-blue-700 font-semibold mb-2">Post Title</label>
+          <input
+            type="text"
+            value={post}
+            onChange={(e) => setPost(e.target.value)}
+            required
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-blue-700 font-semibold mb-2">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            rows={4}
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-blue-700 font-semibold mb-2">Tags (comma separated)</label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="e.g., ui, engineering"
+            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
+          />
+        </div>
+
+        <div>
+          <label className="block text-blue-700 font-semibold mb-2">Upload Images (up to 3)</label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            disabled={!!videoFile}
+            onChange={handleImageChange}
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-blue-700 font-semibold mb-2">Or Upload Video</label>
+          <input
+            type="file"
+            accept="video/*"
+            disabled={imageFiles.length > 0}
+            onChange={handleVideoChange}
+            className="w-full"
+          />
+        </div>
+
+        {imageFiles.length > 0 && (
+          <div className="flex flex-wrap gap-4 mt-4">
+            {imageFiles.map((file, idx) => (
+              <img
+                key={idx}
+                src={URL.createObjectURL(file)}
+                alt="preview"
+                className="w-28 h-28 object-cover rounded-lg border"
+              />
+            ))}
+          </div>
+        )}
+
+        {videoFile && (
+          <div className="mt-4">
+            <video
+              src={URL.createObjectURL(videoFile)}
+              controls
+              className="w-full max-w-lg rounded-lg border"
             />
           </div>
+        )}
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
-              rows={4}
-              required
-            />
-          </div>
+        {error && <p className="text-red-600 text-base font-medium">{error}</p>}
+        {success && <p className="text-green-600 text-base font-medium">{success}</p>}
 
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
-            <input
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="e.g., frontend, devops, ai"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100"
-            />
-          </div>
-
-          {/* Upload */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Upload Images (max 3)</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                disabled={!!videoFile}
-                onChange={handleImageChange}
-                className="w-full text-sm"
-              />
-            </div>
-
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Upload Video</label>
-              <input
-                type="file"
-                accept="video/*"
-                disabled={imageFiles.length > 0}
-                onChange={handleVideoChange}
-                className="w-full text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Error and Success */}
-          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
-          {success && <p className="text-green-500 text-center text-sm">{success}</p>}
-
-          {/* Preview */}
-          {imageFiles.length > 0 && (
-            <div className="flex gap-3 mt-2">
-              {imageFiles.map((file, i) => (
-                <img
-                  key={i}
-                  src={URL.createObjectURL(file)}
-                  alt="preview"
-                  className="w-24 h-24 rounded object-cover border"
-                />
-              ))}
-            </div>
-          )}
-          {videoFile && (
-            <div className="mt-2">
-              <video
-                src={URL.createObjectURL(videoFile)}
-                controls
-                className="w-full rounded border"
-              />
-            </div>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold text-lg transition duration-300"
-          >
-            ➕ Add Post
-          </button>
-        </form>
-      </div>
+        <button
+          type="submit"
+          className="w-full py-3 rounded-lg text-white font-bold text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 hover:brightness-110 transition"
+        >
+          🚀 Share Post
+        </button>
+      </form>
     </div>
   );
 };
