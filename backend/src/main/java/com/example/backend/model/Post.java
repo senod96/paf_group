@@ -18,9 +18,12 @@ public class Post {
     private String date;
     private int likes;
 
-    // ✅ Replace base64 fields with Firebase-hosted URLs
+    // ✅ Media fields (Firebase URLs)
     private List<String> imageUrls;
     private String videoUrl;
+
+    // ✅ 🆕 LikedBy field
+    private List<String> likedBy;
 
     // --- Getters ---
     public String getPostId() {
@@ -59,6 +62,10 @@ public class Post {
         return videoUrl;
     }
 
+    public List<String> getLikedBy() {
+        return likedBy;
+    }
+
     // --- Setters ---
     public void setPostId(String postId) {
         this.postId = postId;
@@ -94,5 +101,9 @@ public class Post {
 
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
+    }
+
+    public void setLikedBy(List<String> likedBy) {
+        this.likedBy = likedBy;
     }
 }

@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(
+        origins = "http://localhost:3000",
+        allowCredentials = "true",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 @RestController
-@RequestMapping("/learningplans")
+@RequestMapping("/learning-plans")
 public class LearningPlanController {
 
     @Autowired
@@ -53,7 +58,6 @@ public class LearningPlanController {
 
         LearningPlan plan = optional.get();
 
-        // Optional fields update
         if (updatedPlan.getUserId() != null) {
             plan.setUserId(updatedPlan.getUserId());
         }
@@ -62,7 +66,24 @@ public class LearningPlanController {
             plan.setPlans(updatedPlan.getPlans());
         }
 
+        if (updatedPlan.getType() != null) {
+            plan.setType(updatedPlan.getType());
+        }
+
+        if (updatedPlan.getImage() != null) {
+            plan.setImage(updatedPlan.getImage());
+        }
+
+        if (updatedPlan.getBadge() != null) {
+            plan.setBadge(updatedPlan.getBadge());
+        }
+
+        if (updatedPlan.getParentId() != null) {
+            plan.setParentId(updatedPlan.getParentId());
+        }
+
         plan.setUpdatedAt(new Date());
+
         return ResponseEntity.ok(learningPlanRepository.save(plan));
     }
 

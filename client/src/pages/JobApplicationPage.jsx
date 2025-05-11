@@ -63,15 +63,24 @@ const JobApplicationPage = () => {
                 <div
                   key={job.id}
                   onClick={() => setJobId(job.id)}
+<<<<<<< HEAD
                   className={`cursor-pointer p-4 rounded-lg shadow border bg-white transform transition-all duration-300 ${
+=======
+                  className={`cursor-pointer p-4 rounded-lg shadow border bg-white dark:bg-gray-800 transform transition-all duration-300 ${
+>>>>>>> main
                     jobId === job.id
                       ? "scale-105 border-blue-600 ring-2 ring-blue-400"
                       : "border-gray-300 hover:scale-105 hover:shadow-lg"
                   }`}
                 >
                   <img src={courseImage} alt="Job Banner" className="w-full h-32 object-cover rounded mb-3" />
+<<<<<<< HEAD
                   <h3 className="text-lg font-bold text-gray-800">{job.jobTitle}</h3>
                   <p className="text-sm text-gray-500">{job.company}</p>
+=======
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">{job.jobTitle}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-300">{job.company}</p>
+>>>>>>> main
                   <p className="text-sm italic">{job.companyOverview}</p>
                   <p className="text-sm mt-1"><strong>Experience:</strong> {job.workExperience}</p>
                   <p className="text-sm"><strong>Skills:</strong> {job.skillsNeeded}</p>
@@ -93,7 +102,11 @@ const JobApplicationPage = () => {
                 placeholder={field.replace(/([A-Z])/g, " $1")}
                 value={formData[field]}
                 onChange={handleInputChange}
+<<<<<<< HEAD
                 className="border px-3 py-2 rounded"
+=======
+                className="border dark:border-gray-600 dark:bg-gray-700 dark:text-white p-3 rounded"
+>>>>>>> main
               />
             ))}
           </div>
@@ -107,7 +120,11 @@ const JobApplicationPage = () => {
               type="file"
               accept="application/pdf"
               onChange={(e) => setSelectedFile(e.target.files[0])}
+<<<<<<< HEAD
               className="w-full"
+=======
+              className="w-full dark:bg-gray-700 dark:text-white p-2 rounded"
+>>>>>>> main
             />
           </div>
         );
@@ -116,7 +133,11 @@ const JobApplicationPage = () => {
         const selectedJob = jobs.find((j) => j.id === jobId);
         return (
           <div className="space-y-3">
+<<<<<<< HEAD
             <h3 className="text-xl font-semibold text-gray-700">Review Details</h3>
+=======
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-white">Review Details</h3>
+>>>>>>> main
             <p><strong>Job:</strong> {selectedJob?.jobTitle}</p>
             {Object.entries(formData).map(([key, value]) => (
               <p key={key}><strong>{key.replace(/([A-Z])/g, " $1")}:</strong> {value}</p>
@@ -131,6 +152,7 @@ const JobApplicationPage = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="max-w-7xl mx-auto p-6 bg-white shadow rounded-lg font-sans">
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Job Application Wizard</h1>
 
@@ -177,6 +199,56 @@ const JobApplicationPage = () => {
       </div>
 
       {message && <p className="mt-4 text-center text-sm text-blue-600">{message}</p>}
+=======
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans text-gray-800 dark:text-white flex flex-col items-center py-10">
+      <div className="max-w-6xl w-full bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold text-center mb-8">Job Application Wizard</h1>
+
+        {/* Step Indicators */}
+        <div className="flex justify-between mb-8">
+          {[1, 2, 3, 4].map((s) => (
+            <div
+              key={s}
+              className={`flex-1 text-center py-2 border-b-2 ${step >= s ? "border-blue-600 text-blue-600" : "border-gray-300 text-gray-400"}`}
+            >
+              Step {s}
+            </div>
+          ))}
+        </div>
+
+        {renderStep()}
+
+        {/* Navigation */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={() => setStep((prev) => Math.max(1, prev - 1))}
+            disabled={step === 1}
+            className="bg-gray-300 dark:bg-gray-700 dark:text-white text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+          >
+            Back
+          </button>
+
+          {step < 4 ? (
+            <button
+              onClick={() => setStep((prev) => Math.min(4, prev + 1))}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              disabled={step === 1 && !jobId}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              onClick={handleUpload}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+            >
+              Submit
+            </button>
+          )}
+        </div>
+
+        {message && <p className="mt-6 text-center text-sm text-blue-600 dark:text-green-400">{message}</p>}
+      </div>
+>>>>>>> main
     </div>
   );
 };

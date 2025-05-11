@@ -69,9 +69,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-6">
-        <h2 className="text-2xl font-bold text-center text-blue-700">Silloura Login</h2>
+    <div className="dark:bg-gray-900 dark:text-gray-100 min-h-screen bg-gray-100 flex justify-center items-center px-4">
+      <div className="dark:bg-gray-900 dark:text-gray-100 bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-6">
+        <h2 className="text-2xl font-bold text-center text-blue-700">Skillora Login</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -102,9 +102,9 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="text-center text-sm text-gray-500">or</div>
+        <div className="dark:bg-gray-900 dark:text-gray-100 text-center text-sm text-gray-500">or</div>
 
-        <div className="flex justify-center">
+        <div className="dark:bg-gray-900 dark:text-gray-100 flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleLogin}
             onError={() => setStatus('❌ Google login failed')}
@@ -113,7 +113,7 @@ const Login = () => {
 
         {status && <p className="text-center text-sm text-gray-700 mt-2">{status}</p>}
 
-        <div className="text-center mt-4">
+        <div className="dark:bg-gray-900 dark:text-gray-100 text-center mt-4">
           <span className="text-sm text-gray-600">Don't have an account? </span>
           <button
             onClick={() => navigate('/register')}

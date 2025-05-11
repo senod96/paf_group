@@ -5,12 +5,14 @@ import com.example.backend.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/posts")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*", methods = {
+        RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class PostController {
 
     @Autowired
@@ -29,13 +31,13 @@ public class PostController {
                 .orElseThrow(() -> new RuntimeException("Post not found with ID: " + id));
     }
 
-    // ✅ Create a new post (now using imageUrls and videoUrl)
+    // ✅ Create a new post
     @PostMapping
     public Post createPost(@RequestBody Post post) {
         return postRepository.save(post);
     }
 
-    // ✅ Search posts by keyword in the 'post' title
+    // ✅ Search posts by keyword
     @GetMapping("/search")
     public List<Post> searchPosts(@RequestParam("q") String query) {
         return postRepository.findByPostContainingIgnoreCase(query);
@@ -54,8 +56,6 @@ public class PostController {
             existingPost.setTags(updatedPost.getTags());
             existingPost.setDate(updatedPost.getDate());
             existingPost.setLikes(updatedPost.getLikes());
-
-            // ✅ Use Firebase URL fields instead of base64
             existingPost.setImageUrls(updatedPost.getImageUrls());
             existingPost.setVideoUrl(updatedPost.getVideoUrl());
 
@@ -72,12 +72,23 @@ public class PostController {
         optionalPost.ifPresent(postRepository::delete);
     }
 
-    // ✅ Like post using MongoDB _id (not postId)
+    // ✅ Updated Like/Unlike toggle method
     @PutMapping("/{id}/like")
-    public Post likePost(@PathVariable String id) {
+    public Post likeOrUnlikePost(@PathVariable String id, @RequestParam String userId) {
         return postRepository.findById(id)
                 .map(post -> {
-                    post.setLikes(post.getLikes() + 1);
+                    if (post.getLikedBy() == null) {
+                        post.setLikedBy(new ArrayList<>());
+                    }
+                    if (post.getLikedBy().contains(userId)) {
+                        // 🔥 Already liked → Unlike
+                        post.setLikes(Math.max(0, post.getLikes() - 1));
+                        post.getLikedBy().remove(userId);
+                    } else {
+                        // 🔥 Not liked yet → Like
+                        post.setLikes(post.getLikes() + 1);
+                        post.getLikedBy().add(userId);
+                    }
                     return postRepository.save(post);
                 })
                 .orElseThrow(() -> new RuntimeException("Post not found with ID: " + id));
