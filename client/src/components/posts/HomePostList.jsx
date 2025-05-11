@@ -275,7 +275,7 @@ const HomePostList = () => {
                 onClick={() => handleReshareOpen(post)}
                 className="text-gray-600 dark:text-gray-300 font-semibold"
               >
-                🔁 Repost
+                🔁 Reposts
               </Button>
             </Box>
 
