@@ -291,9 +291,11 @@ const CourseList = () => {
                           py: 1
                         }}
                       >
-                        View Course
+                        
+                        Start Course
                       </Button>
                     </Box>
+                    
                   </CardContent>
                 </Card>
               </Grid>
