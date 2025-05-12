@@ -42,7 +42,7 @@ const NotificationComponent = ({ userId }) => {
       });
       setNotifications([]);
     } catch (err) {
-      console.error('Error clearing notifications:', err);
+      console.error('Error cleaning notifications:', err);
     }
   };
 
@@ -77,6 +77,7 @@ const NotificationComponent = ({ userId }) => {
                 </div>
               ))}
             </div>
+
 
             <div className="flex justify-center mt-8">
               <button
