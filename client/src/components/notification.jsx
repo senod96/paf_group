@@ -35,6 +35,7 @@ const NotificationComponent = ({ userId }) => {
     }
   };
 
+  
   const clearAllNotifications = async () => {
     try {
       await axios.delete(`http://localhost:8080/api/notifications/clear`, {
