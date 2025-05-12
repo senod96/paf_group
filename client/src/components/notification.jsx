@@ -78,7 +78,6 @@ const NotificationComponent = ({ userId }) => {
               ))}
             </div>
 
-
             <div className="flex justify-center mt-8">
               <button
                 onClick={clearAllNotifications}
