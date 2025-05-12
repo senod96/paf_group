@@ -15,7 +15,7 @@ import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
 import ProgressAnalytics from './components/ProgressAnalytics';
-import LearningPlanDetails from './components/LearningPlanDetails';
+import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
 import CreateLearningPlan from './components/CreateLearningPlan';
 
 import LandingPage from './components/Landing';
