@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import CourseDetails from './CourseDetails';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -265,7 +265,7 @@ const CourseList = () => {
                         variant="contained"
                         color="primary"
                         size="medium" 
-                        onClick={() => handleStartCourse(course.id)}
+                      onClick={() => navigate('/CourseDetails')}
                         sx={{ 
                           textTransform: 'none',
                           fontWeight: 600,
