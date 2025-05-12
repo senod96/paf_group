@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../Navbar';
 import { useNavigate, Link } from 'react-router-dom';
 
 const CreateLearningPlan = () => {
@@ -121,7 +122,10 @@ const CreateLearningPlan = () => {
   };
 
   return (
+    <div className=''>
+      <Navbar />
     <div className="max-w-5xl mx-auto py-12 px-6 font-poppins">
+      
       <h1 className="text-4xl font-bold mb-10 text-center text-indigo-700">📘 Manage Your Learning Plans</h1>
 
       {/* Tab Switch */}
@@ -183,7 +187,7 @@ const CreateLearningPlan = () => {
         </>
       )}
 
-      {/* Real Learning Plans */}
+      {/* Real Learning Plans - Available */}
       {activeTab === "real" && (
         <>
           <h2 className="text-3xl font-semibold mb-6 text-gray-800">✅ Real Learning Plans</h2>
@@ -194,6 +198,7 @@ const CreateLearningPlan = () => {
           )}
         </>
       )}
+    </div>
     </div>
   );
 };
