@@ -17,7 +17,7 @@ public class Notification {
     private boolean isRead;
     private Date createdAt;
 
-    // --- Getters ---
+    //  Getters
     public String getId() {
         return id;
     }
@@ -42,7 +42,7 @@ public class Notification {
         return createdAt;
     }
 
-    // --- Setters ---
+    //  Setters
     public void setId(String id) {
         this.id = id;
     }
