@@ -27,7 +27,7 @@ import UpcomingTasks from './components/LearninPlans/UpcomingEvents';
 
 import SubscriptionPlans from './components/SubscriptionPlans';
 import AdminDashboard from './components/AdminDashboard';
-import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
+import CreateLearningPlanAdmin from './components/LearninPlans/CreateLearningPlanAdmin';
 import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
 import AddQuiz from './components/Courses_Dima/AddQuiz';
