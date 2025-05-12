@@ -14,7 +14,7 @@ import ViewJobs from './components/posts/ViewJobs'
 import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
-import ProgressAnalytics from './components/ProgressAnalytics';
+import ProgressAnalytics from './components/LearninPlans/ProgressAnalytics';
 import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
 import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
