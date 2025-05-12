@@ -31,7 +31,7 @@ import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin'
 import AvailableLearningPlans from './components/AvailableLearningPlans';
 
 import AddQuiz from './components/Courses_Dima/AddQuiz';
-import QuizWrapper from './components/Courses_Dima/test';
+// import QuizWrapper from './components/Courses_Dima/test';
 const currentUserId = localStorage.getItem('user');
 
 function App() {
@@ -39,7 +39,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/upcoming" element={<UpcomingTasks />} />
-      <Route path="/addquiz" element={<QuizWrapper />} />
+      {/* <Route path="/addquiz" element={<QuizWrapper />} /> */}
       <Route path="/applyjob" element={<JobApplicationPage/>}/>
       <Route path="/jobapplications" element={<ViewJobs/>}/>
       <Route path="/applicants/:jobId" element={<ViewApplicants />} />
