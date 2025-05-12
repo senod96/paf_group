@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import HomePostList from './posts/HomePostList';
 import SearchPost from './posts/SearchPost';
+import CourseList from './courses/CourseList';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -84,6 +85,8 @@ const Dashboard = () => {
               <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
               <li><button onClick={() => navigate('/upcoming')} className="text-sm hover:underline">Upcoming Events</button></li>
               <li><button onClick={() => navigate('/availablelearning')} className="text-sm hover:underline">Available Learning Plans</button></li>
+             <li><button onClick={() => navigate('/CourseList')} className="text-sm hover:underline">Skillaura Learning Courses</button></li>
+  
             </ul>
           </div>
         </div>
