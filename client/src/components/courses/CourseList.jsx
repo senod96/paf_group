@@ -7,17 +7,18 @@ import {
   Typography,
   Grid,
   Button,
+  Stack,
+  Skeleton,
   Chip,
   IconButton,
   Pagination,
   TextField,
   InputAdornment,
-  Alert,
-  Skeleton
+  Alert
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
-import CourseDetails from './CourseDetails';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -26,6 +27,8 @@ const CourseList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
   const navigate = useNavigate();
 
   const itemsPerPage = 6;
@@ -61,6 +64,16 @@ const CourseList = () => {
     setPage(1); // Reset to first page on new search
   };
 
+  const handleMenuOpen = (event, courseId) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedCourseId(courseId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedCourseId(null);
+  };
+
   const handleStartCourse = (courseId) => {
     navigate(`/course/${courseId}`);
   };
@@ -87,6 +100,7 @@ const CourseList = () => {
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
           Available Courses
         </Typography>
+       
       </Box>
 
       <TextField
@@ -190,7 +204,10 @@ const CourseList = () => {
                       <Chip 
                         label={course.level} 
                         size="small" 
-                        color={course.level === 'Beginner' ? 'primary' : course.level === 'Intermediate' ? 'secondary' : 'error'}
+                        color={
+                          course.level === 'Beginner' ? 'primary' : 
+                          course.level === 'Intermediate' ? 'secondary' : 'error'
+                        }
                       />
                     </Box>
                   </Box>
@@ -224,6 +241,7 @@ const CourseList = () => {
                       >
                         {course.title}
                       </Typography>
+                      
                     </Box>
 
                     <Typography 
@@ -265,7 +283,7 @@ const CourseList = () => {
                         variant="contained"
                         color="primary"
                         size="medium" 
-                      onClick={() => navigate('/CourseDetails')}
+                        onClick={() => handleStartCourse(course.id)}
                         sx={{ 
                           textTransform: 'none',
                           fontWeight: 600,
