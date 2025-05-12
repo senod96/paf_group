@@ -23,7 +23,7 @@ import FollowRequests from './components/FollowRequests';
 
 import NotificationComponent from './components/notification';
 import Settings from './components/settings';
-import UpcomingTasks from './components/UpcomingEvents';
+import UpcomingTasks from './components/LearninPlans/UpcomingEvents';
 
 import SubscriptionPlans from './components/SubscriptionPlans';
 import AdminDashboard from './components/AdminDashboard';
