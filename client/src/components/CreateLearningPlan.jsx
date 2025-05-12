@@ -183,7 +183,7 @@ const CreateLearningPlan = () => {
         </>
       )}
 
-      {/* Real Learning Plans */}
+      {/* Real Learning Plans - Available */}
       {activeTab === "real" && (
         <>
           <h2 className="text-3xl font-semibold mb-6 text-gray-800">✅ Real Learning Plans</h2>
