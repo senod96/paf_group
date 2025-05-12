@@ -31,7 +31,7 @@ import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin'
 import AvailableLearningPlans from './components/AvailableLearningPlans';
 
 import AddQuiz from './components/courses/AddQuiz';
-import QuizWrapper from './components/courses/test';
+//import QuizWrapper from './components/courses/test';
 const currentUserId = localStorage.getItem('user');
 
 function App() {
