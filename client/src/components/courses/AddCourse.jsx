@@ -381,7 +381,7 @@ const AddCourse = () => {
                     <VideoCameraBack color="primary" /> Course Video
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Upload an introduction video for your course (optional)
+                    Upload an video for your course (optional)
                   </Typography>
                   <Button
                     component="label"
@@ -420,7 +420,7 @@ const AddCourse = () => {
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
-              Add Quiz to Your Course
+              Add a Quiz to Your Course
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
               Create a quiz to test your students' understanding (optional)
