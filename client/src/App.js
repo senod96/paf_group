@@ -16,7 +16,7 @@ import ViewApplicants from './components/posts/ViewApplicants';
 
 import ProgressAnalytics from './components/ProgressAnalytics';
 import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
-import CreateLearningPlan from './components/CreateLearningPlan';
+import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
 import LandingPage from './components/Landing';
 import FollowRequests from './components/FollowRequests';
@@ -28,7 +28,7 @@ import UpcomingTasks from './components/UpcomingEvents';
 import SubscriptionPlans from './components/SubscriptionPlans';
 import AdminDashboard from './components/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
-import AvailableLearningPlans from './components/AvailableLearningPlans';
+import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
 import AddQuiz from './components/Courses_Dima/AddQuiz';
 // import QuizWrapper from './components/Courses_Dima/test';
