@@ -172,7 +172,7 @@ const HomePostList = () => {
         return (
           <Card
   key={post.postId}
-  className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
+  className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border "
 >
             {/* Profile Header */}
             <Box className="flex items-center justify-between p-4">
