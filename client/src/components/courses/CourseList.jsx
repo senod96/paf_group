@@ -291,7 +291,7 @@ const CourseList = () => {
                           py: 1
                         }}
                       >
-                        Start Course
+                        View Course
                       </Button>
                     </Box>
                   </CardContent>
