@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../Navbar';
 import { useParams, Link } from 'react-router-dom';
 
 const LearningPlanDetails = () => {
@@ -126,6 +127,8 @@ const LearningPlanDetails = () => {
   };
 
   return (
+    <div className=''>
+      <Navbar />
     <div className="max-w-5xl mx-auto px-6 py-12">
       <Link to="/learning-plans" className="text-indigo-600 hover:underline text-sm mb-6 inline-block">← Back to Plans</Link>
 
@@ -308,6 +311,7 @@ const LearningPlanDetails = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

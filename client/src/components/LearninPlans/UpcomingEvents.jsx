@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../Navbar';
 
 const UpcomingTasks = ({ currentUserId, profileUserId }) => {
   const [upcomingTasks, setUpcomingTasks] = useState([]);
