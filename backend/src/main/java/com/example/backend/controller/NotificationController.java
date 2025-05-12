@@ -42,7 +42,7 @@ public class NotificationController {
         return notificationRepo.save(notification);
     }
 
-    // ✅ New: Send Like Notification
+    // Send Like Notification
     @PostMapping("/like")
     public Notification sendLikeNotification(
             @RequestParam String senderId,
@@ -64,7 +64,7 @@ public class NotificationController {
         return notificationRepo.save(notification);
     }
 
-    // ✅ New: Send Comment Notification
+    //Send Comment Notification
     @PostMapping("/comment")
     public Notification sendCommentNotification(
             @RequestParam String senderId,
