@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import Navbar from '../Navbar';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Pie, Bar } from 'react-chartjs-2';
@@ -211,6 +212,8 @@ const ProgressAnalytics = () => {
   };
   
   return (
+    <div className=''>
+      <Navbar />
     <div className="max-w-6xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold mb-10 text-center text-indigo-700">📊 Progress Analytics</h1>
 
@@ -333,6 +336,7 @@ const ProgressAnalytics = () => {
   </div>
 )}
 
+    </div>
     </div>
   );
 };
