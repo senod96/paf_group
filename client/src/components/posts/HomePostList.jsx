@@ -30,6 +30,8 @@ const HomePostList = () => {
   const [commentRefresh, setCommentRefresh] = useState({});
   const [openCommentPostId, setOpenCommentPostId] = useState(null);
   const [userMap, setUserMap] = useState({});
+  const [followersMap, setFollowersMap] = useState({});
+  const [requestMap, setRequestMap] = useState({});
   const [reshareModalOpen, setReshareModalOpen] = useState(false);
   const [reshareTargetPost, setReshareTargetPost] = useState(null);
   const [reshareComment, setReshareComment] = useState("");
@@ -63,7 +65,7 @@ const HomePostList = () => {
       setCommentCounts(countMap);
       setCommentRefresh(refreshMap);
 
-      // Fetch usernames
+      // Fetch user names and followers
       const userIds = [...new Set(visiblePosts.map(p => p.userId))];
       const users = await Promise.all(
         userIds.map(id =>
@@ -71,10 +73,22 @@ const HomePostList = () => {
         )
       );
       const map = {};
+      const followMap = {};
       users.forEach(user => {
         map[user.id] = user.name;
+        followMap[user.id] = user.followers || [];
       });
       setUserMap(map);
+      setFollowersMap(followMap);
+
+      // Fetch pending follow requests
+      const pendingRequests = {};
+      for (let uid of userIds) {
+        const reqRes = await fetch(`http://localhost:8080/api/follow-requests/pending/${uid}`);
+        const reqData = await reqRes.json();
+        pendingRequests[uid] = reqData.some(req => req.senderId === currentUserId);
+      }
+      setRequestMap(pendingRequests);
 
     } catch (err) {
       console.error("Error loading posts", err);
@@ -84,6 +98,37 @@ const HomePostList = () => {
   useEffect(() => {
     fetchAllPosts();
   }, []);
+
+  const handleFollow = async (targetId) => {
+    try {
+      const followRes = await fetch(`http://localhost:8080/api/follow-requests/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderId: currentUserId,
+          receiverId: targetId,
+        }),
+      });
+
+      if (followRes.ok) {
+        console.log("✅ Follow request sent");
+
+        const notificationRes = await fetch(`http://localhost:8080/api/notifications/follow?senderId=${currentUserId}&receiverId=${targetId}`, {
+          method: 'POST',
+        });
+
+        if (notificationRes.ok) {
+          console.log("✅ Notification sent to receiver");
+        }
+        // Update button
+        setRequestMap((prev) => ({ ...prev, [targetId]: true }));
+      } else {
+        console.error("❌ Follow request failed");
+      }
+    } catch (err) {
+      console.error("❌ Follow process failed:", err);
+    }
+  };
 
   const handleLike = async (postId) => {
     const storedUser = localStorage.getItem("user");
@@ -168,13 +213,14 @@ const HomePostList = () => {
       {posts.map((post) => {
         const hasLiked = post.likedBy?.includes(currentUserId);
         const userName = userMap[post.userId] || post.userId;
+        const isFollowing = followersMap[post.userId]?.includes(currentUserId);
+        const hasRequested = requestMap[post.userId];
 
         return (
           <Card
-  key={post.postId}
-  className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
->
-            {/* Profile Header */}
+            key={post.postId}
+            className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg mb-10 overflow-hidden border"
+          >
             <Box className="flex items-center justify-between p-4">
               <Box className="flex items-center gap-4">
                 <img
@@ -191,12 +237,25 @@ const HomePostList = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Button size="small" variant="outlined" className="text-blue-600 border-blue-600">
-                Follow
-              </Button>
+
+              {/* Follow Button */}
+              {isFollowing ? (
+                <span className="text-green-600 text-sm font-medium">Following</span>
+              ) : hasRequested ? (
+                <span className="text-yellow-600 text-sm font-medium">Requested</span>
+              ) : (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  className="text-blue-600 border-blue-600 text-sm"
+                  onClick={() => handleFollow(post.userId)}
+                >
+                  Follow
+                </Button>
+              )}
             </Box>
 
-            {/* Media */}
+            {/* Media Section */}
             {post.videoUrl ? (
               <CardMedia
                 component="video"
@@ -231,7 +290,6 @@ const HomePostList = () => {
                 {post.description}
               </Typography>
 
-              {/* Tags */}
               <Box className="flex gap-2 flex-wrap mt-4">
                 {post.tags?.map((tag, idx) => (
                   <Chip
@@ -252,15 +310,13 @@ const HomePostList = () => {
               </Box>
             </CardContent>
 
-            {/* Action Buttons */}
+            {/* Like, Comment, Reshare Buttons */}
             <Box className="flex items-center justify-around text-base border-t p-3">
               <motion.button
                 whileTap={{ scale: 0.8 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 onClick={() => handleLike(post.postId)}
-                className={`font-semibold ${
-                  hasLiked ? "text-blue-600" : "text-gray-600 dark:text-gray-300"
-                }`}
+                className={`font-semibold ${hasLiked ? "text-blue-600" : "text-gray-600 dark:text-gray-300"}`}
               >
                 {hasLiked ? "👍 Liked" : "👍 Like"} {post.likes}
               </motion.button>
@@ -271,6 +327,7 @@ const HomePostList = () => {
               >
                 💬 Comments {commentCounts[post.postId] || 0}
               </Button>
+
               <Button
                 onClick={() => handleReshareOpen(post)}
                 className="text-gray-600 dark:text-gray-300 font-semibold"
@@ -279,7 +336,7 @@ const HomePostList = () => {
               </Button>
             </Box>
 
-            {/* Inline Comment Section (with fade animation) */}
+            {/* Comment Section */}
             {openCommentPostId === post.postId && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
