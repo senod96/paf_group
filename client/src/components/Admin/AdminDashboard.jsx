@@ -6,7 +6,7 @@ const actions = [
   {
     title: "Add Courses",
     description: "Create and manage new courses.",
-    route: "/admin/add-course"
+    route: "/AddCourse"
   },
   {
     title: "Add Learning Plans",
@@ -17,6 +17,11 @@ const actions = [
     title: "Add Jobs",
     description: "Post job opportunities and roles.",
     route: "/admin/add-job"
+  },
+  {
+    title: "Our Published Courses",  
+    description: "View and manage your published courses.",
+    route: "/MyCourses"  
   }
 ];
 
