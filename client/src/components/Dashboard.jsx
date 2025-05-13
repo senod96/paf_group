@@ -85,7 +85,6 @@ const Dashboard = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Navigation</h3>
             <ul className="space-y-2 text-blue-600 dark:text-blue-400">
-              <li><button onClick={() => navigate('/addpost')} className="text-sm hover:underline">Upload posts</button></li>
               <li><button onClick={() => navigate('/learning-plans')} className="text-sm hover:underline">Learning Plans</button></li>
               <li><button onClick={() => navigate('/applyjob')} className="text-sm hover:underline">View Jobs</button></li>
               <li><button onClick={() => navigate('/analytics')} className="text-sm hover:underline">Progress Evaluation</button></li>
