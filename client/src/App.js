@@ -15,20 +15,20 @@ import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
 import ProgressAnalytics from './components/LearninPlans/ProgressAnalytics';
-import LearningPlanDetails from './components/LearningPlanDetails';
-import CreateLearningPlan from './components/CreateLearningPlan';
+import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
+import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
 import LandingPage from './components/Landing';
 import FollowRequests from './components/FollowRequests';
 
 import NotificationComponent from './components/notification';
 import Settings from './components/settings';
-import UpcomingTasks from './components/UpcomingEvents';
+import UpcomingTasks from './components/LearninPlans/UpcomingEvents';
 
 import SubscriptionPlans from './components/SubscriptionPlans';
 import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
-import AvailableLearningPlans from './components/AvailableLearningPlans';
+import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
 // import AddCourse from './components/courses/AddCourse';
 import CourseList from './components/courses/CourseList';
