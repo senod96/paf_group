@@ -72,7 +72,6 @@ const Dashboard = () => {
         <div className="space-y-4 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
             <img 
-              src="https://via.placeholder.com/100" 
               alt="Profile" 
               className="w-24 h-24 mx-auto rounded-full mb-4" 
             />
