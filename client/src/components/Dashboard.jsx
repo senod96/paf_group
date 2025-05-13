@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import HomePostList from './posts/HomePostList';
 import SearchPost from './posts/SearchPost';
 import CourseList from './courses/CourseList';
+import AddPost from './posts/AddPost';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -100,6 +101,7 @@ const Dashboard = () => {
 
         {/* Middle Content */}
         <div className="lg:col-span-2 space-y-6">
+          <AddPost/>
           <HomePostList />
         </div>
 
