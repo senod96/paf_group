@@ -11,8 +11,6 @@ import {
   Skeleton,
   Chip,
   IconButton,
-  Menu,
-  MenuItem,
   Pagination,
   TextField,
   InputAdornment,
@@ -74,31 +72,6 @@ const CourseList = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedCourseId(null);
-  };
-
-  const handleEditCourse = () => {
-    if (selectedCourseId) {
-      navigate(`/edit-course/${selectedCourseId}`);
-    }
-    handleMenuClose();
-  };
-
-  const handleDeleteCourse = async () => {
-    if (!selectedCourseId) return;
-    
-    try {
-      const res = await fetch(`http://localhost:8080/api/courses/${selectedCourseId}`, {
-        method: "DELETE"
-      });
-      
-      if (!res.ok) throw new Error("Failed to delete course");
-      
-      setCourses(courses.filter(course => course.id !== selectedCourseId));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      handleMenuClose();
-    }
   };
 
   const handleStartCourse = (courseId) => {
@@ -268,13 +241,7 @@ const CourseList = () => {
                       >
                         {course.title}
                       </Typography>
-                      <IconButton 
-                        size="small" 
-                        onClick={(e) => handleMenuOpen(e, course.id)}
-                        sx={{ ml: 1 }}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
+                      
                     </Box>
 
                     <Typography 
@@ -324,9 +291,11 @@ const CourseList = () => {
                           py: 1
                         }}
                       >
+                        
                         Start Course
                       </Button>
                     </Box>
+                    
                   </CardContent>
                 </Card>
               </Grid>
@@ -347,14 +316,6 @@ const CourseList = () => {
         </>
       )}
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleEditCourse}>Edit Course</MenuItem>
-        <MenuItem onClick={handleDeleteCourse} sx={{ color: 'error.main' }}>Delete Course</MenuItem>
-      </Menu>
     </Box>
   );
 };

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -15,8 +14,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Select,
-  useTheme
+  Select
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -27,48 +25,57 @@ const AddQuiz = ({ quizData, setQuizData }) => {
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [questionType, setQuestionType] = useState("multiple_choice");
   const [error, setError] = useState("");
-  const theme = useTheme();
 
-  const handleAddQuestion = () => {
-    if (!newQuestion.trim()) {
-      setError("Question cannot be empty");
+ 
+
+
+
+
+  // In AddQuiz.js, modify the handleAddQuestion function:
+const handleAddQuestion = () => {
+  if (!newQuestion.trim()) {
+    setError("Question cannot be empty");
+    return;
+  }
+
+  if (questionType === "multiple_choice") {
+    if (newOptions.some(opt => !opt.trim())) {
+      setError("All options must be filled");
       return;
     }
-
-    if (questionType === "multiple_choice") {
-      if (newOptions.some(opt => !opt.trim())) {
-        setError("All options must be filled");
-        return;
-      }
-      if (correctAnswer === "") {
-        setError("Please select a correct answer");
-        return;
-      }
+    if (correctAnswer === "") {
+      setError("Please select a correct answer");
+      return;
     }
+  }
+//////////////////////////////////
+  let processedCorrectAnswer = correctAnswer;
+  if (questionType === "true_false") {
+    // Store as string to match quiz taker's expectations
+    processedCorrectAnswer = correctAnswer; // already "true" or "false"
+  }
 
-    let processedCorrectAnswer = correctAnswer;
-    if (questionType === "true_false") {
-      processedCorrectAnswer = correctAnswer;
-    }
-
-    const newQuizItem = {
-      question: newQuestion,
-      questionType,
-      options: questionType === "multiple_choice" ? newOptions : [],
-      correctAnswer: questionType === "multiple_choice" ? parseInt(correctAnswer) : processedCorrectAnswer
-    };
-
-    setQuizData(prev => ({
-      ...prev,
-      questions: [...prev.questions, newQuizItem]
-    }));
-
-    setNewQuestion("");
-    setNewOptions(["", "", ""]);
-    setCorrectAnswer("");
-    setQuestionType("multiple_choice");
-    setError("");
+  const newQuizItem = {
+    question: newQuestion,
+    questionType,
+    options: questionType === "multiple_choice" ? newOptions : [],
+    correctAnswer: questionType === "multiple_choice" ? parseInt(correctAnswer) : processedCorrectAnswer
   };
+
+  setQuizData(prev => ({
+    ...prev,
+    questions: [...prev.questions, newQuizItem]
+  }));
+  
+  // Reset form
+  setNewQuestion("");
+  setNewOptions(["", "", ""]);
+  setCorrectAnswer("");
+  setQuestionType("multiple_choice");
+  setError("");
+};
+
+//////////////////////////////////////////////
 
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...newOptions];
@@ -84,16 +91,9 @@ const AddQuiz = ({ quizData, setQuizData }) => {
   };
 
   return (
-    <Box sx={{
-      p: 3,
-      bgcolor: theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
-      borderRadius: 3,
-      maxWidth: '800px',
-      mx: 'auto',
-      mt: 4
-    }}>
-      <Typography variant="h5" fontWeight="bold" mb={2}>
-        ✏️ Add Quiz Question
+    <Paper elevation={3} sx={{ p: 3 }}>
+      <Typography variant="h6" gutterBottom component="div">
+        Add New Question
       </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -121,9 +121,10 @@ const AddQuiz = ({ quizData, setQuizData }) => {
 
       {questionType === "multiple_choice" && (
         <>
-          <Typography variant="subtitle1" fontWeight="medium" mb={1}>
+          <Typography variant="subtitle1" component="div" sx={{ mt: 2, mb: 1 }}>
             Options
           </Typography>
+          
           {newOptions.map((option, index) => (
             <TextField
               key={index}
@@ -187,8 +188,8 @@ const AddQuiz = ({ quizData, setQuizData }) => {
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h6" gutterBottom>
-        📝 Current Questions ({quizData.questions.length})
+      <Typography variant="h6" gutterBottom component="div">
+        Current Questions ({quizData.questions.length})
       </Typography>
 
       {quizData.questions.length > 0 ? (
@@ -198,7 +199,10 @@ const AddQuiz = ({ quizData, setQuizData }) => {
               key={index}
               divider
               secondaryAction={
-                <IconButton edge="end" onClick={() => handleRemoveQuestion(index)}>
+                <IconButton
+                  edge="end"
+                  onClick={() => handleRemoveQuestion(index)}
+                >
                   <DeleteIcon color="error" />
                 </IconButton>
               }
@@ -206,11 +210,12 @@ const AddQuiz = ({ quizData, setQuizData }) => {
               <ListItemText
                 primary={`${index + 1}. ${question.question}`}
                 secondary={
-                  <Box>
-                    {question.questionType === "multiple_choice" ? (
+                  <Box component="div">
+                    {question.questionType === "multiple_choice" && 
                       question.options.map((opt, optIndex) => (
                         <Typography
                           key={optIndex}
+                          component="div"
                           sx={{
                             color: optIndex === question.correctAnswer ? "success.main" : "text.primary",
                             fontWeight: optIndex === question.correctAnswer ? "bold" : "normal"
@@ -218,9 +223,12 @@ const AddQuiz = ({ quizData, setQuizData }) => {
                         >
                           {`${optIndex + 1}. ${opt}`}
                         </Typography>
-                      ))
-                    ) : (
-                      <Typography sx={{ color: "success.main", fontWeight: "bold" }}>
+                      ))}
+                    {question.questionType !== "multiple_choice" && (
+                      <Typography
+                        component="div"
+                        sx={{ color: "success.main", fontWeight: "bold" }}
+                      >
                         Correct Answer: {question.correctAnswer}
                       </Typography>
                     )}
@@ -231,12 +239,12 @@ const AddQuiz = ({ quizData, setQuizData }) => {
           ))}
         </List>
       ) : (
-        <Typography variant="body2" color="text.secondary">
-          No questions added yet.
+        <Typography variant="body2" color="text.secondary" component="div">
+          No questions added yet
         </Typography>
       )}
-    </Box>
+    </Paper>
   );
 };
 
-export default AddQuiz;
+export default React.memo(AddQuiz);

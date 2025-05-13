@@ -24,8 +24,6 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import QuizTaker from './QuizTaker';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 const CourseDetails = () => {
   const { courseId } = useParams();
@@ -135,21 +133,7 @@ const CourseDetails = () => {
         >
           Back to Courses
         </Button>
-        <Box>
-          <IconButton 
-            color="primary" 
-            onClick={() => navigate(`/edit-course/${courseId}`)}
-            sx={{ mr: 1 }}
-          >
-            <EditIcon />
-          </IconButton>
-          <IconButton 
-            color="error" 
-            onClick={() => setDeleteConfirmOpen(true)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Box>
+      
       </Box>
 
       <Card sx={{ mb: 4, boxShadow: 3 }}>

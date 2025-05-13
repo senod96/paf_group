@@ -14,24 +14,29 @@ import ViewJobs from './components/posts/ViewJobs'
 import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
-import ProgressAnalytics from './components/ProgressAnalytics';
-import LearningPlanDetails from './components/LearningPlanDetails';
-import CreateLearningPlan from './components/CreateLearningPlan';
+import ProgressAnalytics from './components/LearninPlans/ProgressAnalytics';
+import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
+import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
 import LandingPage from './components/Landing';
 import FollowRequests from './components/FollowRequests';
 
 import NotificationComponent from './components/notification';
 import Settings from './components/settings';
-import UpcomingTasks from './components/UpcomingEvents';
+import UpcomingTasks from './components/LearninPlans/UpcomingEvents';
 
 import SubscriptionPlans from './components/SubscriptionPlans';
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
-import AvailableLearningPlans from './components/AvailableLearningPlans';
+import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
-import AddQuiz from './components/Courses_Dima/AddQuiz';
-import QuizWrapper from './components/Courses_Dima/test';
+// import AddCourse from './components/courses/AddCourse';
+import CourseList from './components/courses/CourseList';
+import CourseDetails from './components/courses/CourseDetails';
+import MyCourses from './components/courses/MyCourses';
+import EditCourse from './components/courses/EditCourse';
+
+
 const currentUserId = localStorage.getItem('user');
 
 function App() {
@@ -39,7 +44,7 @@ function App() {
     <Router>
       <Routes>
       <Route path="/upcoming" element={<UpcomingTasks />} />
-      <Route path="/addquiz" element={<QuizWrapper />} />
+      {/* <Route path="/addquiz" element={<QuizWrapper />} /> */}
       <Route path="/applyjob" element={<JobApplicationPage/>}/>
       <Route path="/jobapplications" element={<ViewJobs/>}/>
       <Route path="/applicants/:jobId" element={<ViewApplicants />} />
@@ -67,6 +72,20 @@ function App() {
       <Route path="/adminlearning" element={<CreateLearningPlanAdmin />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/availablelearning" element={<AvailableLearningPlans />} />
+     
+  
+      {/* <Route path="/AddCourse" element={<AddCourse />} /> */}
+      <Route path="/CourseList" element={<CourseList />} />
+      <Route path="/courses" element={<CourseList />} />
+      <Route path="/course/:courseId" element={<CourseDetails />} />
+      <Route path="/MyCourses" element={<MyCourses />} />
+      <Route path="/EditCourse/:courseId?" element={<EditCourse />} />
+      <Route path="/AddCourse" element={<EditCourse />} />
+
+
+
+
+
 
 
       </Routes>

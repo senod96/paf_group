@@ -10,6 +10,7 @@ import {
   CardContent,
   Chip,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 
 const SearchPost = () => {
@@ -18,8 +19,10 @@ const SearchPost = () => {
   const [posts, setPosts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const currentUserId = localStorage.getItem("user");
+  const currentUser = localStorage.getItem("user");
+  const currentUserId = currentUser?.startsWith("{") ? JSON.parse(currentUser).id : currentUser;
 
   useEffect(() => {
     fetch("http://localhost:8080/api/posts")
@@ -31,6 +34,7 @@ const SearchPost = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     setHasSearched(true);
+    setLoading(true);
 
     try {
       const res = await fetch(`http://localhost:8080/api/posts/search?q=${query}`);
@@ -38,6 +42,8 @@ const SearchPost = () => {
       setResults(data);
     } catch (err) {
       console.error("Search error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,42 +56,65 @@ const SearchPost = () => {
     setSuggestions(value ? filtered.slice(0, 5) : []);
   };
 
-  return (
-    <Box sx={{ mt: 4, maxWidth: "800px", mx: "auto" }}>
+  const handleClear = () => {
+    setQuery("");
+    setResults([]);
+    setSuggestions([]);
+    setHasSearched(false);
+  };
 
+  const formatDate = (iso) => {
+    const date = new Date(iso);
+    return date.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  return (
+    <Box className="font-sans px-4 pt-4 pb-0 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
       {/* Search Bar */}
-      <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
+      <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-3xl">
         <InputBase
           value={query}
           onChange={handleInputChange}
-          placeholder="Search by title"
+          placeholder="Search posts..."
           required
-          sx={{
-            backgroundColor: "white",
-            borderRadius: 2,
-            px: 2,
-            py: 1.5,
-            flexGrow: 1,
-            fontSize: "1.1rem",
-            border: "1px solid #ccc",
-          }}
+          className="flex-grow bg-white dark:bg-gray-700 dark:text-white rounded-full px-4 py-2 border dark:border-gray-600"
         />
-        <Button variant="contained" type="submit">
+        <Button
+          type="submit"
+          variant="contained"
+          className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-6"
+          sx={{ height: "42px", textTransform: "none", fontWeight: "bold" }}
+        >
           Search
         </Button>
+        {hasSearched && (
+          <Button
+            onClick={handleClear}
+            className="rounded-full bg-pink-600 hover:bg-pink-700 text-white px-6"
+            sx={{ height: "42px", textTransform: "none", fontWeight: "bold" }}
+          >
+            Clear
+          </Button>
+        )}
       </form>
 
       {/* Suggestions */}
       {suggestions.length > 0 && (
-        <Paper sx={{ mt: 1, maxHeight: 200, overflowY: "auto", borderRadius: 2 }}>
+        <Paper className="w-full max-w-3xl mt-1 rounded-lg overflow-hidden dark:bg-gray-800">
           {suggestions.map((s, idx) => (
             <Box
               key={idx}
-              sx={{ px: 2, py: 1, cursor: "pointer", "&:hover": { backgroundColor: "#eee" } }}
               onClick={() => {
                 setQuery(s.post);
                 setSuggestions([]);
               }}
+              className="p-3 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
             >
               {s.post}
             </Box>
@@ -93,17 +122,21 @@ const SearchPost = () => {
         </Paper>
       )}
 
-      {/* Results */}
-      <Box sx={{ mt: 4 }}>
-        {results.length === 0 && hasSearched ? (
-          <Typography variant="body1" color="text.secondary">
+      {/* Search Results */}
+      <Box className="w-full max-w-4xl mt-4">
+        {loading ? (
+          <Box className="flex justify-center mt-8">
+            <CircularProgress />
+          </Box>
+        ) : results.length === 0 && hasSearched ? (
+          <Typography className="text-gray-600 dark:text-gray-300 text-center mt-6">
             No matching posts found.
           </Typography>
         ) : (
           <Grid container spacing={3} direction="column">
             {results.map((post) => (
               <Grid item xs={12} key={post.postId}>
-                <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+                <Card className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border dark:border-gray-700">
                   {post.videoUrl ? (
                     <CardMedia
                       component="video"
@@ -112,37 +145,50 @@ const SearchPost = () => {
                       loop
                       muted
                       playsInline
-                      sx={{ height: 400 }}
+                      className="w-full max-h-[400px] object-cover"
                     />
                   ) : post.imageUrls?.length > 0 ? (
                     <CardMedia
                       component="img"
                       src={post.imageUrls[0]}
                       alt="Post"
-                      sx={{ height: 400, objectFit: "cover" }}
+                      className="w-full max-h-[400px] object-cover"
                     />
                   ) : (
                     <CardMedia
                       component="img"
                       src="https://via.placeholder.com/800x300?text=No+Media"
                       alt="No media"
+                      className="w-full object-cover"
                     />
                   )}
 
-                  <CardContent>
-                    <Typography variant="h6">{post.post}</Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
+                  <CardContent className="p-4">
+                    <Typography className="text-xl font-semibold text-gray-800 dark:text-white">
+                      {post.post}
+                    </Typography>
+                    <Typography className="text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">
                       {post.description}
                     </Typography>
 
-                    <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    <Box className="flex flex-wrap gap-2 mt-4">
                       {post.tags?.map((tag, i) => (
-                        <Chip key={i} label={tag} variant="outlined" size="small" />
+                        <Chip
+                          key={i}
+                          label={`#${tag}`}
+                          variant="outlined"
+                          size="small"
+                          style={{
+                            color: "#3b82f6",
+                            borderColor: "#3b82f6",
+                            fontWeight: 500,
+                          }}
+                        />
                       ))}
                     </Box>
 
-                    <Typography variant="body2" sx={{ mt: 1 }} color="text.secondary">
-                      By: {post.userId} | Date: {post.date}
+                    <Typography className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+                      By: {post.userId} | {formatDate(post.date)}
                     </Typography>
                   </CardContent>
                 </Card>
