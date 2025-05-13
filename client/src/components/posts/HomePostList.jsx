@@ -209,7 +209,7 @@ const HomePostList = () => {
   };
 
   return (
-    <Box className="font-sans px-4 py-8 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
+    <Box className="font-sans px-4 py-4 bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col items-center">
       {posts.map((post) => {
         const hasLiked = post.likedBy?.includes(currentUserId);
         const userName = userMap[post.userId] || post.userId;

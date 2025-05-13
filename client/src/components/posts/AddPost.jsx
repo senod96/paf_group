@@ -102,7 +102,7 @@ const AddPost = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       {/* Top: Start a Post */}
       <div className="flex items-center gap-3 mb-3">
         <img

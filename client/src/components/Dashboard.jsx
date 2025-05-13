@@ -5,6 +5,7 @@ import HomePostList from './posts/HomePostList';
 import SearchPost from './posts/SearchPost';
 import CourseList from './courses/CourseList';
 import AddPost from './posts/AddPost';
+import image from './image.jpg'
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const Dashboard = () => {
         <div className="space-y-4 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
             <img 
-              src="https://via.placeholder.com/100" 
+              src={image}
               alt="Profile" 
               className="w-24 h-24 mx-auto rounded-full mb-4" 
             />
@@ -105,7 +106,7 @@ const Dashboard = () => {
         </div>
 
         {/* Right Add to Feed */}
-        <div className="space-y-4 mt-36">
+        <div className="space-y-4 mt-48">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Add to Your Feed</h3>
             {['Sysco LABS', 'WSO2', 'NetworkChuck'].map((company, i) => (
