@@ -30,7 +30,7 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
 import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
-import AddCourse from './components/courses/AddCourse';
+// import AddCourse from './components/courses/AddCourse';
 import CourseList from './components/courses/CourseList';
 import CourseDetails from './components/courses/CourseDetails';
 import MyCourses from './components/courses/MyCourses';
@@ -74,7 +74,7 @@ function App() {
       <Route path="/availablelearning" element={<AvailableLearningPlans />} />
      
   
-      <Route path="/AddCourse" element={<AddCourse />} />
+      {/* <Route path="/AddCourse" element={<AddCourse />} /> */}
       <Route path="/CourseList" element={<CourseList />} />
       <Route path="/courses" element={<CourseList />} />
       <Route path="/course/:courseId" element={<CourseDetails />} />

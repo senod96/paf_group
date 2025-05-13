@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 import { PlusCircle, Eye, EyeOff } from "lucide-react";
 
 export default function AvailableLearningPlans() {
