@@ -14,7 +14,7 @@ import ViewJobs from './components/posts/ViewJobs'
 import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
-import ProgressAnalytics from './components/ProgressAnalytics';
+import ProgressAnalytics from './components/LearninPlans/ProgressAnalytics';
 import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
 import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
@@ -30,7 +30,7 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
 import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
-import AddCourse from './components/courses/AddCourse';
+// import AddCourse from './components/courses/AddCourse';
 import CourseList from './components/courses/CourseList';
 import CourseDetails from './components/courses/CourseDetails';
 import MyCourses from './components/courses/MyCourses';
@@ -74,7 +74,7 @@ function App() {
       <Route path="/availablelearning" element={<AvailableLearningPlans />} />
      
   
-      <Route path="/AddCourse" element={<AddCourse />} />
+      {/* <Route path="/AddCourse" element={<AddCourse />} /> */}
       <Route path="/CourseList" element={<CourseList />} />
       <Route path="/courses" element={<CourseList />} />
       <Route path="/course/:courseId" element={<CourseDetails />} />
