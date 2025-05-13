@@ -15,23 +15,27 @@ import JobApplicationPage from './pages/JobApplicationPage';
 import ViewApplicants from './components/posts/ViewApplicants';
 
 import ProgressAnalytics from './components/ProgressAnalytics';
-import LearningPlanDetails from './components/LearningPlanDetails';
-import CreateLearningPlan from './components/CreateLearningPlan';
+import LearningPlanDetails from './components/LearninPlans/LearningPlanDetails';
+import CreateLearningPlan from './components/LearninPlans/CreateLearningPlan';
 
 import LandingPage from './components/Landing';
 import FollowRequests from './components/FollowRequests';
 
 import NotificationComponent from './components/notification';
 import Settings from './components/settings';
-import UpcomingTasks from './components/UpcomingEvents';
+import UpcomingTasks from './components/LearninPlans/UpcomingEvents';
 
 import SubscriptionPlans from './components/SubscriptionPlans';
-import AdminDashboard from './components/AdminDashboard';
+import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
-import AvailableLearningPlans from './components/AvailableLearningPlans';
+import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
-import AddQuiz from './components/Courses_Dima/AddQuiz';
-// import QuizWrapper from './components/Courses_Dima/test';
+import CourseList from './components/courses/CourseList';
+import AddQuiz from './components/courses/AddQuiz';
+import CourseDetails from './components/courses/CourseDetails';
+import MyCourses from './components/courses/MyCourses';
+
+
 const currentUserId = localStorage.getItem('user');
 
 function App() {
@@ -67,6 +71,15 @@ function App() {
       <Route path="/adminlearning" element={<CreateLearningPlanAdmin />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/availablelearning" element={<AvailableLearningPlans />} />
+      <Route path="/CourseList" element={<CourseList />} />
+      <Route path="/AddQuiz" element={<AddQuiz />} />
+      <Route path="/CourseDetails" element={<CourseDetails />} />
+      <Route path="/MyCourses" element={<MyCourses />} />
+
+
+
+
+
 
 
       </Routes>

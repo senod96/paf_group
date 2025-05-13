@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import HomePostList from './posts/HomePostList';
 import SearchPost from './posts/SearchPost';
+import CourseList from './courses/CourseList';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -83,14 +84,16 @@ const Dashboard = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Navigation</h3>
             <ul className="space-y-2 text-blue-600 dark:text-blue-400">
-              <li><button onClick={() => navigate('/addpost')} className="hover:underline">Upload Posts</button></li>
-              <li><button onClick={() => navigate('/learning-plans')} className="hover:underline">Learning Plans</button></li>
-              <li><button onClick={() => navigate('/applyjob')} className="hover:underline">View Jobs</button></li>
-              <li><button onClick={() => navigate('/analytics')} className="hover:underline">Progress Evaluation</button></li>
-              <li><button onClick={() => navigate('/collob')} className="hover:underline">Collaboration</button></li>
-              <li><button onClick={() => navigate('/notifications')} className="hover:underline">Notifications</button></li>
-              <li><button onClick={() => navigate('/upcoming')} className="hover:underline">Upcoming Events</button></li>
-              <li><button onClick={() => navigate('/availablelearning')} className="hover:underline">Available Learning Plans</button></li>
+              <li><button onClick={() => navigate('/addpost')} className="text-sm hover:underline">Upload posts</button></li>
+              <li><button onClick={() => navigate('/learning-plans')} className="text-sm hover:underline">Learning Plans</button></li>
+              <li><button onClick={() => navigate('/applyjob')} className="text-sm hover:underline">View Jobs</button></li>
+              <li><button onClick={() => navigate('/analytics')} className="text-sm hover:underline">Progress Evaluation</button></li>
+              <li><button onClick={() => navigate('/collob')} className="text-sm hover:underline">Collaboration</button></li>
+              <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
+              <li><button onClick={() => navigate('/upcoming')} className="text-sm hover:underline">Upcoming Events</button></li>
+              <li><button onClick={() => navigate('/availablelearning')} className="text-sm hover:underline">Available Learning Plans</button></li>
+             <li><button onClick={() => navigate('/CourseList')} className="text-sm hover:underline">Skillaura Learning Courses</button></li>
+  
             </ul>
           </div>
         </div>
