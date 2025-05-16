@@ -89,6 +89,16 @@ const AddPost = () => {
 
       if (!res.ok) throw new Error("Post creation failed");
 
+      // Send notifications to followers after successful post creation
+      try {
+        await fetch(`http://localhost:8080/api/notifications/post-share?senderId=${userId}&postTitle=${encodeURIComponent(post)}`, {
+          method: "POST",
+        });
+      } catch (notificationError) {
+        console.error("Failed to send notifications:", notificationError);
+        // Don't fail the whole operation if notifications fail
+      }
+
       setPost("");
       setDescription("");
       setTags("");
