@@ -5,12 +5,25 @@ const AddPost = () => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
+      if (stored?.startsWith("{")) return JSON.parse(stored);
+      return { id: stored };
+    } catch {
+      return null;
+    }
+  });
+
+  /*const AddPost = () => {
+  const [user] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
       return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
     } catch {
       return null;
     }
   });
 
+  */
+ 
   const userId = user?.id || "";
   const [post, setPost] = useState("");
   const [description, setDescription] = useState("");
@@ -88,16 +101,18 @@ const AddPost = () => {
       });
 
       if (!res.ok) throw new Error("Post creation failed");
+/////////////////////////////////////////////////////////////////////
+// Send notifications to followers after successful post creation
+    try {
+      await fetch(`http://localhost:8080/api/notifications/post-share?senderId=${userId}&postTitle=${encodeURIComponent(post)}`, {
+        method: "POST",
+      });
+    } catch (notificationError) {
+      console.error("Failed to send notifications:", notificationError);
+      // Don't fail the whole operation if notifications fail
+    }
 
-      // Send notifications to followers after successful post creation
-      try {
-        await fetch(`http://localhost:8080/api/notifications/post-share?senderId=${userId}&postTitle=${encodeURIComponent(post)}`, {
-          method: "POST",
-        });
-      } catch (notificationError) {
-        console.error("Failed to send notifications:", notificationError);
-        // Don't fail the whole operation if notifications fail
-      }
+////////////////////////////////////////////////////////////////////
 
       setPost("");
       setDescription("");
