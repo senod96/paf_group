@@ -30,12 +30,13 @@ import AdminDashboard from './components/Admin/AdminDashboard';
 import CreateLearningPlanAdmin from './components/Admin/CreateLearningPlanAdmin';
 import AvailableLearningPlans from './components/LearninPlans/AvailableLearningPlans';
 
-// import AddCourse from './components/courses/AddCourse';
+import AddCourse from './components/courses/AddCourse';
 import CourseList from './components/courses/CourseList';
 import CourseDetails from './components/courses/CourseDetails';
 import MyCourses from './components/courses/MyCourses';
 import EditCourse from './components/courses/EditCourse';
 
+import HomePostList from './components/posts/HomePostList';
 
 const currentUserId = localStorage.getItem('user');
 
@@ -74,13 +75,15 @@ function App() {
       <Route path="/availablelearning" element={<AvailableLearningPlans />} />
      
   
-      {/* <Route path="/AddCourse" element={<AddCourse />} /> */}
+      <Route path="/AddCourse" element={<AddCourse />} /> 
       <Route path="/CourseList" element={<CourseList />} />
       <Route path="/courses" element={<CourseList />} />
       <Route path="/course/:courseId" element={<CourseDetails />} />
       <Route path="/MyCourses" element={<MyCourses />} />
       <Route path="/EditCourse/:courseId?" element={<EditCourse />} />
       <Route path="/AddCourse" element={<EditCourse />} />
+      <Route path="/HomePostList" element={<HomePostList />} />
+
 
 
 
