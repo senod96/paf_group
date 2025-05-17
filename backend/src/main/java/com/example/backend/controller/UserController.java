@@ -165,6 +165,18 @@ public class UserController {
 
         return savedUser;
     }
+    // ✅ NEW ENDPOINT: Get users not followed by current user
+    @GetMapping("/{id}/suggestions")
+    public List<User> getSuggestions(@PathVariable String id) {
+        User currentUser = userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        Set<String> following = new HashSet<>(currentUser.getFollowing());
+        following.add(id); // Exclude current user
+
+        return userRepo.findAll().stream()
+                .filter(user -> !following.contains(user.getId()))
+                .limit(10) // Limit to top 10 suggestions
+                .toList();
+    }
 
     @GetMapping("/verify")
     public String verifyUser(@RequestParam("token") String token) {
