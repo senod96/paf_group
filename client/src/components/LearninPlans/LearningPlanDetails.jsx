@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar';
 import { useParams, Link } from 'react-router-dom';
-import Navbar from '../Navbar';
+
 
 const LearningPlanDetails = () => {
   const { id } = useParams();
@@ -236,19 +236,20 @@ const LearningPlanDetails = () => {
         )}
 
         {/* Add Task Button */}
-        {!showForm && (
-          <div className="text-center mt-10">
-            <button
-              onClick={() => {
-                setNewTask({ title: '', description: '', status: '', startTime: '', endTime: '' });
-                setShowForm(true);
-              }}
-              className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg"
-            >
-            Add Task
-            </button>
-          </div>
-        )}
+     {!showForm && plan.type !== "my" && (
+  <div className="text-center mt-10">
+    <button
+      onClick={() => {
+        setNewTask({ title: '', description: '', status: '', startTime: '', endTime: '' });
+        setShowForm(true);
+      }}
+      className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg"
+    >
+      Add Task
+    </button>
+  </div>
+)}
+
 
         {/* Task Form */}
         {showForm && (
