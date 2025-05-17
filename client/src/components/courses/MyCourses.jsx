@@ -176,7 +176,7 @@ const CourseList = () => {
           {!searchQuery && (
             <Button 
               variant="contained" 
-              onClick={() => navigate('/add-course')}
+              onClick={() => navigate('/AddCourse')}
             >
               Create Your First Course
             </Button>
