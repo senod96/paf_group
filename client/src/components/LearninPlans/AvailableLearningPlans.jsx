@@ -39,8 +39,8 @@ return (
   <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
     <Navbar />
 
-    <div className="px-6 py-8">
-      <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
+    <div className="px-10 py-10">
+      <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
   Available Learning Plans
 </h1>
 
@@ -49,7 +49,7 @@ return (
       {plans.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400">No available plans right now.</p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-4">
           {plans.map((plan) => (
             <div
   key={plan.id}
@@ -63,7 +63,7 @@ return (
                 className="w-full h-40 object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
               />
               <div className="p-4">
-                <h2 className="text-xl font mb-1 text-gray-800 dark:text-white">
+                <h2 className="text-xl font-bold mb-1 text-gray-800 dark:text-white">
                   {plan.plans?.[0]?.mainTitle || "Untitled Plan"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300 mb-3">
