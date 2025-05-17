@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { uploadImageToFirebase } from "../utils/firebaseUploader.js";
 
 const EditUserForm = () => {
   const userId = localStorage.getItem("user");
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +66,39 @@ const EditUserForm = () => {
       <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-10 rounded-lg shadow-lg w-full max-w-3xl space-y-8">
         <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100">Edit Profile</h2>
 
+        {/* Profile Picture Upload */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Profile Picture</h3>
+          <div className="flex items-center gap-4">
+            <img
+              src={user.profilePicture || 'https://via.placeholder.com/100'}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setLoading(true);
+                  setStatus('Uploading...');
+                  try {
+                    const imageUrl = await uploadImageToFirebase(file);
+                    setUser(prev => ({ ...prev, profilePicture: imageUrl }));
+                    setStatus('✅ Profile picture updated!');
+                  } catch (err) {
+                    console.error("Image upload failed", err);
+                    setStatus('❌ Image upload failed');
+                  }
+                  setLoading(false);
+                }
+              }}
+              className="p-2"
+            />
+          </div>
+        </div>
+
         {/* Basic Info */}
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Basic Info</h3>
@@ -102,54 +137,22 @@ const EditUserForm = () => {
           }} />
         </div>
 
-        {/* Education */}
+        {/* Badge Selection */}
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Education</h3>
-          {user.education?.map((edu, idx) => (
-            <div key={idx} className="flex gap-2 mb-2">
-              <input type="text" value={edu.institution} onChange={(e) => {
-                const updated = [...user.education];
-                updated[idx].institution = e.target.value;
-                setUser(prev => ({ ...prev, education: updated }));
-              }} placeholder="Institution" className="flex-1 p-3 rounded-md dark:bg-gray-700 dark:text-white" />
-              <input type="text" value={edu.degree} onChange={(e) => {
-                const updated = [...user.education];
-                updated[idx].degree = e.target.value;
-                setUser(prev => ({ ...prev, education: updated }));
-              }} placeholder="Degree" className="flex-1 p-3 rounded-md dark:bg-gray-700 dark:text-white" />
-              <button type="button" onClick={() => setUser(prev => ({ ...prev, education: prev.education.filter((_, i) => i !== idx) }))} className="text-red-500">×</button>
-            </div>
-          ))}
-          <button type="button" className="text-indigo-600" onClick={() => setUser(prev => ({ ...prev, education: [...prev.education, { institution: '', degree: '' }] }))}>Add Education</button>
-        </div>
-
-        {/* Experience */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Experience</h3>
-          {user.experience?.map((exp, idx) => (
-            <div key={idx} className="flex gap-2 mb-2">
-              <input type="text" value={exp.company} onChange={(e) => {
-                const updated = [...user.experience];
-                updated[idx].company = e.target.value;
-                setUser(prev => ({ ...prev, experience: updated }));
-              }} placeholder="Company" className="flex-1 p-3 rounded-md dark:bg-gray-700 dark:text-white" />
-              <input type="text" value={exp.position} onChange={(e) => {
-                const updated = [...user.experience];
-                updated[idx].position = e.target.value;
-                setUser(prev => ({ ...prev, experience: updated }));
-              }} placeholder="Position" className="flex-1 p-3 rounded-md dark:bg-gray-700 dark:text-white" />
-              <button type="button" onClick={() => setUser(prev => ({ ...prev, experience: prev.experience.filter((_, i) => i !== idx) }))} className="text-red-500">×</button>
-            </div>
-          ))}
-          <button type="button" className="text-indigo-600" onClick={() => setUser(prev => ({ ...prev, experience: [...prev.experience, { company: '', position: '' }] }))}>Add Experience</button>
-        </div>
-
-        {/* Links */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Social Links</h3>
-          {['github', 'linkedin', 'website'].map(link => (
-            <input key={link} name={`links.${link}`} value={user.links?.[link] || ''} onChange={handleChange} placeholder={link.charAt(0).toUpperCase() + link.slice(1)} className="w-full p-3 rounded-md dark:bg-gray-700 dark:text-white" />
-          ))}
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Select Badge</h3>
+          <div className="flex flex-wrap gap-4">
+            {user.badges?.map((badgeUrl, idx) => (
+              <img
+                key={idx}
+                src={badgeUrl}
+                alt={`Badge ${idx}`}
+                onClick={() => setUser(prev => ({ ...prev, currentBadge: badgeUrl }))}
+                className={`w-16 h-16 p-1 rounded-full cursor-pointer border-4 ${
+                  user.currentBadge === badgeUrl ? 'border-indigo-600' : 'border-transparent'
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Submit */}
