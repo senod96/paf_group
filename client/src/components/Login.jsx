@@ -46,7 +46,6 @@ const Login = () => {
   }
 };
 
-
   const handleGoogleLogin = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential); // ✅ fixed

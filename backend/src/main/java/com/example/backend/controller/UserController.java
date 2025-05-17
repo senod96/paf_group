@@ -90,22 +90,24 @@ public class UserController {
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable String id, @RequestBody User updatedUser) {
-        return userRepo.findById(id).map(user -> {
-            user.setName(updatedUser.getName());
-            user.setHeadline(updatedUser.getHeadline());
-            user.setBio(updatedUser.getBio());
-            user.setLocation(updatedUser.getLocation());
-            user.setSkills(updatedUser.getSkills());
-            user.setBackgroundImage(updatedUser.getBackgroundImage());
-            user.setExperience(updatedUser.getExperience());
-            user.setEducation(updatedUser.getEducation());
-            user.setLinks(updatedUser.getLinks());
-            user.setMobile(updatedUser.getMobile());
-            user.setUpdatedAt(new Date());
-            user.setSubscriptionType(updatedUser.getSubscriptionType() != null ? updatedUser.getSubscriptionType() : user.getSubscriptionType());
-            return userRepo.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found"));
-    }
+    return userRepo.findById(id).map(user -> {
+        user.setName(updatedUser.getName());
+        user.setHeadline(updatedUser.getHeadline());
+        user.setBio(updatedUser.getBio());
+        user.setLocation(updatedUser.getLocation());
+        user.setSkills(updatedUser.getSkills());
+        user.setBackgroundImage(updatedUser.getBackgroundImage());
+        user.setProfilePicture(updatedUser.getProfilePicture()); // ✅ Add this line!
+        user.setExperience(updatedUser.getExperience());
+        user.setEducation(updatedUser.getEducation());
+        user.setLinks(updatedUser.getLinks());
+        user.setMobile(updatedUser.getMobile());
+        user.setUpdatedAt(new Date());
+        user.setSubscriptionType(updatedUser.getSubscriptionType() != null ? updatedUser.getSubscriptionType() : user.getSubscriptionType());
+        return userRepo.save(user);
+    }).orElseThrow(() -> new RuntimeException("User not found"));
+}
+
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable String id) {
@@ -166,17 +168,17 @@ public class UserController {
         return savedUser;
     }
     // ✅ NEW ENDPOINT: Get users not followed by current user
-    @GetMapping("/{id}/suggestions")
-    public List<User> getSuggestions(@PathVariable String id) {
-        User currentUser = userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        Set<String> following = new HashSet<>(currentUser.getFollowing());
-        following.add(id); // Exclude current user
+@GetMapping("/{id}/suggestions")
+public List<User> getSuggestions(@PathVariable String id) {
+    User currentUser = userRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    Set<String> following = new HashSet<>(currentUser.getFollowing());
+    following.add(id); // Exclude current user
 
-        return userRepo.findAll().stream()
-                .filter(user -> !following.contains(user.getId()))
-                .limit(10) // Limit to top 10 suggestions
-                .toList();
-    }
+    return userRepo.findAll().stream()
+            .filter(user -> !following.contains(user.getId()))
+            .limit(10) // Limit to top 10 suggestions
+            .toList();
+}
 
     @GetMapping("/verify")
     public String verifyUser(@RequestParam("token") String token) {
