@@ -37,7 +37,7 @@ const jobActions = [
   {
     title: "Create Job",
     description: "Post new job opportunities and roles.",
-    route: "/admin/add-job",
+    route: "/AddJob",
     icon: <Briefcase className="w-8 h-8 text-red-500" />
   },
   {
