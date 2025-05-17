@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, PlusCircle, BookOpen, Bookmark, Briefcase } from "lucide-react";
+import { Settings, PlusCircle, BookOpen, Bookmark, Briefcase, FileText, List } from "lucide-react";
 
 const courseActions = [
   {
@@ -25,10 +25,26 @@ const otherActions = [
     icon: <Bookmark className="w-8 h-8 text-purple-500" />
   },
   {
-    title: "Job Postings",
-    description: "Post job opportunities and roles.",
-    route: "/admin/add-job",
-    icon: <Briefcase className="w-8 h-8 text-orange-500" />
+    title: "Published Learning Plans",
+    description: "View and manage your published Learning Plans",
+    route: "/AdminLearningPlanView",
+    icon: <FileText className="w-8 h-8 text-orange-500" />
+  }
+];
+
+// New Job Management Section
+const jobActions = [
+  {
+    title: "Create Job",
+    description: "Post new job opportunities and roles.",
+    route: "/AddJob",
+    icon: <Briefcase className="w-8 h-8 text-red-500" />
+  },
+  {
+    title: "Published Jobs",
+    description: "View and manage all published job postings.",
+    route: "/admin/jobs",
+    icon: <List className="w-8 h-8 text-teal-500" />
   }
 ];
 
@@ -146,12 +162,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Other Actions Section */}
+        {/* Learning & Career Section */}
         <div className="mb-12">
           <div className="flex items-center mb-6">
             <div className="w-1 h-8 bg-purple-500 rounded-full mr-3"></div>
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              Learning & Career
+              Learning Plans Management
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
@@ -185,9 +201,47 @@ export default function AdminDashboard() {
             ))}
           </div>
         </div>
+
+        {/* New Job Management Section */}
+        <div className="mb-12">
+          <div className="flex items-center mb-6">
+            <div className="w-1 h-8 bg-red-500 rounded-full mr-3"></div>
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              Job Management
+            </h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+            {jobActions.map((action, index) => (
+              <div
+                key={index}
+                onClick={() => navigate(action.route)}
+                className="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-500 overflow-hidden"
+              >
+                <div className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-red-50 dark:bg-gray-700 group-hover:bg-red-100 dark:group-hover:bg-gray-600 transition-colors">
+                      {action.icon}
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+                        {action.title}
+                      </h2>
+                      <p className="text-gray-500 dark:text-gray-400 text-sm">
+                        {action.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <span className="text-sm text-red-500 dark:text-red-400 font-medium group-hover:underline">
+                      Go to section →
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-

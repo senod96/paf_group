@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../Navbar";
+
 import { PlusCircle, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 
 export default function AvailableLearningPlans() {
@@ -14,8 +15,8 @@ export default function AvailableLearningPlans() {
   }, []);
 
   const fetchPlans = () => {
-    axios
-      .get("http://localhost:8080/learning-plans")
+
+    axios.get("http://localhost:8080/learning-plans")
       .then((res) => {
         const sitePlans = res.data.filter((p) => p.type === "site");
         setPlans(sitePlans);
@@ -68,6 +69,36 @@ export default function AvailableLearningPlans() {
     }
   };
 
+  const handleEditTask = (planId, idx, task) => {
+    setEditingTask({ planId, idx, ...task });
+  };
+
+  const handleUpdateTask = async () => {
+    const { planId, idx, title, description } = editingTask;
+    try {
+      const plan = plans.find(p => p.id === planId);
+      plan.plans[0].tasks[idx] = { ...plan.plans[0].tasks[idx], title, description };
+      await axios.put(`http://localhost:8080/learning-plans/${planId}`, plan);
+      fetchPlans();
+      setEditingTask({});
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update task");
+    }
+  };
+
+  const handleDeleteTask = async (planId, idx) => {
+    try {
+      const plan = plans.find(p => p.id === planId);
+      plan.plans[0].tasks.splice(idx, 1);
+      await axios.put(`http://localhost:8080/learning-plans/${planId}`, plan);
+      fetchPlans();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete task");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
       <Navbar />
@@ -81,6 +112,7 @@ export default function AvailableLearningPlans() {
         ) : (
           <div className="grid gap-6 md:grid-cols-4">
             {plans.map((plan) => (
+
               <div
                 key={plan.id}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
@@ -112,10 +144,12 @@ export default function AvailableLearningPlans() {
                         >
                           Cancel
                         </button>
+
                       </div>
                     </>
                   ) : (
                     <>
+
                       <h2 className="text-xl font-bold mb-1 text-gray-800 dark:text-white">
                         {plan.plans?.[0]?.mainTitle || "Untitled Plan"}
                       </h2>
@@ -157,6 +191,39 @@ export default function AvailableLearningPlans() {
                     </button>
                   </div>
 
+                  {expanded === plan.id && (
+                    <div className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-200">
+                      {plan.plans?.[0]?.tasks?.map((task, idx) => (
+                        <div key={idx} className="bg-white dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 shadow-sm">
+                          {editingTask.planId === plan.id && editingTask.idx === idx ? (
+                            <>
+                              <input
+                                value={editingTask.title}
+                                onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                                className="w-full mb-2 p-2 border rounded"
+                                placeholder="Task Title"
+                              />
+                              <input
+                                value={editingTask.description}
+                                onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
+                                className="w-full mb-2 p-2 border rounded"
+                                placeholder="Task Description"
+                              />
+                              <div className="flex gap-2">
+                                <button onClick={handleUpdateTask} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">Save</button>
+                                <button onClick={() => setEditingTask({})} className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm">Cancel</button>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="font-semibold text-gray-800 dark:text-white">{task.title}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-300 mb-2">{task.description}</p>
+                              <div className="flex gap-2">
+                                <button onClick={() => handleEditTask(plan.id, idx, task)} className="text-yellow-500 hover:text-yellow-600 text-xs">Edit</button>
+                                <button onClick={() => handleDeleteTask(plan.id, idx)} className="text-red-500 hover:text-red-600 text-xs">Delete</button>
+                              </div>
+                            </>
+                          )}
                   {/* Task List */}
                   {expanded === plan.id && (
                     <div className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-200">
@@ -167,6 +234,7 @@ export default function AvailableLearningPlans() {
                         >
                           <p className="font-semibold text-gray-800 dark:text-white">{task.title}</p>
                           <p className="text-xs text-gray-500 dark:text-gray-300">{task.description}</p>
+
                         </div>
                       ))}
                     </div>
