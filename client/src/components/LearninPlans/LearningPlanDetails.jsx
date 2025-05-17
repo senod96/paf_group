@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar';
 import { useParams, Link } from 'react-router-dom';
+import Navbar from '../Navbar';
 
 const LearningPlanDetails = () => {
   const { id } = useParams();
