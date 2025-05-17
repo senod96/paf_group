@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import { useNavigate, Link } from 'react-router-dom';
+import Navbar from '../Navbar';
 
 const CreateLearningPlan = () => {
   const userId = localStorage.getItem("user");

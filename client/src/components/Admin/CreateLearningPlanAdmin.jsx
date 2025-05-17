@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, Settings } from "lucide-react";
 import { uploadImageToFirebase } from "../../utils/firebaseUploader";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateLearningPlanAdmin() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-
+  const [showSettings, setShowSettings] = useState(false);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
   const [mainTitle, setMainTitle] = useState("");
   const [image, setImage] = useState("");
   const [badge, setBadge] = useState("");
-  const [tasks, setTasks] = useState([
-    { title: "", description: "", status: "Pending", startTime: "", endTime: "" }
-  ]);
-
+  const [tasks, setTasks] = useState([{ title: "", description: "", status: "Pending", startTime: "", endTime: "" }]);
   const [previewFile, setPreviewFile] = useState(null);
   const [badgeFile, setBadgeFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function CreateLearningPlanAdmin() {
     try {
       const [imageUrl, badgeUrl] = await Promise.all([
         uploadImageToFirebase(previewFile),
-        uploadImageToFirebase(badgeFile)
+        uploadImageToFirebase(badgeFile),
       ]);
       setImage(imageUrl);
       setBadge(badgeUrl);
@@ -40,27 +40,14 @@ export default function CreateLearningPlanAdmin() {
     setTasks(updated);
   };
 
-  const addTask = () => {
-    setTasks([...tasks, { title: "", description: "", status: "Pending", startTime: "", endTime: "" }]);
-  };
-
-  const removeTask = (index) => {
-    const updated = [...tasks];
-    updated.splice(index, 1);
-    setTasks(updated);
-  };
+  const addTask = () => setTasks([...tasks, { title: "", description: "", status: "Pending", startTime: "", endTime: "" }]);
+  const removeTask = (index) => setTasks(tasks.filter((_, i) => i !== index));
 
   const handleSubmit = async () => {
-    const plan = {
-      type: "site",
-      image,
-      badge,
-      plans: [{ mainTitle, tasks }]
-    };
-
+    const plan = { type: "site", image, badge, plans: [{ mainTitle, tasks }] };
     try {
       await axios.post("http://localhost:8080/learning-plans", plan);
-      alert("Learning Plan Created!");
+      alert("✅ Learning Plan Created!");
       // Reset form
       setMainTitle("");
       setImage("");
@@ -71,7 +58,7 @@ export default function CreateLearningPlanAdmin() {
       setStep(1);
     } catch (err) {
       console.error(err);
-      alert("Failed to create plan");
+      alert("❌ Failed to create plan");
     }
   };
 
@@ -178,6 +165,12 @@ export default function CreateLearningPlanAdmin() {
             <PlusCircle size={20} /> Add Task
           </button>
         </div>
+            <button
+              onClick={addTask}
+              className="flex items-center gap-2 mb-8 px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-600 text-white rounded-lg shadow hover:from-indigo-600 hover:to-blue-700 transition-all"
+            >
+              <PlusCircle size={20} /> Add Task
+            </button>
 
         <button
           onClick={handleSubmit}
@@ -190,4 +183,15 @@ export default function CreateLearningPlanAdmin() {
   </div>
 );
 
+            <button
+              onClick={handleSubmit}
+              className="w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 text-white rounded-lg shadow-lg text-lg font-semibold"
+            >
+              🚀 Create Learning Plan
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
