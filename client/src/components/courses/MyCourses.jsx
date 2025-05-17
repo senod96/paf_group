@@ -188,7 +188,10 @@ const CourseList = () => {
               : "No courses available yet"}
           </Typography>
           {!searchQuery && (
-            <Button variant="contained" onClick={() => navigate("/add-course")}>
+            <Button 
+              variant="contained" 
+              onClick={() => navigate('/AddCourse')}
+            >
               Create Your First Course
             </Button>
           )}
