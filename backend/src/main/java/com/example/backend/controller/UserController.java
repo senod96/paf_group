@@ -18,7 +18,7 @@ public class UserController {
     private UserRepository userRepo;
 
     @Autowired
-    private JavaMailSender mailSender;z
+    private JavaMailSender mailSender;
 
     private final String FROM_EMAIL = "bandaralahiru9@gmail.com";
     private final String APP_URL = "http://localhost:3000";
