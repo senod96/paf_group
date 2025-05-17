@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../Navbar";
-
 import { PlusCircle, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 
 export default function AvailableLearningPlans() {
@@ -9,14 +8,15 @@ export default function AvailableLearningPlans() {
   const [expanded, setExpanded] = useState(null);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
+  const [editingTask, setEditingTask] = useState({});
 
   useEffect(() => {
     fetchPlans();
   }, []);
 
   const fetchPlans = () => {
-
-    axios.get("http://localhost:8080/learning-plans")
+    axios
+      .get("http://localhost:8080/learning-plans")
       .then((res) => {
         const sitePlans = res.data.filter((p) => p.type === "site");
         setPlans(sitePlans);
@@ -76,7 +76,7 @@ export default function AvailableLearningPlans() {
   const handleUpdateTask = async () => {
     const { planId, idx, title, description } = editingTask;
     try {
-      const plan = plans.find(p => p.id === planId);
+      const plan = plans.find((p) => p.id === planId);
       plan.plans[0].tasks[idx] = { ...plan.plans[0].tasks[idx], title, description };
       await axios.put(`http://localhost:8080/learning-plans/${planId}`, plan);
       fetchPlans();
@@ -89,7 +89,7 @@ export default function AvailableLearningPlans() {
 
   const handleDeleteTask = async (planId, idx) => {
     try {
-      const plan = plans.find(p => p.id === planId);
+      const plan = plans.find((p) => p.id === planId);
       plan.plans[0].tasks.splice(idx, 1);
       await axios.put(`http://localhost:8080/learning-plans/${planId}`, plan);
       fetchPlans();
@@ -112,7 +112,6 @@ export default function AvailableLearningPlans() {
         ) : (
           <div className="grid gap-6 md:grid-cols-4">
             {plans.map((plan) => (
-
               <div
                 key={plan.id}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
@@ -144,12 +143,10 @@ export default function AvailableLearningPlans() {
                         >
                           Cancel
                         </button>
-
                       </div>
                     </>
                   ) : (
                     <>
-
                       <h2 className="text-xl font-bold mb-1 text-gray-800 dark:text-white">
                         {plan.plans?.[0]?.mainTitle || "Untitled Plan"}
                       </h2>
@@ -159,7 +156,6 @@ export default function AvailableLearningPlans() {
                     </>
                   )}
 
-                  {/* Action Buttons */}
                   <div className="flex gap-2 flex-wrap mb-2">
                     <button
                       onClick={() => handleAdd(plan.id)}
@@ -194,7 +190,10 @@ export default function AvailableLearningPlans() {
                   {expanded === plan.id && (
                     <div className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-200">
                       {plan.plans?.[0]?.tasks?.map((task, idx) => (
-                        <div key={idx} className="bg-white dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <div
+                          key={idx}
+                          className="bg-white dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 shadow-sm"
+                        >
                           {editingTask.planId === plan.id && editingTask.idx === idx ? (
                             <>
                               <input
@@ -210,8 +209,18 @@ export default function AvailableLearningPlans() {
                                 placeholder="Task Description"
                               />
                               <div className="flex gap-2">
-                                <button onClick={handleUpdateTask} className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">Save</button>
-                                <button onClick={() => setEditingTask({})} className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm">Cancel</button>
+                                <button
+                                  onClick={handleUpdateTask}
+                                  className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => setEditingTask({})}
+                                  className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm"
+                                >
+                                  Cancel
+                                </button>
                               </div>
                             </>
                           ) : (
@@ -219,22 +228,21 @@ export default function AvailableLearningPlans() {
                               <p className="font-semibold text-gray-800 dark:text-white">{task.title}</p>
                               <p className="text-xs text-gray-500 dark:text-gray-300 mb-2">{task.description}</p>
                               <div className="flex gap-2">
-                                <button onClick={() => handleEditTask(plan.id, idx, task)} className="text-yellow-500 hover:text-yellow-600 text-xs">Edit</button>
-                                <button onClick={() => handleDeleteTask(plan.id, idx)} className="text-red-500 hover:text-red-600 text-xs">Delete</button>
+                                <button
+                                  onClick={() => handleEditTask(plan.id, idx, task)}
+                                  className="text-yellow-500 hover:text-yellow-600 text-xs"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteTask(plan.id, idx)}
+                                  className="text-red-500 hover:text-red-600 text-xs"
+                                >
+                                  Delete
+                                </button>
                               </div>
                             </>
                           )}
-                  {/* Task List */}
-                  {expanded === plan.id && (
-                    <div className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-200">
-                      {plan.plans?.[0]?.tasks?.map((task, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 shadow-sm"
-                        >
-                          <p className="font-semibold text-gray-800 dark:text-white">{task.title}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-300">{task.description}</p>
-
                         </div>
                       ))}
                     </div>
