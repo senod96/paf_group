@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.List;
+import java.util.ArrayList;
 
 @Document(collection = "users")
 public class User {
@@ -33,7 +35,16 @@ public class User {
     private List<String> skills = new ArrayList<>();
     private List<String> followers = new ArrayList<>();
     private List<String> following = new ArrayList<>();
+    // 🎖️ New Badge Attributes
+    private List<String> badges = new ArrayList<>();
+    private String currentBadge;
 
+    // Getters and Setters for new fields
+    public List<String> getBadges() { return badges; }
+    public void setBadges(List<String> badges) { this.badges = badges; }
+
+    public String getCurrentBadge() { return currentBadge; }
+    public void setCurrentBadge(String currentBadge) { this.currentBadge = currentBadge; }
     private List<Education> education = new ArrayList<>();
     private List<Experience> experience = new ArrayList<>();
 
@@ -43,6 +54,7 @@ public class User {
 
     private Date createdAt = new Date();
     private Date updatedAt = new Date();
+
 
     public User() {}
 
@@ -74,6 +86,8 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+   
+    
 
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { isVerified = verified; }

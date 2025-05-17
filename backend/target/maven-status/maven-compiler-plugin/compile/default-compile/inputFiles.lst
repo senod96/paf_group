@@ -15,6 +15,7 @@ E:\paf\paf_group\backend\src\main\java\com\example\backend\controller\FollowRequ
 E:\paf\paf_group\backend\src\main\java\com\example\backend\repository\UserRepository.java
 E:\paf\paf_group\backend\src\main\java\com\example\backend\repository\NotificationRepository.java
 E:\paf\paf_group\backend\src\main\java\com\example\backend\controller\LearningPlanController.java
+E:\paf\paf_group\backend\src\main\java\com\example\backend\controller\BadgeController.java
 E:\paf\paf_group\backend\src\main\java\com\example\backend\controller\MessageController.java
 E:\paf\paf_group\backend\src\main\java\com\example\backend\repository\JobPostRepository.java
 E:\paf\paf_group\backend\src\main\java\com\example\backend\repository\CourseRepository.java

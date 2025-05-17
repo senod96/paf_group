@@ -79,7 +79,7 @@ const Dashboard = () => {
             {results.map(user => (
               <div
                 key={user._id}
-                onClick={() => handleProfileClick(user._id)}
+                onClick={() => handleProfileClick(user.id)}
                 className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded text-sm text-blue-600"
               >
                 {user.name} ({user.email})
@@ -94,7 +94,7 @@ const Dashboard = () => {
         <div className="space-y-4 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
             <img 
-              src={profile?.profilePicture || 'https://lh3.googleusercontent.com/a/ACg8ocI7fc25SXLBYTr4h8993MgnDK08x4HpjqROXkAcN6c3k8DaOR3A=s96-c'}
+              src={profile?.profilePicture}
               alt="Profile" 
               className="w-24 h-24 mx-auto rounded-full mb-4" 
             />
@@ -145,7 +145,7 @@ const Dashboard = () => {
           <p className="text-gray-500 dark:text-gray-300 text-sm">{user.headline || 'New User'}</p>
         </div>
         <button 
-          onClick={() => handleProfileClick(user._id)}
+          onClick={() => handleProfileClick(user.id)}
           className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
         >
           + Follow
