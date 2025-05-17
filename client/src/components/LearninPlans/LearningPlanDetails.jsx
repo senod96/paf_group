@@ -127,192 +127,189 @@ const LearningPlanDetails = () => {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        <Link to="/learning-plans" className="text-indigo-600 hover:underline text-sm mb-6 inline-block">← Back to Plans</Link>
+  <div>
+    <Navbar />
+    <div className="max-w-5xl mx-auto px-6 py-12">
+      <Link to="/learning-plans" className="text-blue-600 hover:underline text-sm mb-6 inline-block">← Back to Plans</Link>
 
-        <h1 className="text-4xl font-bold mb-8 text-gray-800">{plan.plans[0].mainTitle}</h1>
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">{plan.plans[0].mainTitle}</h1>
 
-        {taskList.length > 0 && (
-          <div className="mb-10">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-gray-600">{completed} of {taskList.length} tasks completed</p>
-              <p className="text-sm text-gray-500">{progress}%</p>
-            </div>
-            <div className="w-full bg-gray-300 rounded-full h-4">
-              <div
-                className="bg-indigo-500 h-4 rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+      {taskList.length > 0 && (
+        <div className="mb-10">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-gray-600">{completed} of {taskList.length} tasks completed</p>
+            <p className="text-sm text-gray-500">{progress}%</p>
           </div>
-        )}
-
-        {/* Search and Filter Section */}
-        <div className="flex flex-wrap gap-4 mb-10">
-          <input
-            type="text"
-            placeholder="Search tasks..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 min-w-[200px] border px-4 py-2 rounded shadow-sm focus:ring-2 focus:ring-indigo-300"
-          />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="border px-4 py-2 rounded shadow-sm text-sm"
-          >
-            <option value="All">All Tasks</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Done">Done</option>
-          </select>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="border px-4 py-2 rounded shadow-sm text-sm"
-          >
-            <option value="startTime">Sort by Start Time</option>
-            <option value="endTime">Sort by End Time</option>
-            <option value="status">Sort by Status</option>
-          </select>
+          <div className="w-full bg-gray-300 rounded-full h-4">
+            <div
+              className="bg-gradient-to-r from-blue-500 to-blue-700 h-4 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
+      )}
 
-        {/* Task List */}
-        {filteredTasks.length > 0 ? (
-          filteredTasks.map((task, idx) => (
-            <div key={idx} className="relative bg-white rounded-lg p-6 mb-6 shadow-md border-l-4 border-indigo-500">
-              <div className="flex items-start gap-4">
-                <input
-                  type="checkbox"
-                  checked={task.status?.toLowerCase() === "done"}
-                  onChange={() => toggleTaskStatus(idx)}
-                  className="mt-2 accent-green-500"
-                />
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-800">{highlightMatch(task.title)}</h3>
-                  <p className="text-gray-600 mt-1">{highlightMatch(task.description)}</p>
-                  <div className="text-sm text-gray-500 mt-2">
-                    <p><strong>Status:</strong> {highlightMatch(task.status)}</p>
-                    <p><strong>Start:</strong> {task.startTime}</p>
-                    <p className={isOverdue(task.endTime) && task.status?.toLowerCase() !== "done" ? 'text-red-500' : ''}>
-                      <strong>End:</strong> {task.endTime}
-                      {isOverdue(task.endTime) && task.status?.toLowerCase() !== "done" && (
-                        <span className="ml-2 text-xs font-bold">⚠️ Overdue</span>
-                      )}
-                    </p>
-                  </div>
+      <div className="flex flex-wrap gap-4 mb-10">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-1 min-w-[200px] border px-4 py-2 rounded shadow-sm focus:ring-2 focus:ring-blue-400"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border px-4 py-2 rounded shadow-sm text-sm"
+        >
+          <option value="All">All Tasks</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Done">Done</option>
+        </select>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border px-4 py-2 rounded shadow-sm text-sm"
+        >
+          <option value="startTime">Sort by Start Time</option>
+          <option value="endTime">Sort by End Time</option>
+          <option value="status">Sort by Status</option>
+        </select>
+      </div>
+
+      {filteredTasks.length > 0 ? (
+        filteredTasks.map((task, idx) => (
+          <div key={idx} className="relative bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 mb-6 shadow-lg">
+            <div className="flex items-start gap-4">
+              <input
+                type="checkbox"
+                checked={task.status?.toLowerCase() === "done"}
+                onChange={() => toggleTaskStatus(idx)}
+                className="mt-2 accent-green-500"
+              />
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-blue-800">{highlightMatch(task.title)}</h3>
+                <p className="text-gray-700 mt-1">{highlightMatch(task.description)}</p>
+                <div className="text-sm text-gray-500 mt-2">
+                  <p><strong>Status:</strong> {highlightMatch(task.status)}</p>
+                  <p><strong>Start:</strong> {task.startTime}</p>
+                  <p className={isOverdue(task.endTime) && task.status?.toLowerCase() !== "done" ? 'text-red-500' : ''}>
+                    <strong>End:</strong> {task.endTime}
+                    {isOverdue(task.endTime) && task.status?.toLowerCase() !== "done" && (
+                      <span className="ml-2 text-xs font-bold">⚠️ Overdue</span>
+                    )}
+                  </p>
                 </div>
               </div>
-
-              <div className="absolute top-4 right-4 flex space-x-2">
-                <button
-                  onClick={() => handleEditClick(idx)}
-                  className="text-sm bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
-                >
-                  ✏️ Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteTask(idx)}
-                  className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                >
-                  ❌ Delete
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-400 text-center mt-10">No tasks found matching your filters.</p>
-        )}
-
-        {/* Add Task Button */}
-        {!showForm && (
-          <div className="text-center mt-10">
-            <button
-              onClick={() => {
-                setNewTask({ title: '', description: '', status: '', startTime: '', endTime: '' });
-                setShowForm(true);
-              }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg"
-            >
-              ➕ Add Task
-            </button>
-          </div>
-        )}
-
-        {/* Task Form */}
-        {showForm && (
-          <div className="bg-white rounded-xl shadow-lg p-8 mt-10">
-            <h3 className="text-2xl font-bold mb-6">{editingIndex !== null ? 'Edit Task' : 'Add New Task'}</h3>
-
-            <div className="grid gap-4">
-              <input
-                type="text"
-                placeholder="Task Title"
-                value={newTask.title}
-                onChange={(e) => handleChange('title', e.target.value)}
-                className="w-full p-3 border rounded shadow-sm"
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newTask.description}
-                onChange={(e) => handleChange('description', e.target.value)}
-                className="w-full p-3 border rounded shadow-sm"
-              />
-              <select
-                value={newTask.status}
-                onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full p-3 border rounded shadow-sm"
-              >
-                <option value="">Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Done">Done</option>
-              </select>
-              <input
-                type="datetime-local"
-                value={newTask.startTime}
-                onChange={(e) => handleChange('startTime', e.target.value)}
-                className="w-full p-3 border rounded shadow-sm"
-              />
-              <input
-                type="datetime-local"
-                value={newTask.endTime}
-                onChange={(e) => handleChange('endTime', e.target.value)}
-                className="w-full p-3 border rounded shadow-sm"
-              />
             </div>
 
-            <div className="flex gap-4 mt-6">
-              {editingIndex !== null ? (
-                <button
-                  onClick={handleUpdateTask}
-                  className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full"
-                >
-                  ✅ Update Task
-                </button>
-              ) : (
-                <button
-                  onClick={handleAddTask}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg w-full"
-                >
-                  ➕ Save Task
-                </button>
-              )}
+            <div className="absolute top-4 right-4 flex space-x-2">
               <button
-                onClick={resetForm}
-                className="bg-gray-400 hover:bg-gray-500 text-white py-3 px-6 rounded-lg w-full"
+                onClick={() => handleEditClick(idx)}
+                className="text-sm bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
               >
-                ❌ Cancel
+                ✏️ Edit
+              </button>
+              <button
+                onClick={() => handleDeleteTask(idx)}
+                className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+              >
+                🗑️ Delete
               </button>
             </div>
           </div>
-        )}
-      </div>
+        ))
+      ) : (
+        <p className="text-gray-400 text-center mt-10">No tasks found matching your filters.</p>
+      )}
+
+      {!showForm && (
+        <div className="text-center mt-10">
+          <button
+            onClick={() => {
+              setNewTask({ title: '', description: '', status: '', startTime: '', endTime: '' });
+              setShowForm(true);
+            }}
+            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg"
+          >
+            ➕ Add Task
+          </button>
+        </div>
+      )}
+
+      {showForm && (
+        <div className="bg-white rounded-2xl shadow-lg p-8 mt-10">
+          <h3 className="text-2xl font-bold mb-6">{editingIndex !== null ? 'Edit Task' : 'Add New Task'}</h3>
+
+          <div className="grid gap-4">
+            <input
+              type="text"
+              placeholder="Task Title"
+              value={newTask.title}
+              onChange={(e) => handleChange('title', e.target.value)}
+              className="w-full p-3 border rounded shadow-sm"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              value={newTask.description}
+              onChange={(e) => handleChange('description', e.target.value)}
+              className="w-full p-3 border rounded shadow-sm"
+            />
+            <select
+              value={newTask.status}
+              onChange={(e) => handleChange('status', e.target.value)}
+              className="w-full p-3 border rounded shadow-sm"
+            >
+              <option value="">Select Status</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Done">Done</option>
+            </select>
+            <input
+              type="datetime-local"
+              value={newTask.startTime}
+              onChange={(e) => handleChange('startTime', e.target.value)}
+              className="w-full p-3 border rounded shadow-sm"
+            />
+            <input
+              type="datetime-local"
+              value={newTask.endTime}
+              onChange={(e) => handleChange('endTime', e.target.value)}
+              className="w-full p-3 border rounded shadow-sm"
+            />
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            {editingIndex !== null ? (
+              <button
+                onClick={handleUpdateTask}
+                className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full"
+              >
+                ✅ Update Task
+              </button>
+            ) : (
+              <button
+                onClick={handleAddTask}
+                className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-3 px-6 rounded-lg w-full"
+              >
+              Save Task
+              </button>
+            )}
+            <button
+              onClick={resetForm}
+              className="bg-gray-400 hover:bg-gray-500 text-white py-3 px-6 rounded-lg w-full"
+            >
+            Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default LearningPlanDetails;
