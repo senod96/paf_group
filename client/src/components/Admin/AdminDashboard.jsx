@@ -17,24 +17,13 @@ const courseActions = [
   }
 ];
 
-const PlansActions = [
-  {
-    title: "Add Learning Plans",
-    description: "Create and manage new Learning plans.",
-    route: "/adminlearning",
-    icon: <PlusCircle className="w-8 h-8 text-blue-500" />
-  },
-  {
-    title: "Published Learning Plans",  
-    description: "View and manage your published Learning plans.",
-    route: "/MyCourses",
-    icon: <BookOpen className="w-8 h-8 text-green-500" />
-  }
-];
-
 const otherActions = [
-  
-  
+  {
+    title: "Learning Plans",
+    description: "Setup guided learning paths for users.",
+    route: "/adminlearning",
+    icon: <Bookmark className="w-8 h-8 text-purple-500" />
+  },
   {
     title: "Job Postings",
     description: "Post job opportunities and roles.",
@@ -42,8 +31,6 @@ const otherActions = [
     icon: <Briefcase className="w-8 h-8 text-orange-500" />
   }
 ];
-
-
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
