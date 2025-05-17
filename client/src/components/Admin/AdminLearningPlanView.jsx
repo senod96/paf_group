@@ -100,15 +100,17 @@ export default function AvailableLearningPlans() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors">
       <Navbar />
       <div className="px-10 py-10">
-        <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 mb-8">
+        <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600 mb-8">
           Available Learning Plans
         </h1>
 
         {plans.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-center">No available plans right now.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center">
+            No available plans right now.
+          </p>
         ) : (
           <div className="grid gap-6 md:grid-cols-4">
             {plans.map((plan) => (
@@ -127,7 +129,7 @@ export default function AvailableLearningPlans() {
                       <input
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
-                        className="w-full mb-2 p-2 border rounded"
+                        className="w-full mb-2 p-2 border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded"
                         placeholder="Enter Title"
                       />
                       <div className="flex gap-2 mb-3">
@@ -202,13 +204,13 @@ export default function AvailableLearningPlans() {
                               <input
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                                className="w-full mb-2 p-2 border rounded"
+                                className="w-full mb-2 p-2 border dark:border-gray-500 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                 placeholder="Task Title"
                               />
                               <input
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-                                className="w-full mb-2 p-2 border rounded"
+                                className="w-full mb-2 p-2 border dark:border-gray-500 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                 placeholder="Task Description"
                               />
                               <div className="flex gap-2">
