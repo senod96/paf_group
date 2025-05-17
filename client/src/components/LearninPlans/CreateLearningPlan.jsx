@@ -27,10 +27,7 @@ const CreateLearningPlan = () => {
       return;
     }
 
-    const newPlan = {
-      userId,
-      plans: [{ mainTitle, tasks: [] }]
-    };
+    const newPlan = { userId, plans: [{ mainTitle, tasks: [] }] };
 
     fetch('http://localhost:8080/learning-plans', {
       method: 'POST',
@@ -71,48 +68,28 @@ const CreateLearningPlan = () => {
         const progress = tasks.length ? Math.round((completed / tasks.length) * 100) : 0;
 
         return (
-          <div
-            key={`${plan.id}-${idx}`}
-            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300"
-          >
+          <div key={`${plan.id}-${idx}`} className="p-6 h-48 w-full rounded-2xl shadow-lg bg-gradient-to-br from-blue-100 to-blue-200 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
             <div className="flex justify-between items-center mb-4">
-              <Link
-                to={`/learning-plans/${plan.id}`}
-                className="text-lg font-semibold text-gray-800 hover:underline"
-              >
+              <Link to={`/learning-plans/${plan.id}`} className="text-2xl font-extrabold text-blue-800 text-center hover:underline tracking-wide font-sans">
                 {p.mainTitle}
               </Link>
               <div className="flex gap-2">
-                <button
-                  className="text-gray-600 hover:text-indigo-600"
-                  onClick={() => navigate(`/learning-plans/${plan.id}`)}
-                >
-                  ✏️
-                </button>
+                <button className="text-blue-600 hover:text-blue-800" onClick={() => navigate(`/learning-plans/${plan.id}`)}>1</button>
                 {allowDelete && (
-                  <button
-                    className="text-gray-600 hover:text-red-500"
-                    onClick={() => handleDeletePlan(plan.id)}
-                  >
-                    ❌
-                  </button>
+                  <button className="text-gray-600 hover:text-red-500" onClick={() => handleDeletePlan(plan.id)}>🗑️</button>
                 )}
               </div>
             </div>
 
-            {tasks.length > 0 && (
-              <>
-                <p className="text-sm text-gray-500 mb-2">
-                  {completed} of {tasks.length} tasks completed ({progress}%)
-                </p>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-indigo-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </>
-            )}
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              {completed} of {tasks.length} tasks completed ({progress}%)
+            </p>
+            <div className="w-full bg-blue-100 rounded-full h-4">
+              <div
+                className="h-4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
         );
       })
@@ -122,69 +99,84 @@ const CreateLearningPlan = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-5xl mx-auto py-12 px-6 font-sans">
-        <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Manage Your Learning Plans</h1>
-
-        <div className="flex justify-center mb-8 gap-4">
-          <button
-            onClick={() => setActiveTab("your")}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeTab === "your" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            Your Plans
-          </button>
-          <button
-            onClick={() => setActiveTab("real")}
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              activeTab === "real" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            Real Learning Plans
-          </button>
-        </div>
-
+      <div className="max-w-7xl mx-auto py-12 px-6 font-sans flex flex-col md:flex-row gap-12">
         {activeTab === "your" && (
-          <div className="bg-white rounded-lg shadow-md p-8 mb-12">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Create New Plan</h2>
+          <div className="md:w-1/4 mr-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <h2 className="text-3xl font-bold text-center text-black mb-6">
+              Create New Plan
+            </h2>
             <input
               type="text"
               placeholder="Enter Plan Title..."
               value={mainTitle}
               onChange={(e) => setMainTitle(e.target.value)}
-              className="w-full p-4 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              className="w-full p-4 border border-gray-300 rounded-xl shadow-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            {error && <p className="text-red-500 mb-3 text-sm">{error}</p>}
+            {error && <p className="text-red-500 mb-3 text-sm text-center">{error}</p>}
             <button
               onClick={handleCreatePlan}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition duration-300"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-medium py-3 rounded-xl shadow-lg transition duration-300"
             >
               Create Plan
             </button>
           </div>
         )}
 
-        {activeTab === "your" && (
-          <>
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Your Learning Plans</h2>
-            {plans.selfCreated.length > 0 ? (
-              <div className="grid gap-6">{renderPlans(plans.selfCreated)}</div>
-            ) : (
-              <p className="text-gray-500 mt-8 text-center">No learning plans created yet.</p>
-            )}
-          </>
-        )}
+        <div className={`w-full ${activeTab === "your" ? "md:w-3/4" : "md:w-full"}`}>
+          <h1 className="text-4xl font-bold mb-10 text-center text-black">
+            My Learning Plans
+          </h1>
 
-        {activeTab === "real" && (
-          <>
-            <h2 className="text-2xl font-semibold mb-6 text-gray-800">Real Learning Plans</h2>
-            {plans.realPlans.length > 0 ? (
-              <div className="grid gap-6">{renderPlans(plans.realPlans, false)}</div>
-            ) : (
-              <p className="text-gray-500 mt-8 text-center">No real learning plans added yet.</p>
-            )}
-          </>
-        )}
+          <div className="flex justify-center mb-8 gap-4">
+            <button
+              onClick={() => setActiveTab("your")}
+              className={`px-6 py-3 rounded-full text-sm font-medium transition duration-300 ${
+                activeTab === "your"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              My Plans
+            </button>
+            <button
+              onClick={() => setActiveTab("real")}
+              className={`px-6 py-3 rounded-full text-sm font-medium transition duration-300 ${
+                activeTab === "real"
+                  ? "bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Real Learning Plans
+            </button>
+          </div>
+
+          {activeTab === "your" && (
+            <>
+              {plans.selfCreated.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                  {renderPlans(plans.selfCreated)}
+                </div>
+              ) : (
+                <p className="text-gray-500 mt-8 text-center">No learning plans created yet.</p>
+              )}
+            </>
+          )}
+
+          {activeTab === "real" && (
+            <>
+              <h2 className="text-4xl font-extrabold mb-6 text-center text-black">
+                Real Learning Plans
+              </h2>
+              {plans.realPlans.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                  {renderPlans(plans.realPlans, false)}
+                </div>
+              ) : (
+                <p className="text-gray-500 mt-8 text-center">No real learning plans added yet.</p>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
