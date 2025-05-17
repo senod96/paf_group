@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const currentUserId = localStorage.getItem("user");
-
+  const [visibleCount, setVisibleCount] = useState(5);
   useEffect(() => {
     if (currentUserId) {
       fetch(`http://localhost:8080/api/users/${currentUserId}`)
@@ -94,12 +94,13 @@ const Dashboard = () => {
         <div className="space-y-4 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
             <img 
-              src={profile?.profilePicture || 'https://via.placeholder.com/100?text=User'}
+              src={profile?.profilePicture || 'https://lh3.googleusercontent.com/a/ACg8ocI7fc25SXLBYTr4h8993MgnDK08x4HpjqROXkAcN6c3k8DaOR3A=s96-c'}
               alt="Profile" 
               className="w-24 h-24 mx-auto rounded-full mb-4" 
             />
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{profile?.name}</h2>
             <p className="text-gray-500 dark:text-gray-300">{profile?.headline}</p>
+            <p className="text-gray-500 dark:text-gray-300">{profile?.bio}</p>
             <p className="text-gray-500 dark:text-gray-300 mt-1">📍 {profile?.location}</p>
           </div>
 
@@ -134,34 +135,38 @@ const Dashboard = () => {
 
         {/* Right Add to Feed */}
         <div className="space-y-4 mt-48">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Add to Your Feed</h3>
-            {suggestions.length > 0 ? (
-              suggestions.map(user => (
-                <div key={user._id} className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="font-medium text-gray-800 dark:text-gray-100">{user.name}</p>
-                    <p className="text-gray-500 dark:text-gray-300 text-sm">{user.headline || 'New User'}</p>
-                  </div>
-                  <button 
-                    onClick={() => handleProfileClick(user._id)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-                  >
-                    + Follow
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No new recommendations</p>
-            )}
-            <button 
-              onClick={() => navigate('/recommendations')}
-              className="text-sm text-blue-600 hover:underline mt-4 block"
-            >
-              View all recommendations →
-            </button>
-          </div>
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Add to Your Feed</h3>
+
+    {suggestions.slice(0, visibleCount).map(user => ( 
+      <div key={user._id} className="flex items-center justify-between mb-4">
+        <div>
+          <p className="font-medium text-gray-800 dark:text-gray-100">{user.name}</p>
+          <p className="text-gray-500 dark:text-gray-300 text-sm">{user.headline || 'New User'}</p>
         </div>
+        <button 
+          onClick={() => handleProfileClick(user._id)}
+          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+        >
+          + Follow
+        </button>
+      </div>
+    ))}
+
+    {suggestions.length === 0 && (
+      <p className="text-sm text-gray-500 dark:text-gray-400">No new recommendations</p>
+    )}
+
+    {visibleCount < suggestions.length && (
+      <button 
+        onClick={() => setVisibleCount(prev => prev + 5)}
+        className="text-sm text-blue-600 hover:underline mt-4 block"
+      >
+        Load More →
+      </button>
+    )}
+  </div>
+</div>
       </div>
     </div>
   );

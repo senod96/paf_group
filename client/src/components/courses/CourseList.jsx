@@ -120,7 +120,7 @@ const CourseList = () => {
       />
 
       {loading ? (
-        <Grid container spacing={4}>
+        <Grid container spacing={8}>
           {[...Array(6)].map((_, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card sx={{ height: 500 }}>

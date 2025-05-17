@@ -11,6 +11,7 @@ const AddPost = () => {
       return null;
     }
   });
+  const currentUserId = localStorage.getItem("user");
 
   /*const AddPost = () => {
   const [user] = useState(() => {
@@ -131,7 +132,7 @@ const AddPost = () => {
       {/* Top: Start a Post */}
       <div className="flex items-center gap-3 mb-3">
         <img
-          src="/profile.jpg" // your profile pic path
+          src={currentUserId.profilePicture} 
           alt="Profile"
           className="w-11 h-11 rounded-full object-cover"
         />

@@ -12,19 +12,21 @@ const UserPublicProfile = () => {
   const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
-  const viewingUserId = id || localStorage.getItem('viewingUser'); // support both routes
+  const viewingUserId = id || localStorage.getItem('viewingUser'); 
+  const navigate = useNavigate();
   
-    const navigate = useNavigate();
-  
-
   const currentUserId = localStorage.getItem('user');
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch(`http://localhost:8080/api/users/${id}`);
         const data = await res.json();
-        setUser(data);
-        setIsFollowing(data.followers?.includes(currentUserId));
+if (!data) {
+  console.error('No user data found for ID:', id);
+  return;
+}
+setUser(data);
+
       } catch (err) {
         console.error('Failed to fetch user:', err);
       }
@@ -277,12 +279,13 @@ const UserPublicProfile = () => {
             <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">🕑 Upcoming Tasks</h2>
             {upcomingTasks.length > 0 ? (
               <ul className="space-y-2 text-sm">
-                {upcomingTasks.map((task, i) => (
-                  <li key={i} className="bg-gray-100 dark:bg-gray-600 px-4 py-2 rounded">
-                    <p><strong>{task.title}</strong> - {task.planTitle}</p>
-                    <p className="text-gray-600 dark:text-gray-300">Due: {new Date(task.endTime).toLocaleString()}</p>
-                  </li>
-                ))}
+                {upcomingTasks.map((task) => (
+  <li key={task.id || task.title} className="bg-gray-100 dark:bg-gray-600 px-4 py-2 rounded">
+    <p><strong>{task.title}</strong> - {task.planTitle}</p>
+    <p className="text-gray-600 dark:text-gray-300">Due: {new Date(task.endTime).toLocaleString()}</p>
+  </li>
+))}
+
               </ul>
             ) : (
               <p className="text-gray-500 dark:text-gray-400">No upcoming tasks in the next 7 days.</p>
