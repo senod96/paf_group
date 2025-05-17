@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, PlusCircle, BookOpen, Bookmark, Briefcase, FileText, List } from "lucide-react";
+import {
+  Settings,
+  PlusCircle,
+  BookOpen,
+  Bookmark,
+  Briefcase,
+  FileText,
+  List
+} from "lucide-react";
 
 const courseActions = [
   {
@@ -10,7 +18,7 @@ const courseActions = [
     icon: <PlusCircle className="w-8 h-8 text-blue-500" />
   },
   {
-    title: "Published Courses",  
+    title: "Published Courses",
     description: "View and manage your published courses.",
     route: "/MyCourses",
     icon: <BookOpen className="w-8 h-8 text-green-500" />
@@ -32,7 +40,7 @@ const otherActions = [
   }
 ];
 
-// New Job Management Section
+// ✅ Updated Job Management Section
 const jobActions = [
   {
     title: "Create Job",
@@ -43,7 +51,7 @@ const jobActions = [
   {
     title: "Published Jobs",
     description: "View and manage all published job postings.",
-    route: "/admin/jobs",
+    route: "/jobapplications", // ✅ Updated route here
     icon: <List className="w-8 h-8 text-teal-500" />
   }
 ];
@@ -81,7 +89,7 @@ export default function AdminDashboard() {
         </h1>
 
         <div className="relative">
-          <button 
+          <button
             onClick={() => setShowSettings(!showSettings)}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
@@ -162,7 +170,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Learning & Career Section */}
+        {/* Learning Plans Section */}
         <div className="mb-12">
           <div className="flex items-center mb-6">
             <div className="w-1 h-8 bg-purple-500 rounded-full mr-3"></div>
@@ -202,7 +210,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* New Job Management Section */}
+        {/* Job Management Section */}
         <div className="mb-12">
           <div className="flex items-center mb-6">
             <div className="w-1 h-8 bg-red-500 rounded-full mr-3"></div>
