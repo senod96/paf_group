@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { uploadImageToFirebase } from "../../utils/firebaseUploader";
 
 const AddPost = () => {
-  const [user] = useState(() => {
+  const [user, setUser] = useState(null);
+  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/100");
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem("user");
-      return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
+      const parsed = stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
+      setUser(parsed);
+
+      // Fetch user details to get profile picture
+      fetch(`http://localhost:8080/api/users/${parsed.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setProfilePic(data.profilePicture || "https://via.placeholder.com/100");
+        })
+        .catch(err => console.error("Failed to fetch profile picture", err));
     } catch {
-      return null;
+      setUser(null);
     }
-  });
+  }, []);
 
   const userId = user?.id || "";
   const [post, setPost] = useState("");
@@ -89,6 +101,15 @@ const AddPost = () => {
 
       if (!res.ok) throw new Error("Post creation failed");
 
+      try {
+        await fetch(
+          `http://localhost:8080/api/notifications/post-share?senderId=${userId}&postTitle=${encodeURIComponent(post)}`,
+          { method: "POST" }
+        );
+      } catch (notificationError) {
+        console.error("Failed to send notifications:", notificationError);
+      }
+
       setPost("");
       setDescription("");
       setTags("");
@@ -102,11 +123,11 @@ const AddPost = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       {/* Top: Start a Post */}
       <div className="flex items-center gap-3 mb-3">
         <img
-          src="/profile.jpg" // your profile pic path
+          src={profilePic}
           alt="Profile"
           className="w-11 h-11 rounded-full object-cover"
         />
@@ -120,10 +141,9 @@ const AddPost = () => {
         />
       </div>
 
-      {/* Divider */}
       <div className="border-t border-gray-300 dark:border-gray-600 my-2"></div>
 
-      {/* Bottom Buttons */}
+      {/* Media Upload Buttons */}
       <div className="flex justify-around text-sm text-gray-600 dark:text-gray-300 font-medium">
         <label className="flex items-center gap-1 cursor-pointer">
           <input
@@ -151,17 +171,9 @@ const AddPost = () => {
             <span className="text-blue-600">🖼️</span> Photo
           </span>
         </label>
-
-        <button
-          type="button"
-          onClick={() => alert("Write an article")}
-          className="flex items-center gap-1 cursor-pointer hover:text-blue-600"
-        >
-          <span className="text-red-600">📝</span> Write article
-        </button>
       </div>
 
-      {/* Expanded Post Form (Hidden Fields) */}
+      {/* Expanded Post Form */}
       {post.trim() !== "" && (
         <form onSubmit={handleSubmit} className="space-y-4 mt-4 text-sm">
           <textarea

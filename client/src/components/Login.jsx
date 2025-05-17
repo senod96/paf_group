@@ -16,29 +16,35 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('Logging in...');
+  e.preventDefault();
+  setStatus('Logging in...');
 
-    try {
-      const res = await fetch('http://localhost:8080/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+  // ✅ Admin credentials check before API call
+  if (formData.email === 'admin@gmail.com' && formData.password === 'admin') {
+    navigate('/admin');
+    return;
+  }
 
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('user', data.id); // already string
-        setStatus('✅ Logged in successfully!');
-        navigate('/dashboard');
-      } else {
-        setStatus(`❌ ${data.message || 'Login failed'}`);
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      setStatus('❌ Something went wrong');
+  try {
+    const res = await fetch('http://localhost:8080/api/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('user', data.id); 
+      setStatus('✅ Logged in successfully!');
+      navigate('/dashboard');
+    } else {
+      setStatus(`❌ ${data.message || 'Login failed'}`);
     }
-  };
+  } catch (err) {
+    console.error('Login error:', err);
+    setStatus('❌ Something went wrong');
+  }
+};
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {

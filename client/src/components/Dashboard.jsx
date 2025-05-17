@@ -2,15 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import HomePostList from './posts/HomePostList';
-import SearchPost from './posts/SearchPost';
-import CourseList from './courses/CourseList';
 import AddPost from './posts/AddPost';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
   const currentUserId = localStorage.getItem("user");
+  const [visibleCount, setVisibleCount] = useState(5);
+  useEffect(() => {
+    if (currentUserId) {
+      fetch(`http://localhost:8080/api/users/${currentUserId}`)
+        .then(res => res.json())
+        .then(data => {
+          setProfile(data);
+          fetchSuggestions(data.following || []);
+        });
+    }
+  }, [currentUserId]);
+
+  const fetchSuggestions = (following) => {
+    fetch(`http://localhost:8080/api/users`)
+      .then(res => res.json())
+      .then(users => {
+        const filtered = users.filter(u => u._id !== currentUserId && !following.includes(u._id));
+        setSuggestions(filtered);
+      });
+  };
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -42,7 +62,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-inter">
       <Navbar />
       <div className="max-w-7xl mx-auto px-6 py-4">
-        {/* Search */}
+        {/* Search Bar */}
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex gap-4 items-center">
           <input
             type="text"
@@ -53,12 +73,12 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Results */}
+        {/* Search Results */}
         {results.length > 0 && (
           <div className="bg-white dark:bg-gray-800 mt-4 rounded-lg shadow p-4 space-y-2">
-            {results.map((user) => (
+            {results.map(user => (
               <div
-                key={user.id}
+                key={user._id}
                 onClick={() => handleProfileClick(user.id)}
                 className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2 py-1 rounded text-sm text-blue-600"
               >
@@ -68,63 +88,85 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
       <div className="max-w-7xl mx-auto px-6 py-0 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Left Profile Card */}
+        {/* Left Profile */}
         <div className="space-y-4 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
             <img 
-              src="https://via.placeholder.com/100" 
+              src={profile?.profilePicture}
               alt="Profile" 
               className="w-24 h-24 mx-auto rounded-full mb-4" 
             />
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Lahiru Bandara</h2>
-            <p className="text-gray-500 dark:text-gray-300">Undergraduate at SLIIT BSc (Hons) in IT</p>
-            <p className="text-gray-500 dark:text-gray-300 mt-1">📍 Kandy, Central Province</p>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{profile?.name}</h2>
+            <p className="text-gray-500 dark:text-gray-300">{profile?.headline}</p>
+            <p className="text-gray-500 dark:text-gray-300">{profile?.bio}</p>
+            <p className="text-gray-500 dark:text-gray-300 mt-1">📍 {profile?.location}</p>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Navigation</h3>
             <ul className="space-y-2 text-blue-600 dark:text-blue-400">
-              <li><button onClick={() => navigate('/learning-plans')} className="text-sm hover:underline">Learning Plans</button></li>
-              <li><button onClick={() => navigate('/applyjob')} className="text-sm hover:underline">View Jobs</button></li>
-              <li><button onClick={() => navigate('/analytics')} className="text-sm hover:underline">Progress Evaluation</button></li>
-              <li><button onClick={() => navigate('/collob')} className="text-sm hover:underline">Collaboration</button></li>
-              <li><button onClick={() => navigate('/notifications')} className="text-sm hover:underline">Notifications</button></li>
-              <li><button onClick={() => navigate('/upcoming')} className="text-sm hover:underline">Upcoming Events</button></li>
-              <li><button onClick={() => navigate('/availablelearning')} className="text-sm hover:underline">Available Learning Plans</button></li>
-             <li><button onClick={() => navigate('/CourseList')} className="text-sm hover:underline">Skillaura Learning Courses</button></li>
-  
+              {[
+                ['Learning Plans', '/learning-plans'],
+                ['View Jobs', '/applyjob'],
+                ['Progress Evaluation', '/analytics'],
+                ['Collaboration', '/collob'],
+                ['Notifications', '/notifications'],
+                ['Upcoming Events', '/upcoming'],
+                ['Available Learning Plans', '/availablelearning'],
+                ['Skillora Learning Courses', '/CourseList'],
+              ].map(([label, route], i) => (
+                <li key={i}>
+                  <button onClick={() => navigate(route)} className="text-sm hover:underline">
+                    {label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Middle Content */}
+        {/* Center Posts */}
         <div className="lg:col-span-2 space-y-6">
-          <AddPost/>
+          <AddPost />
           <HomePostList />
         </div>
 
         {/* Right Add to Feed */}
-        <div className="space-y-4 mt-36">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Add to Your Feed</h3>
-            {['Sysco LABS', 'WSO2', 'NetworkChuck'].map((company, i) => (
-              <div key={i} className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="font-medium text-gray-800 dark:text-gray-100">{company}</p>
-                  <p className="text-gray-500 dark:text-gray-300 text-sm">Company • Tech</p>
-                </div>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">+ Follow</button>
-              </div>
-            ))}
-            <button 
-              onClick={() => navigate('/recommendations')}
-              className="text-sm text-blue-600 hover:underline mt-4 block"
-            >
-              View all recommendations →
-            </button>
-          </div>
+        <div className="space-y-4 mt-48">
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <h3 className="font-semibold mb-4 text-gray-800 dark:text-gray-100">Add to Your Feed</h3>
+
+    {suggestions.slice(0, visibleCount).map(user => ( 
+      <div key={user._id} className="flex items-center justify-between mb-4">
+        <div>
+          <p className="font-medium text-gray-800 dark:text-gray-100">{user.name}</p>
+          <p className="text-gray-500 dark:text-gray-300 text-sm">{user.headline || 'New User'}</p>
         </div>
+        <button 
+          onClick={() => handleProfileClick(user.id)}
+          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+        >
+          + Follow
+        </button>
+      </div>
+    ))}
+
+    {suggestions.length === 0 && (
+      <p className="text-sm text-gray-500 dark:text-gray-400">No new recommendations</p>
+    )}
+
+    {visibleCount < suggestions.length && (
+      <button 
+        onClick={() => setVisibleCount(prev => prev + 5)}
+        className="text-sm text-blue-600 hover:underline mt-4 block"
+      >
+        Load More →
+      </button>
+    )}
+  </div>
+</div>
       </div>
     </div>
   );
