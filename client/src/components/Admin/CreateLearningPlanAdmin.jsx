@@ -75,98 +75,119 @@ export default function CreateLearningPlanAdmin() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 text-gray-800 dark:text-gray-100">
-      <h1 className="text-3xl font-bold mb-6 text-blue-700 dark:text-blue-300">
-        Create Site Learning Plan
-      </h1>
+ return (
+  <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 text-gray-800 dark:text-gray-100 font-sans">
+    <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 mb-8">
+      Create Site Learning Plan
+    </h1>
 
-      {step === 1 && (
-        <div className="space-y-6">
-          <div>
-            <label className="block mb-1 font-medium">Main Title</label>
-            <input
-              value={mainTitle}
-              onChange={(e) => setMainTitle(e.target.value)}
-              className="w-full p-2 rounded bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600"
-            />
-          </div>
+    {step === 1 && (
+      <div className="max-w-7xl mx-auto space-y-6 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg min-h-[500px]">
 
-          <div>
-            <label className="block mb-1 font-medium">Upload Preview Image</label>
-            <input type="file" onChange={(e) => setPreviewFile(e.target.files[0])} />
-          </div>
-
-          <div>
-            <label className="block mb-1 font-medium">Upload Badge Image</label>
-            <input type="file" onChange={(e) => setBadgeFile(e.target.files[0])} />
-          </div>
-
-          <button
-            onClick={handleImageUpload}
-            disabled={!mainTitle || !previewFile || !badgeFile || loading}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-60"
-          >
-            {loading ? "Uploading..." : "Continue to Tasks"}
-          </button>
+        {/* Main Title */}
+        <div>
+          <label className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-300">Main Title</label>
+          <input
+            value={mainTitle}
+            onChange={(e) => setMainTitle(e.target.value)}
+            className="w-full p-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Enter a Plan Title..."
+          />
         </div>
-      )}
 
-      {step === 2 && (
-        <>
-          <h2 className="text-xl font-semibold mb-4">Add Tasks</h2>
-          {tasks.map((task, index) => (
-            <div key={index} className="mb-4 p-4 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-700">
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold">Task {index + 1}</span>
-                <button onClick={() => removeTask(index)} className="text-red-500 hover:text-red-700">
-                  <Trash2 size={18} />
-                </button>
-              </div>
-              <input
-                value={task.title}
-                onChange={(e) => handleTaskChange(index, "title", e.target.value)}
-                placeholder="Title"
-                className="w-full mb-2 p-2 rounded bg-gray-50 dark:bg-gray-700"
-              />
-              <input
-                value={task.description}
-                onChange={(e) => handleTaskChange(index, "description", e.target.value)}
-                placeholder="Description"
-                className="w-full mb-2 p-2 rounded bg-gray-50 dark:bg-gray-700"
-              />
-              <div className="flex gap-2">
-                <input
-                  value={task.startTime}
-                  onChange={(e) => handleTaskChange(index, "startTime", e.target.value)}
-                  type="datetime-local"
-                  className="flex-1 p-2 rounded bg-gray-50 dark:bg-gray-700"
-                />
-                <input
-                  value={task.endTime}
-                  onChange={(e) => handleTaskChange(index, "endTime", e.target.value)}
-                  type="datetime-local"
-                  className="flex-1 p-2 rounded bg-gray-50 dark:bg-gray-700"
-                />
-              </div>
+        {/* Preview Image */}
+        <div>
+          <label className="block mb-2 mt-12 text-lg font-semibold text-gray-700 dark:text-gray-300">Upload Preview Image</label>
+          <input
+            type="file"
+            onChange={(e) => setPreviewFile(e.target.files[0])}
+            className="w-full mt-4 text-gray-600 mt- 12 dark:text-gray-300"
+          />
+        </div>
+
+        {/* Badge Image */}
+        <div>
+          <label className="block mb-2 mt-12 text-lg font-semibold text-gray-700 dark:text-gray-300">Upload Badge Image</label>
+          <input
+            type="file"
+            onChange={(e) => setBadgeFile(e.target.files[0])}
+            className="w-full mt-4 text-gray-600 dark:text-gray-300 "
+          />
+        </div>
+
+        {/* Continue Button */}
+        <button
+          onClick={handleImageUpload}
+          disabled={!mainTitle || !previewFile || !badgeFile || loading}
+          className="w-full mt-12 py-3 margin-top 20px bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white rounded-xl font-semibold text-lg shadow-md disabled:opacity-60 transition duration-300"
+        >
+          {loading ? "Uploading..." : "Continue to Tasks"}
+        </button>
+      </div>
+    )}
+
+    {step === 2 && (
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
+          Add Tasks
+        </h2>
+        {tasks.map((task, index) => (
+          <div key={index} className="mb-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <span className="font-semibold text-lg text-gray-700 dark:text-gray-300">Task {index + 1}</span>
+              <button onClick={() => removeTask(index)} className="text-red-500 hover:text-red-700">
+                <Trash2 size={20} />
+              </button>
             </div>
-          ))}
 
+            <input
+              value={task.title}
+              onChange={(e) => handleTaskChange(index, "title", e.target.value)}
+              placeholder="Task Title"
+              className="w-full mb-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <input
+              value={task.description}
+              onChange={(e) => handleTaskChange(index, "description", e.target.value)}
+              placeholder="Task Description"
+              className="w-full mb-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+
+            <div className="flex gap-4">
+              <input
+                value={task.startTime}
+                onChange={(e) => handleTaskChange(index, "startTime", e.target.value)}
+                type="datetime-local"
+                className="flex-1 p-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <input
+                value={task.endTime}
+                onChange={(e) => handleTaskChange(index, "endTime", e.target.value)}
+                type="datetime-local"
+                className="flex-1 p-3 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          </div>
+        ))}
+
+        <div className="flex justify-center gap-4 mt-8">
           <button
             onClick={addTask}
-            className="flex items-center gap-2 mt-3 mb-6 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white rounded-xl shadow-md font-semibold transition duration-300"
           >
-            <PlusCircle size={18} /> Add Task
+            <PlusCircle size={20} /> Add Task
           </button>
+        </div>
 
-          <button
-            onClick={handleSubmit}
-            className="w-full py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 text-lg font-semibold"
-          >
-            Create Learning Plan
-          </button>
-        </>
-      )}
-    </div>
-  );
+        <button
+          onClick={handleSubmit}
+          className="w-full mt-8 py-4 bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-700 hover:to-indigo-900 text-white rounded-xl font-bold text-lg shadow-lg transition duration-300"
+        >
+          Create Learning Plan
+        </button>
+      </div>
+    )}
+  </div>
+);
+
 }
