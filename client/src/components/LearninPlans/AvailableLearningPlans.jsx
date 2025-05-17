@@ -40,7 +40,7 @@ return (
     <Navbar />
 
     <div className="px-6 py-8">
-      <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
+      <h1 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
   Available Learning Plans
 </h1>
 
@@ -53,8 +53,9 @@ return (
           {plans.map((plan) => (
             <div
   key={plan.id}
-  className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
+  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
 >
+
 
               <img
                 src={plan.image}
@@ -62,7 +63,7 @@ return (
                 className="w-full h-40 object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
               />
               <div className="p-4">
-                <h2 className="text-xl font-bold mb-1 text-gray-800 dark:text-white">
+                <h2 className="text-xl font mb-1 text-gray-800 dark:text-white">
                   {plan.plans?.[0]?.mainTitle || "Untitled Plan"}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-300 mb-3">
