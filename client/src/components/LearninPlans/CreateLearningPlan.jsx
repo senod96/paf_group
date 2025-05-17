@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../Navbar';
 import { useNavigate, Link } from 'react-router-dom';
 
 const CreateLearningPlan = () => {
