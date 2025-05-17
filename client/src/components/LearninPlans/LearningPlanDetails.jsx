@@ -151,31 +151,34 @@ const LearningPlanDetails = () => {
 
       <div className="flex flex-wrap gap-4 mb-10">
         <input
-          type="text"
-          placeholder="Search tasks..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 min-w-[200px] border px-4 py-2 rounded shadow-sm focus:ring-2 focus:ring-blue-400"
-        />
+  type="text"
+  placeholder="Search tasks..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  className="flex-1 min-w-[200px] border border-blue-300 px-4 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+/>
+
         <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border px-4 py-2 rounded shadow-sm text-sm"
-        >
-          <option value="All">All Tasks</option>
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Done">Done</option>
-        </select>
+  value={statusFilter}
+  onChange={(e) => setStatusFilter(e.target.value)}
+  className="border border-blue-300 px-4 py-2 rounded-xl shadow-sm text-sm bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+>
+  <option value="All">All Tasks</option>
+  <option value="Pending">Pending</option>
+  <option value="In Progress">In Progress</option>
+  <option value="Done">Done</option>
+</select>
+
         <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="border px-4 py-2 rounded shadow-sm text-sm"
-        >
-          <option value="startTime">Sort by Start Time</option>
-          <option value="endTime">Sort by End Time</option>
-          <option value="status">Sort by Status</option>
-        </select>
+  value={sortBy}
+  onChange={(e) => setSortBy(e.target.value)}
+  className="border border-blue-300 px-4 py-2 rounded-xl shadow-sm text-sm bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+>
+  <option value="startTime">Sort by Start Time</option>
+  <option value="endTime">Sort by End Time</option>
+  <option value="status">Sort by Status</option>
+</select>
+
       </div>
 
       {filteredTasks.length > 0 ? (
@@ -207,13 +210,13 @@ const LearningPlanDetails = () => {
             <div className="absolute top-4 right-4 flex space-x-2">
               <button
                 onClick={() => handleEditClick(idx)}
-                className="text-sm bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
+                className="text-sm bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-3 py-1 rounded shadow-md"
               >
                  Edit
               </button>
               <button
                 onClick={() => handleDeleteTask(idx)}
-                className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                className="text-sm bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white px-3 py-1 rounded shadow-md"
               >
                  Delete
               </button>
