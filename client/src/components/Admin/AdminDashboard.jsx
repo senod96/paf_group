@@ -27,7 +27,7 @@ const otherActions = [
   {
     title: "Job Postings",
     description: "Post job opportunities and roles.",
-    route: "/admin/add-job",
+    route: "/AdminLearningPlanView",
     icon: <Briefcase className="w-8 h-8 text-orange-500" />
   }
 ];
