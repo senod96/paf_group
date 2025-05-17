@@ -68,8 +68,8 @@ const AddJob = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
-      {/* Top Navigation Bar */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-sans transition-colors">
+      {/* Top Navigation */}
       <div className="dark:bg-gray-800/80 dark:text-gray-100 bg-white/80 backdrop-blur-sm shadow-sm px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
         <h1
           className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent dark:from-blue-400 dark:to-blue-300 cursor-pointer"
@@ -90,99 +90,127 @@ const AddJob = () => {
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"
                 onClick={() => setDarkMode(!darkMode)}
               >
-                {darkMode ? (
-                  <>
-                    <span>☀️</span> Light Mode
-                  </>
-                ) : (
-                  <>
-                    <span>🌙</span> Dark Mode
-                  </>
-                )}
+                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Page Title */}
-      <div className="px-6 pt-10 max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600 mb-6">
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 pt-10">
+        <h2 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600 mb-8">
           Add New Job Post
         </h2>
 
-        {/* Job Form Card */}
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
           {message && (
             <p className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
               {message}
             </p>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="company"
-              value={form.company}
-              onChange={handleChange}
-              placeholder="Company"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <textarea
-              name="companyOverview"
-              value={form.companyOverview}
-              onChange={handleChange}
-              placeholder="Company Overview"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <input
-              type="text"
-              name="jobTitle"
-              value={form.jobTitle}
-              onChange={handleChange}
-              placeholder="Job Title"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <input
-              type="text"
-              name="workExperience"
-              value={form.workExperience}
-              onChange={handleChange}
-              placeholder="Work Experience (e.g. 2+ years)"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <input
-              type="text"
-              name="skillsNeeded"
-              value={form.skillsNeeded}
-              onChange={handleChange}
-              placeholder="Skills (comma-separated)"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <input
-              type="text"
-              name="jobRoles"
-              value={form.jobRoles}
-              onChange={handleChange}
-              placeholder="Job Roles (comma-separated)"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Job Description"
-              required
-              className="w-full border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Company
+              </label>
+              <input
+                type="text"
+                name="company"
+                value={form.company}
+                onChange={handleChange}
+                placeholder="Company"
+                required
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Company Overview
+              </label>
+              <textarea
+                name="companyOverview"
+                value={form.companyOverview}
+                onChange={handleChange}
+                placeholder="Brief about the company"
+                required
+                rows="3"
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Job Title
+              </label>
+              <input
+                type="text"
+                name="jobTitle"
+                value={form.jobTitle}
+                onChange={handleChange}
+                placeholder="Job Title"
+                required
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Work Experience
+              </label>
+              <input
+                type="text"
+                name="workExperience"
+                value={form.workExperience}
+                onChange={handleChange}
+                placeholder="e.g. 2+ years"
+                required
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Skills Needed
+              </label>
+              <input
+                type="text"
+                name="skillsNeeded"
+                value={form.skillsNeeded}
+                onChange={handleChange}
+                placeholder="Comma-separated skills"
+                required
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Job Roles
+              </label>
+              <input
+                type="text"
+                name="jobRoles"
+                value={form.jobRoles}
+                onChange={handleChange}
+                placeholder="Comma-separated roles"
+                required
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+                Job Description
+              </label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Job Description"
+                required
+                rows="4"
+                className="w-full p-3 rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600"
+              />
+            </div>
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition-colors"
+              className="w-full py-3 mt-4 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white font-semibold text-lg rounded-xl shadow-lg transition-all hover:shadow-xl"
             >
               Post Job
             </button>
