@@ -167,7 +167,7 @@ export default function AdminDashboard() {
           <div className="flex items-center mb-6">
             <div className="w-1 h-8 bg-purple-500 rounded-full mr-3"></div>
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              Learning & Career
+              Learning Plans Management
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
