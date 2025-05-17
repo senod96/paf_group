@@ -209,13 +209,13 @@ const LearningPlanDetails = () => {
                 onClick={() => handleEditClick(idx)}
                 className="text-sm bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
               >
-                ✏️ Edit
+                 Edit
               </button>
               <button
                 onClick={() => handleDeleteTask(idx)}
                 className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
               >
-                🗑️ Delete
+                 Delete
               </button>
             </div>
           </div>
@@ -233,7 +233,7 @@ const LearningPlanDetails = () => {
             }}
             className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg"
           >
-            ➕ Add Task
+            Add Task
           </button>
         </div>
       )}
@@ -287,7 +287,7 @@ const LearningPlanDetails = () => {
                 onClick={handleUpdateTask}
                 className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg w-full"
               >
-                ✅ Update Task
+                Update Task
               </button>
             ) : (
               <button
