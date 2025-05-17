@@ -39,8 +39,8 @@ return (
   <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
     <Navbar />
 
-    <div className="px-6 py-8">
-      <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
+    <div className="px-10 py-10">
+      <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 font-sans mb-8">
   Available Learning Plans
 </h1>
 
@@ -49,12 +49,13 @@ return (
       {plans.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400">No available plans right now.</p>
       ) : (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-4">
           {plans.map((plan) => (
             <div
   key={plan.id}
-  className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
+  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 max-w-sm w-full mx-auto"
 >
+
 
               <img
                 src={plan.image}
