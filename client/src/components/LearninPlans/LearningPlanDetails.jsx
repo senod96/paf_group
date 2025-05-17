@@ -12,6 +12,7 @@ const LearningPlanDetails = () => {
   const [sortBy, setSortBy] = useState('startTime');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:8080/learning-plans/${id}`)
@@ -26,14 +27,31 @@ const LearningPlanDetails = () => {
       });
   }, [id]);
 
+  const validateForm = () => {
+    const errors = {};
+    if (!newTask.title.trim()) errors.title = 'Title is required';
+    if (!newTask.description.trim()) errors.description = 'Description is required';
+    if (!newTask.status) errors.status = 'Status is required';
+    if (!newTask.startTime) errors.startTime = 'Start time is required';
+    if (!newTask.endTime) errors.endTime = 'End time is required';
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleChange = (field, value) => {
     setNewTask(prev => ({ ...prev, [field]: value }));
+    // Clear error when field is changed
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   const resetForm = () => {
     setNewTask({ title: '', description: '', status: '', startTime: '', endTime: '' });
     setEditingIndex(null);
     setShowForm(false);
+    setFormErrors({});
   };
 
   const updateTasksInBackend = (updatedTasks) => {
@@ -55,6 +73,8 @@ const LearningPlanDetails = () => {
   };
 
   const handleAddTask = () => {
+    if (!validateForm()) return;
+    
     const updatedTasks = [...(plan.plans[0].tasks || []), newTask];
     updateTasksInBackend(updatedTasks);
   };
@@ -69,9 +89,12 @@ const LearningPlanDetails = () => {
     setEditingIndex(index);
     setNewTask({ ...plan.plans[0].tasks[index] });
     setShowForm(true);
+    setFormErrors({});
   };
 
   const handleUpdateTask = () => {
+    if (!validateForm()) return;
+    
     const updatedTasks = [...plan.plans[0].tasks];
     updatedTasks[editingIndex] = newTask;
     updateTasksInBackend(updatedTasks);
@@ -354,39 +377,51 @@ const LearningPlanDetails = () => {
                 <div className="mt-4 space-y-4">
                   <div>
                     <label htmlFor="task-title" className="block text-sm font-medium text-gray-700">
-                      Title
+                      Title <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       id="task-title"
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className={`mt-1 block w-full border ${
+                        formErrors.title ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                       value={newTask.title}
                       onChange={(e) => handleChange('title', e.target.value)}
                       disabled={plan.type === "my"}
                     />
+                    {formErrors.title && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.title}</p>
+                    )}
                   </div>
 
                   <div>
                     <label htmlFor="task-description" className="block text-sm font-medium text-gray-700">
-                      Description
+                      Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="task-description"
                       rows={3}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className={`mt-1 block w-full border ${
+                        formErrors.description ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                       value={newTask.description}
                       onChange={(e) => handleChange('description', e.target.value)}
                       disabled={plan.type === "my"}
                     />
+                    {formErrors.description && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.description}</p>
+                    )}
                   </div>
 
                   <div>
                     <label htmlFor="task-status" className="block text-sm font-medium text-gray-700">
-                      Status
+                      Status <span className="text-red-500">*</span>
                     </label>
                     <select
                       id="task-status"
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      className={`mt-1 block w-full border ${
+                        formErrors.status ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                       value={newTask.status}
                       onChange={(e) => handleChange('status', e.target.value)}
                     >
@@ -395,32 +430,45 @@ const LearningPlanDetails = () => {
                       <option value="In Progress">In Progress</option>
                       <option value="Done">Done</option>
                     </select>
+                    {formErrors.status && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.status}</p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="task-start" className="block text-sm font-medium text-gray-700">
-                        Start Time
+                        Start Time <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="datetime-local"
                         id="task-start"
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className={`mt-1 block w-full border ${
+                          formErrors.startTime ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                         value={newTask.startTime}
                         onChange={(e) => handleChange('startTime', e.target.value)}
                       />
+                      {formErrors.startTime && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.startTime}</p>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="task-end" className="block text-sm font-medium text-gray-700">
-                        End Time
+                        End Time <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="datetime-local"
                         id="task-end"
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className={`mt-1 block w-full border ${
+                          formErrors.endTime ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                         value={newTask.endTime}
                         onChange={(e) => handleChange('endTime', e.target.value)}
                       />
+                      {formErrors.endTime && (
+                        <p className="mt-1 text-sm text-red-600">{formErrors.endTime}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -448,7 +496,7 @@ const LearningPlanDetails = () => {
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     onClick={handleAddTask}
                   >
-                  Add Task
+                    Add Task
                   </button>
                 )}
               </div>
