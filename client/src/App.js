@@ -38,6 +38,8 @@ import EditCourse from './components/courses/EditCourse';
 
 import HomePostList from './components/posts/HomePostList';
 import AdminLearningPlanView from './components/Admin/AdminLearningPlanView';
+import AddJob from './components/posts/AddJob';
+
 
 const currentUserId = localStorage.getItem('user');
 
@@ -85,6 +87,8 @@ function App() {
       <Route path="/AddCourse" element={<EditCourse />} />
       <Route path="/HomePostList" element={<HomePostList />} />
       <Route path="/AdminLearningPlanView" element={<AdminLearningPlanView />} />
+      <Route path="/AddJob" element={<AddJob />} />
+
 
 
 
