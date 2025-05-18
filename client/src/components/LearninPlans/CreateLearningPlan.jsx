@@ -24,11 +24,38 @@ const CreateLearningPlan = () => {
       .catch(err => console.error("Error fetching plans:", err));
   }, []);
 
-  const handleCreatePlan = () => {
+  const validateForm = () => {
     if (!mainTitle.trim()) {
       setError("Plan title is required.");
-      return;
+      return false;
     }
+    if (mainTitle.length > 100) {
+      setError("Plan title must be less than 100 characters.");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
+  const validateTaskForm = (task) => {
+    const errors = {};
+    if (!task.title?.trim()) {
+      errors.title = "Task title is required";
+    }
+    if (!task.description?.trim()) {
+      errors.description = "Description is required";
+    }
+    if (!task.dueDate) {
+      errors.dueDate = "Due date is required";
+    }
+    if (!task.priority) {
+      errors.priority = "Priority is required";
+    }
+    return errors;
+  };
+
+  const handleCreatePlan = () => {
+    if (!validateForm()) return;
 
     setIsCreating(true);
     const newPlan = { userId, plans: [{ mainTitle, tasks: [] }] };
@@ -207,6 +234,7 @@ const CreateLearningPlan = () => {
                 onClick={() => {
                   setShowCreateModal(false);
                   setError('');
+                  setMainTitle('');
                 }}
                 className="px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-300"
               >
@@ -219,6 +247,53 @@ const CreateLearningPlan = () => {
               >
                 {isCreating ? 'Creating...' : 'Create Plan'}
               </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="modal-plan-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Plan Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="modal-plan-title"
+                  type="text"
+                  placeholder="e.g. Master React in 30 Days"
+                  value={mainTitle}
+                  onChange={(e) => {
+                    setMainTitle(e.target.value);
+                    if (error) validateForm();
+                  }}
+                  onBlur={validateForm}
+                  maxLength={100}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  autoFocus
+                  required
+                />
+                {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 text-right">
+                  {mainTitle.length}/100 characters
+                </p>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-2">
+                <button
+                  onClick={() => {
+                    setShowCreateModal(false);
+                    setError('');
+                    setMainTitle('');
+                  }}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreatePlan}
+                  disabled={isCreating || !!error}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isCreating ? 'Creating...' : 'Create Plan'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

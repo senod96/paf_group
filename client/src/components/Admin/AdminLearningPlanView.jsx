@@ -100,15 +100,17 @@ export default function AvailableLearningPlans() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans transition-colors">
       <Navbar />
       <div className="px-10 py-10">
-        <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 mb-8">
+        <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600 mb-8">
           Available Learning Plans
         </h1>
 
         {plans.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-center">No available plans right now.</p>
+          <p className="text-gray-500 dark:text-gray-400 text-center">
+            No available plans right now.
+          </p>
         ) : (
           <div className="grid gap-6 md:grid-cols-4">
             {plans.map((plan) => (
@@ -127,7 +129,7 @@ export default function AvailableLearningPlans() {
                       <input
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
-                        className="w-full mb-2 p-2 border rounded"
+                        className="w-full mb-2 p-2 border dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded"
                         placeholder="Enter Title"
                       />
                       <div className="flex gap-2 mb-3">
@@ -166,25 +168,28 @@ export default function AvailableLearningPlans() {
 
                     <button
                       onClick={() => toggleExpand(plan.id)}
-                      className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-semibold"
+                      className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-lg shadow-sm text-sm font-semibold transition-colors"
                     >
                       {expanded === plan.id ? <EyeOff size={16} /> : <Eye size={16} />}
                       {expanded === plan.id ? "Hide Tasks" : "Show Tasks"}
                     </button>
 
-                    <button
-                      onClick={() => handleEditPlan(plan)}
-                      className="flex items-center gap-1 text-yellow-500 hover:text-yellow-600 text-sm font-semibold"
-                    >
-                      <Edit size={16} /> Edit
-                    </button>
-
-                    <button
-                      onClick={() => handleDeletePlan(plan.id)}
-                      className="flex items-center gap-1 text-red-500 hover:text-red-600 text-sm font-semibold"
-                    >
-                      <Trash2 size={16} /> Delete
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditPlan(plan)}
+                        className="flex items-center justify-center bg-yellow-50 dark:bg-yellow-900/20 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 p-2 rounded-lg shadow-sm transition-colors"
+                        title="Edit Plan"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePlan(plan.id)}
+                        className="flex items-center justify-center bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 p-2 rounded-lg shadow-sm transition-colors"
+                        title="Delete Plan"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
 
                   {expanded === plan.id && (
@@ -199,13 +204,13 @@ export default function AvailableLearningPlans() {
                               <input
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                                className="w-full mb-2 p-2 border rounded"
+                                className="w-full mb-2 p-2 border dark:border-gray-500 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                 placeholder="Task Title"
                               />
                               <input
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-                                className="w-full mb-2 p-2 border rounded"
+                                className="w-full mb-2 p-2 border dark:border-gray-500 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                 placeholder="Task Description"
                               />
                               <div className="flex gap-2">
@@ -230,15 +235,15 @@ export default function AvailableLearningPlans() {
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleEditTask(plan.id, idx, task)}
-                                  className="text-yellow-500 hover:text-yellow-600 text-xs"
+                                  className="flex items-center gap-1 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
-                                  Edit
+                                  <Edit size={14} /> Edit
                                 </button>
                                 <button
                                   onClick={() => handleDeleteTask(plan.id, idx)}
-                                  className="text-red-500 hover:text-red-600 text-xs"
+                                  className="flex items-center gap-1 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded text-xs font-medium transition-colors"
                                 >
-                                  Delete
+                                  <Trash2 size={14} /> Delete
                                 </button>
                               </div>
                             </>
