@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from "react-router-dom";
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
 const NotificationComponent = ({ userId }) => {
   const [notifications, setNotifications] = useState([]);
@@ -144,7 +146,18 @@ const NotificationComponent = ({ userId }) => {
 
   return (
     <div className="min-h-screen bg-[#f9fafb] dark:bg-gray-900 p-6 font-sans text-gray-800 dark:text-gray-100">
-      <Navbar /><br />
+      <Navbar />
+     { /* Back to Home Button */}
+    <Button 
+      variant="outlined" 
+      startIcon={<ArrowBackIcon />} 
+      onClick={() => navigate('/dashboard')}
+      className="absolute top-4 left-4 z-10"
+    >
+      Back to Home Page
+    </Button>
+      
+      <br />
       <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
         <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">🔔 Notifications</h2>
 

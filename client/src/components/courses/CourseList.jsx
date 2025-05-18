@@ -19,6 +19,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Navbar from '../Navbar';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -95,12 +97,22 @@ const CourseList = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 5 }, maxWidth: '100%', margin: '0 auto' }}>
+    <Box sx={{ p: { xs: 2, md: 5 }, maxWidth: '100%', margin: '0 auto', position: 'relative' }}>
+      {/* Back to Home Button */}
+      <Button
+        variant="outlined"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate('/dashboard')} 
+        sx={{ position: 'absolute', top: 16, left: 16, zIndex: 1 }}
+      >
+        Back to Home Page
+      </Button>
+      <br></br>
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
           Available Courses
         </Typography>
-       
       </Box>
 
       <TextField
@@ -241,7 +253,6 @@ const CourseList = () => {
                       >
                         {course.title}
                       </Typography>
-                      
                     </Box>
 
                     <Typography 
@@ -291,11 +302,9 @@ const CourseList = () => {
                           py: 1
                         }}
                       >
-                        
                         Start Course
                       </Button>
                     </Box>
-                    
                   </CardContent>
                 </Card>
               </Grid>
@@ -315,7 +324,6 @@ const CourseList = () => {
           )}
         </>
       )}
-
     </Box>
   );
 };

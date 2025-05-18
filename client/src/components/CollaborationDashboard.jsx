@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Button } from '@mui/material';
+
 const CollaborationDashboard = () => {
   const [collabs, setCollabs] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -77,6 +80,15 @@ const CollaborationDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Navbar />
+     { /* Back to Home Button */}
+    <Button 
+      variant="outlined" 
+      startIcon={<ArrowBackIcon />} 
+      onClick={() => navigate('/dashboard')}
+      className="absolute top-4 left-4 z-10"
+    >
+      Back to Home Page
+    </Button>
   
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}

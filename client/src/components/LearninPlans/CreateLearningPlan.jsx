@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar';
 import { useNavigate, Link } from 'react-router-dom';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
 const CreateLearningPlan = () => {
   const userId = localStorage.getItem("user");
@@ -181,6 +183,17 @@ const CreateLearningPlan = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
+
+ {/* Back to Home Button */}
+    <Button 
+      variant="outlined" 
+      startIcon={<ArrowBackIcon />} 
+      onClick={() => navigate('/dashboard')}
+      className="absolute top-4 left-4 z-10"
+    >
+      Back to Home Page
+    </Button>
+
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
