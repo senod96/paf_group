@@ -280,7 +280,6 @@ const HomePostList = () => {
               </Button>
             </Box>
 
-            {/* Comments */}
             {openCommentPostId === post.postId && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="px-6 py-4 border-t">
                 <Typography variant="h6" className="text-md mb-2 text-indigo-700">Comments</Typography>
