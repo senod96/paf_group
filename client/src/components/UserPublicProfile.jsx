@@ -126,6 +126,7 @@ const UserPublicProfile = () => {
         </div>
 
         <h2 className={`text-2xl font-bold flex items-center gap-2 ${user.subscriptionType === 'premium' ? 'text-yellow-500' : ''}`}>
+<<<<<<< HEAD
           {user.subscriptionType === 'premium' && <span>👑</span>}
           {user.name}
           {user.subscriptionType === 'premium' && (
@@ -135,6 +136,23 @@ const UserPublicProfile = () => {
             </>
           )}
         </h2>
+=======
+  {user.subscriptionType === 'premium' && <span>👑</span>}
+  {user.name}
+  {user.currentBadge && (
+    <img
+      src={user.currentBadge} // ✅ Dynamically loaded from backend user.currentBadge field
+      alt="Badge"
+      className="w-8 h-8 ml-1"
+    />
+  )}
+  {user.subscriptionType === 'premium' && (
+    <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
+      Premium
+    </span>
+  )}
+</h2>
+>>>>>>> 67de856be4d190aeb605203c9f58a1055c513948
 
         <p className="text-blue-600">{user.headline}</p>
         <p className="text-gray-600 dark:text-gray-300 mt-2">{user.bio}</p>

@@ -7,6 +7,7 @@ import {
   Typography,
   Grid,
   Button,
+  Stack,
   Skeleton,
   Chip,
   IconButton,
@@ -15,11 +16,11 @@ import {
   Pagination,
   TextField,
   InputAdornment,
-  Alert,
+  Alert
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from '@mui/icons-material/Search';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -35,30 +36,18 @@ const CourseList = () => {
   const itemsPerPage = 6;
 
   useEffect(() => {
-    // ✅ Enable Tailwind Dark Mode
-    if (
-      localStorage.getItem("theme") === "dark" ||
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
         let url = `http://localhost:8080/api/courses`;
-
+        
         if (searchQuery) {
           url += `/search?q=${encodeURIComponent(searchQuery)}`;
         }
 
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch courses");
-
+        
         const data = await res.json();
         setCourses(data);
         setTotalPages(Math.ceil(data.length / itemsPerPage));
@@ -74,7 +63,7 @@ const CourseList = () => {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setPage(1);
+    setPage(1); // Reset to first page on new search
   };
 
   const handleMenuOpen = (event, courseId) => {
@@ -96,15 +85,15 @@ const CourseList = () => {
 
   const handleDeleteCourse = async () => {
     if (!selectedCourseId) return;
-
+    
     try {
       const res = await fetch(`http://localhost:8080/api/courses/${selectedCourseId}`, {
-        method: "DELETE",
+        method: "DELETE"
       });
-
+      
       if (!res.ok) throw new Error("Failed to delete course");
-
-      setCourses(courses.filter((course) => course.id !== selectedCourseId));
+      
+      setCourses(courses.filter(course => course.id !== selectedCourseId));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -123,10 +112,8 @@ const CourseList = () => {
 
   if (error) {
     return (
-      <Box className="p-6 text-center dark:bg-gray-900 min-h-screen">
-        <Alert severity="error" className="mb-4">
-          {error}
-        </Alert>
+      <Box sx={{ p: 4, textAlign: 'center' }}>
+        <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
         <Button variant="contained" onClick={() => window.location.reload()}>
           Refresh Page
         </Button>
@@ -135,11 +122,12 @@ const CourseList = () => {
   }
 
   return (
-    <Box className="p-6 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen">
-      <Box className="flex justify-between items-center mb-6">
-        <Typography variant="h4" className="font-bold text-blue-600 dark:text-blue-400">
+    <Box sx={{ p: { xs: 2, md: 5 }, maxWidth: '100%', margin: '0 auto' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'primary.main' }}>
           Our Published Courses
         </Typography>
+       
       </Box>
 
       <TextField
@@ -148,13 +136,7 @@ const CourseList = () => {
         placeholder="Search courses..."
         value={searchQuery}
         onChange={handleSearch}
-        sx={{
-          mb: 4,
-          maxWidth: 500,
-          backgroundColor: (theme) =>
-            theme.palette.mode === "dark" ? "#1e293b" : "#fff",
-          borderRadius: 1,
-        }}
+        sx={{ mb: 4, maxWidth: 500 }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -168,7 +150,7 @@ const CourseList = () => {
         <Grid container spacing={4}>
           {[...Array(6)].map((_, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card className="bg-white dark:bg-gray-800" sx={{ height: 500 }}>
+              <Card sx={{ height: 500 }}>
                 <Skeleton variant="rectangular" width="100%" height={180} />
                 <CardContent>
                   <Skeleton width="80%" height={32} />
@@ -181,16 +163,20 @@ const CourseList = () => {
           ))}
         </Grid>
       ) : courses.length === 0 ? (
-        <Box className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow text-center">
-          <Typography variant="h5" className="mb-3">
-            {searchQuery
-              ? "No courses match your search"
-              : "No courses available yet"}
+        <Box sx={{ 
+          p: 4, 
+          textAlign: 'center', 
+          borderRadius: 3, 
+          backgroundColor: 'background.paper',
+          boxShadow: 1
+        }}>
+          <Typography variant="h5" sx={{ mb: 3 }}>
+            {searchQuery ? "No courses match your search" : "No courses available yet"}
           </Typography>
           {!searchQuery && (
             <Button 
               variant="contained" 
-              onClick={() => navigate('/AddCourse')}
+              onClick={() => navigate('/add-course')}
             >
               Create Your First Course
             </Button>
@@ -201,101 +187,89 @@ const CourseList = () => {
           <Grid container spacing={4}>
             {paginatedCourses.map((course) => (
               <Grid item xs={12} sm={6} md={4} key={course.id}>
-                <Card
-                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  sx={{
-                    height: 500,
-                    display: "flex",
-                    flexDirection: "column",
-                    borderRadius: 3,
-                    boxShadow: "none",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    transition:
-                      "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-                    "&:hover": {
-                      boxShadow: 3,
-                      transform: "translateY(-4px)",
-                    },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      position: "relative",
-                      height: 180,
-                      overflow: "hidden",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleStartCourse(course.id)}
-                  >
+                <Card sx={{ 
+                  width: '100%',
+                  height: 500,
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  borderRadius: 3,
+                  boxShadow: 'none',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+                  '&:hover': {
+                    boxShadow: 3,
+                    transform: 'translateY(-4px)',
+                  }
+                }}>
+                  <Box sx={{ 
+                    position: 'relative',
+                    height: 180, 
+                    overflow: 'hidden',
+                    cursor: 'pointer'
+                  }} onClick={() => handleStartCourse(course.id)}>
                     <CardMedia
                       component="img"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.3s ease-in-out",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                        },
+                      sx={{ 
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease-in-out',
+                        '&:hover': {
+                          transform: 'scale(1.05)'
+                        }
                       }}
-                      image={
-                        course.imageUrl ||
-                        "https://via.placeholder.com/300x180?text=Course+Image"
-                      }
+                      image={course.imageUrl || "https://via.placeholder.com/300x180?text=Course+Image"}
                       alt={course.title}
                     />
-                    <Box
-                      sx={{ position: "absolute", top: 8, right: 8, zIndex: 1 }}
-                    >
-                      <Chip
-                        label={course.level}
-                        size="small"
+                    <Box sx={{ 
+                      position: 'absolute', 
+                      top: 8, 
+                      right: 8,
+                      zIndex: 1
+                    }}>
+                      <Chip 
+                        label={course.level} 
+                        size="small" 
                         color={
-                          course.level === "Beginner"
-                            ? "primary"
-                            : course.level === "Intermediate"
-                            ? "secondary"
-                            : "error"
+                          course.level === 'Beginner' ? 'primary' : 
+                          course.level === 'Intermediate' ? 'secondary' : 'error'
                         }
                       />
                     </Box>
                   </Box>
 
-                  <CardContent
-                    sx={{
-                      flexGrow: 1,
-                      p: 3,
-                      display: "flex",
-                      flexDirection: "column",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        mb: 1,
-                      }}
-                    >
-                      <Typography
+                  <CardContent sx={{ 
+                    flexGrow: 1, 
+                    p: 3, 
+                    height: 320, 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    overflow: 'hidden'
+                  }}>
+                    <Box sx={{ 
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      mb: 1
+                    }}>
+                      <Typography 
                         variant="h6"
-                        sx={{
-                          cursor: "pointer",
+                        sx={{ 
+                          cursor: 'pointer',
                           fontWeight: 700,
-                          fontSize: "1.15rem",
+                          fontSize: '1.15rem',
                           lineHeight: 1.3,
-                          "&:hover": {
-                            color: "primary.main",
-                          },
+                          '&:hover': {
+                            color: 'primary.main',
+                          }
                         }}
                         onClick={() => handleStartCourse(course.id)}
                       >
                         {course.title}
                       </Typography>
-                      <IconButton
-                        size="small"
+                      <IconButton 
+                        size="small" 
                         onClick={(e) => handleMenuOpen(e, course.id)}
                         sx={{ ml: 1 }}
                       >
@@ -303,51 +277,51 @@ const CourseList = () => {
                       </IconButton>
                     </Box>
 
-                    <Typography
+                    <Typography 
                       variant="subtitle2"
-                      color="text.secondary"
-                      sx={{
-                        display: "block",
-                        fontSize: "0.85rem",
+                      color="text.secondary" 
+                      sx={{ 
+                        display: 'block',
+                        fontSize: '0.85rem',  
                         mb: 2,
-                        lineHeight: 1.4,
+                        lineHeight: 1.4
                       }}
                     >
                       {course.category && (
-                        <Chip
-                          label={course.category}
-                          size="small"
+                        <Chip 
+                          label={course.category} 
+                          size="small" 
                           sx={{ mr: 1, mb: 1 }}
                         />
                       )}
                       {course.duration && `Duration: ${course.duration}`}
                     </Typography>
 
-                    <Box sx={{ overflowY: "auto", flexGrow: 1, mb: 2 }}>
-                      <Typography
+                    <Box sx={{ overflowY: 'auto', flexGrow: 1, mb: 2 }}>
+                      <Typography 
                         variant="body1"
-                        sx={{
-                          fontSize: "0.95rem",
-                          color: "text.primary",
-                          lineHeight: 1.6,
+                        sx={{ 
+                          fontSize: '0.95rem',
+                          color: 'text.primary',
+                          lineHeight: 1.6
                         }}
                       >
                         {course.description}
                       </Typography>
                     </Box>
 
-                    <Box sx={{ mt: "auto", pt: 2 }}>
-                      <Button
+                    <Box sx={{ mt: 'auto', pt: 2 }}>
+                      <Button 
                         fullWidth
                         variant="contained"
                         color="primary"
-                        size="medium"
+                        size="medium" 
                         onClick={() => handleStartCourse(course.id)}
-                        sx={{
-                          textTransform: "none",
+                        sx={{ 
+                          textTransform: 'none',
                           fontWeight: 600,
-                          fontSize: "0.95rem",
-                          py: 1,
+                          fontSize: '0.95rem',
+                          py: 1
                         }}
                       >
                         View Course
@@ -360,7 +334,7 @@ const CourseList = () => {
           </Grid>
 
           {totalPages > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
               <Pagination
                 count={totalPages}
                 page={page}
@@ -372,12 +346,15 @@ const CourseList = () => {
           )}
         </>
       )}
+      
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
         <MenuItem onClick={handleEditCourse}>Edit Course</MenuItem>
-        <MenuItem onClick={handleDeleteCourse} sx={{ color: "error.main" }}>
-          Delete Course
-        </MenuItem>
+        <MenuItem onClick={handleDeleteCourse} sx={{ color: 'error.main' }}>Delete Course</MenuItem>
       </Menu>
     </Box>
   );

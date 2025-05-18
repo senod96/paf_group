@@ -139,21 +139,42 @@ const EditUserForm = () => {
 
         {/* Badge Selection */}
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Select Badge</h3>
-          <div className="flex flex-wrap gap-4">
-            {user.badges?.map((badgeUrl, idx) => (
-              <img
-                key={idx}
-                src={badgeUrl}
-                alt={`Badge ${idx}`}
-                onClick={() => setUser(prev => ({ ...prev, currentBadge: badgeUrl }))}
-                className={`w-16 h-16 p-1 rounded-full cursor-pointer border-4 ${
-                  user.currentBadge === badgeUrl ? 'border-indigo-600' : 'border-transparent'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+  <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-200">Select Badge</h3>
+  <div className="flex flex-wrap gap-4">
+    {user.badges?.map((badgeUrl, idx) => (
+      <img
+        key={idx}
+        src={badgeUrl}
+        alt={`Badge ${idx}`}
+        onClick={async () => {
+          try {
+            // ✅ Set the selected badge visually
+            setUser(prev => ({ ...prev, currentBadge: badgeUrl }));
+
+            // ✅ Call backend to update current badge
+            const res = await fetch(`http://localhost:8080/api/badges/user/${userId}/current`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(badgeUrl)
+            });
+
+            if (res.ok) {
+              setStatus('✅ Current badge updated!');
+            } else {
+              setStatus('❌ Failed to update badge.');
+            }
+          } catch (err) {
+            console.error("Badge update failed:", err);
+            setStatus('❌ Error updating badge.');
+          }
+        }}
+        className={`w-16 h-16 p-1 rounded-full cursor-pointer border-4 ${
+          user.currentBadge === badgeUrl ? 'border-indigo-600' : 'border-transparent'
+        }`}
+      />
+    ))}
+  </div>
+</div>
 
         {/* Submit */}
         <div>

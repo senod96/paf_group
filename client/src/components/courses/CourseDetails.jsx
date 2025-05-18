@@ -14,7 +14,6 @@ import {
   Skeleton,
   Alert,
   Chip,
-  LinearProgress,
   IconButton,
   Dialog,
   DialogTitle,
@@ -55,7 +54,6 @@ const CourseDetails = () => {
           throw new Error("Invalid course data");
         }
 
-        // Additional validation for quiz data
         if (data.quiz) {
           if (!data.quiz.questions || !Array.isArray(data.quiz.questions)) {
             setQuizError("Invalid quiz format - questions missing or invalid");
@@ -133,7 +131,6 @@ const CourseDetails = () => {
         >
           Back to Courses
         </Button>
-      
       </Box>
 
       <Card sx={{ mb: 4, boxShadow: 3 }}>
@@ -170,11 +167,6 @@ const CourseDetails = () => {
           value={activeTab} 
           onChange={(e, newVal) => setActiveTab(newVal)}
           variant="fullWidth"
-          sx={{ 
-            '& .MuiTabs-indicator': {
-              height: 3
-            }
-          }}
         >
           <Tab label="Description" />
           <Tab label="Content" />
@@ -231,26 +223,26 @@ const CourseDetails = () => {
             </Box>
           )}
 
-{activeTab === 2 && (
-  <Box>
-    <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
-      {course.quiz?.title || "Course Quiz"}
-    </Typography>
-    
-    {quizError ? (
-      <Alert severity="error" sx={{ mb: 2 }}>
-        {quizError}
-      </Alert>
-    ) : course.quiz ? (
-      <QuizTaker 
-        quizData={course.quiz} 
-        courseTitle={course.title}  // Pass the course title here
-      />
-    ) : (
-      <Alert severity="info">No quiz available for this course.</Alert>
-    )}
-  </Box>
-)}
+          {activeTab === 2 && (
+            <Box>
+              <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
+                {course.quiz?.title || "Course Quiz"}
+              </Typography>
+              
+              {quizError ? (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {quizError}
+                </Alert>
+              ) : course.quiz ? (
+                <QuizTaker 
+                  quizData={course.quiz} 
+                  courseTitle={course.title}
+                />
+              ) : (
+                <Alert severity="info">No quiz available for this course.</Alert>
+              )}
+            </Box>
+          )}
         </Box>
       </Paper>
 
