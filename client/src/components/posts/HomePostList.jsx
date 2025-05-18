@@ -336,7 +336,7 @@ const HomePostList = () => {
               </Button>
             </Box>
 
-            {/* Comment Section */}
+            {/* Comment Sectionn */}
             {openCommentPostId === post.postId && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
