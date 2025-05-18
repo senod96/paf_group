@@ -102,7 +102,7 @@ const LearningPlanDetails = () => {
               }).catch(err => console.error("❌ Failed to add badge to user:", err));
             }).catch(err => console.error("❌ Failed to fetch badge URL:", err));
         }
-      });
+      });  };
   const handleAddTask = () => {
     if (!validateForm()) return;
     
@@ -193,118 +193,20 @@ const LearningPlanDetails = () => {
         ))}
 
         {/* Completion Modal */}
-        {showCongrats && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center max-w-md w-full">
-              <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 Congratulations!</h2>
-              <p className="text-gray-700 mb-6">You've completed this learning plan and earned a new badge!</p>
-              <button
-                onClick={() => setShowCongrats(false)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                Close
-              </button>
-                <div className="flex items-start gap-4">
-                  <button
-                    onClick={() => toggleTaskStatus(idx)}
-                    className={`mt-1 flex-shrink-0 h-5 w-5 rounded-full border ${
-                      task.status?.toLowerCase() === 'done' 
-                        ? 'bg-green-500 border-green-600 flex items-center justify-center' 
-                        : 'border-gray-400'
-                    }`}
-                  >
-                    {task.status?.toLowerCase() === 'done' && (
-                      <svg className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </button>
-                  
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-blue-800">
-                      {highlightMatch(task.title)}
-                    </h3>
-                    {task.description && (
-                      <p className="text-gray-700 mt-1">
-                        {highlightMatch(task.description)}
-                      </p>
-                    )}
-                    
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center text-sm">
-                        <span className="text-gray-600 mr-2">Status:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          task.status?.toLowerCase() === 'done' 
-                            ? 'bg-green-100 text-green-800' 
-                            : task.status?.toLowerCase() === 'in progress' 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {highlightMatch(task.status)}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600">
-                        <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        {task.startTime}
-                      </div>
-                      
-                      <div className={`flex items-center text-sm ${
-                        isOverdue(task.endTime) && task.status?.toLowerCase() !== 'done' 
-                          ? 'text-red-500' 
-                          : 'text-gray-600'
-                      }`}>
-                        <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {task.endTime}
-                        {isOverdue(task.endTime) && task.status?.toLowerCase() !== 'done' && (
-                          <span className="ml-2 text-xs font-medium bg-red-100 text-red-800 px-2 py-0.5 rounded-full">
-                            Overdue
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="absolute top-4 right-4 flex space-x-2">
-                  <button
-                    onClick={() => handleEditClick(idx)}
-                    className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    Edit
-                  </button>
-                  
-                  {plan.type !== "my" && (
-                    <button
-                      onClick={() => handleDeleteTask(idx)}
-                      className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 className="mt-2 text-lg font-medium text-gray-900">No tasks found</h3>
-            <p className="mt-1 text-gray-500">
-              {searchTerm || statusFilter !== 'All' 
-                ? "Try adjusting your search or filter criteria" 
-                : "Get started by adding your first task"}
-            </p>
-          </div>
-        )}
-
+       {showCongrats && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl shadow-lg p-8 text-center max-w-md w-full">
+      <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 Congratulations!</h2>
+      <p className="text-gray-700 mb-6">You've completed this learning plan and earned a new badge!</p>
+      <button
+        onClick={() => setShowCongrats(false)}
+        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
         {/* Add Task Button */}
         {!showForm && plan.type !== "my" && (
           <div className="mt-8 text-center">
