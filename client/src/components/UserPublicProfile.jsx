@@ -12,93 +12,74 @@ const UserPublicProfile = () => {
   const [hasRequested, setHasRequested] = useState(false);
   const viewingUserId = id || localStorage.getItem('viewingUser');
   const navigate = useNavigate();
-  const currentUserId = localStorage.getItem('user');
+  const stored = localStorage.getItem('user');
+  const currentUserId = stored?.startsWith("{") ? JSON.parse(stored).id : stored;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch(`http://localhost:8080/api/users/${id}`);
         const data = await res.json();
-        if (!data) {
-          console.error('No user data found for ID:', id);
-          return;
-        }
+        if (!data) return console.error('No user data found for ID:', id);
         setUser(data);
       } catch (err) {
         console.error('Failed to fetch user:', err);
       }
     };
 
+    const checkFollowRequest = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/follow-requests/pending/${id}`);
+        const data = await res.json();
+        const alreadyRequested = data.some(req => req.senderId === currentUserId);
+        setHasRequested(alreadyRequested);
+      } catch (err) {
+        console.error("Failed to check follow request:", err);
+      }
+    };
+
+    const fetchUpcomingTasks = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/learning-plans/user/${id}`);
+        const data = await res.json();
+        const today = new Date();
+        const nextWeek = new Date();
+        nextWeek.setDate(today.getDate() + 7);
+        const tasks = data.flatMap(plan =>
+          plan.plans.flatMap(p =>
+            (p.tasks || []).filter(t => {
+              const dueDate = new Date(t.endTime);
+              return dueDate >= today && dueDate <= nextWeek;
+            }).map(t => ({ ...t, planTitle: p.mainTitle }))
+          )
+        );
+        setUpcomingTasks(tasks);
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
+      }
+    };
+
     fetchUser();
     checkFollowRequest();
-
-    if (currentUserId === id) {
-      fetchUpcomingTasks();
-    }
+    if (currentUserId === id) fetchUpcomingTasks();
   }, [id, currentUserId]);
-
-  const checkFollowRequest = async () => {
-    try {
-      const res = await fetch(`http://localhost:8080/api/follow-requests/pending/${id}`);
-      const data = await res.json();
-      const alreadyRequested = data.some(req => req.senderId === currentUserId);
-      setHasRequested(alreadyRequested);
-    } catch (err) {
-      console.error("Failed to check follow request:", err);
-    }
-  };
-
-  const fetchUpcomingTasks = async () => {
-    try {
-      const res = await fetch(`http://localhost:8080/learning-plans/user/${id}`);
-      const data = await res.json();
-      const today = new Date();
-      const nextWeek = new Date();
-      nextWeek.setDate(today.getDate() + 7);
-
-      const tasks = data.flatMap(plan =>
-        plan.plans.flatMap(p =>
-          (p.tasks || []).filter(t => {
-            const dueDate = new Date(t.endTime);
-            return dueDate >= today && dueDate <= nextWeek;
-          }).map(t => ({
-            ...t,
-            planTitle: p.mainTitle
-          }))
-        )
-      );
-      setUpcomingTasks(tasks);
-    } catch (err) {
-      console.error("Error fetching tasks:", err);
-    }
-  };
 
   const handleFollow = async () => {
     try {
       const followRes = await fetch(`http://localhost:8080/api/follow-requests/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          senderId: currentUserId,
-          receiverId: viewingUserId
-        })
+        body: JSON.stringify({ senderId: currentUserId, receiverId: viewingUserId }),
       });
 
       if (followRes.ok) {
-        const notificationRes = await fetch(`http://localhost:8080/api/notifications/follow?senderId=${currentUserId}&receiverId=${viewingUserId}`, {
-          method: 'POST',
-        });
-
-        if (notificationRes.ok) {
-          setIsFollowing(true);
-        } else {
-          console.error("❌ Notification sending failed");
-        }
+        await fetch(`http://localhost:8080/api/notifications/follow?senderId=${currentUserId}&receiverId=${viewingUserId}`, { method: 'POST' });
+        setIsFollowing(true);
       } else {
         console.error("❌ Follow request failed");
       }
     } catch (err) {
-      console.error("❌ Follow + notification process failed:", err);
+      console.error("❌ Follow process failed:", err);
     }
   };
 
@@ -107,52 +88,22 @@ const UserPublicProfile = () => {
   return (
     <div className="min-h-screen bg-[#f9fafb] dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100">
       <Navbar />
-      <div
-        className="h-48 w-128 bg-cover bg-center rounded-t-xl"
-        style={{
-          backgroundImage: user.backgroundImage
-            ? `url(${user.backgroundImage})`
-            : `url('https://via.placeholder.com/800x200?text=Banner')`,
-        }}
+      <div className="h-48 w-128 bg-cover bg-center rounded-t-xl"
+        style={{ backgroundImage: `url(${user.backgroundImage || 'https://via.placeholder.com/800x200?text=Banner'})` }}
       />
-
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-b-xl p-6 shadow -mt-10 relative z-10">
         <div className="w-24 h-24 rounded-full border-4 border-white overflow-hidden -mt-16 mb-4">
-          <img
-            src={user.profilePicture || 'https://via.placeholder.com/100?text=User'}
-            alt="profile"
-            className="w-full h-full object-cover"
-          />
+          <img src={user.profilePicture || 'https://via.placeholder.com/100?text=User'} alt="profile" className="w-full h-full object-cover" />
         </div>
 
         <h2 className={`text-2xl font-bold flex items-center gap-2 ${user.subscriptionType === 'premium' ? 'text-yellow-500' : ''}`}>
-<<<<<<< HEAD
           {user.subscriptionType === 'premium' && <span>👑</span>}
           {user.name}
+          {user.currentBadge && <img src={user.currentBadge} alt="Badge" className="w-8 h-8 ml-1" />}
           {user.subscriptionType === 'premium' && (
-            <>
-              <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">Premium</span>
-              <img src={badgeImg} alt="Badge" className="w-8 h-8 ml-1" />
-            </>
+            <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">Premium</span>
           )}
         </h2>
-=======
-  {user.subscriptionType === 'premium' && <span>👑</span>}
-  {user.name}
-  {user.currentBadge && (
-    <img
-      src={user.currentBadge} // ✅ Dynamically loaded from backend user.currentBadge field
-      alt="Badge"
-      className="w-8 h-8 ml-1"
-    />
-  )}
-  {user.subscriptionType === 'premium' && (
-    <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">
-      Premium
-    </span>
-  )}
-</h2>
->>>>>>> 67de856be4d190aeb605203c9f58a1055c513948
 
         <p className="text-blue-600">{user.headline}</p>
         <p className="text-gray-600 dark:text-gray-300 mt-2">{user.bio}</p>
@@ -203,9 +154,7 @@ const UserPublicProfile = () => {
             <h3 className="font-semibold mb-1">Education</h3>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-200">
               {user.education.map((edu, i) => (
-                <li key={i}>
-                  <strong>{edu.institution}</strong> - {edu.degree}
-                </li>
+                <li key={i}><strong>{edu.institution}</strong> - {edu.degree}</li>
               ))}
             </ul>
           </div>
@@ -216,9 +165,7 @@ const UserPublicProfile = () => {
             <h3 className="font-semibold mb-1">Experience</h3>
             <ul className="list-disc list-inside text-gray-700 dark:text-gray-200">
               {user.experience.map((exp, i) => (
-                <li key={i}>
-                  <strong>{exp.company}</strong> - {exp.position}
-                </li>
+                <li key={i}><strong>{exp.company}</strong> - {exp.position}</li>
               ))}
             </ul>
           </div>
@@ -228,21 +175,9 @@ const UserPublicProfile = () => {
           <div className="mt-6">
             <h3 className="font-semibold mb-1">Links</h3>
             <ul className="text-blue-600 underline text-sm space-y-1">
-              {user.links.linkedin && (
-                <li>
-                  <a href={user.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                </li>
-              )}
-              {user.links.github && (
-                <li>
-                  <a href={user.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-                </li>
-              )}
-              {user.links.website && (
-                <li>
-                  <a href={user.links.website} target="_blank" rel="noopener noreferrer">Personal Website</a>
-                </li>
-              )}
+              {user.links.linkedin && <li><a href={user.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>}
+              {user.links.github && <li><a href={user.links.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>}
+              {user.links.website && <li><a href={user.links.website} target="_blank" rel="noopener noreferrer">Personal Website</a></li>}
             </ul>
           </div>
         )}
@@ -265,7 +200,7 @@ const UserPublicProfile = () => {
           </div>
         )}
 
-        <div>
+        <div className="mt-8">
           <PostList />
         </div>
       </div>
