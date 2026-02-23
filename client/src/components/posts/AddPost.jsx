@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { uploadImageToFirebase } from "../../utils/firebaseUploader";
 
 const AddPost = () => {
-  const [user] = useState(() => {
+  const [user, setUser] = useState(null);
+  const [profilePic, setProfilePic] = useState("https://via.placeholder.com/100");
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem("user");
-      return stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
+      const parsed = stored?.startsWith("{") ? JSON.parse(stored) : { id: stored };
+      setUser(parsed);
+
+      // Fetch user details to get profile picture
+      fetch(`http://localhost:8080/api/users/${parsed.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setProfilePic(data.profilePicture || "https://via.placeholder.com/100");
+        })
+        .catch(err => console.error("Failed to fetch profile picture", err));
     } catch {
-      return null;
+      setUser(null);
     }
-  });
+  }, []);
 
   const userId = user?.id || "";
   const [post, setPost] = useState("");
@@ -75,7 +87,7 @@ const AddPost = () => {
           .split(",")
           .map((tag) => tag.trim())
           .filter(Boolean),
-        likes: 0, // Automatically set to 0
+        likes: 0,
         imageUrls,
         videoUrl,
         date: new Date().toISOString(),
@@ -88,6 +100,15 @@ const AddPost = () => {
       });
 
       if (!res.ok) throw new Error("Post creation failed");
+
+      try {
+        await fetch(
+          `http://localhost:8080/api/notifications/post-share?senderId=${userId}&postTitle=${encodeURIComponent(post)}`,
+          { method: "POST" }
+        );
+      } catch (notificationError) {
+        console.error("Failed to send notifications:", notificationError);
+      }
 
       setPost("");
       setDescription("");
@@ -102,99 +123,110 @@ const AddPost = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-8 bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-xl shadow-lg font-sans">
-      <h2 className="text-3xl font-extrabold mb-6 text-blue-700">📸 Share a New Post</h2>
+    <div className="max-w-2xl mx-auto mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      {/* Top: Start a Post */}
+      <div className="flex items-center gap-3 mb-3">
+        <img
+          src={profilePic}
+          alt="Profile"
+          className="w-11 h-11 rounded-full object-cover"
+        />
+        <input
+          type="text"
+          value={post}
+          onChange={(e) => setPost(e.target.value)}
+          placeholder="Start a post"
+          required
+          className="flex-grow bg-gray-100 dark:bg-gray-700 dark:text-white px-4 py-2 rounded-full text-sm focus:outline-none"
+        />
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 text-lg">
-        <div>
-          <label className="block text-blue-700 font-semibold mb-2">Post Title</label>
+      <div className="border-t border-gray-300 dark:border-gray-600 my-2"></div>
+
+      {/* Media Upload Buttons */}
+      <div className="flex justify-around text-sm text-gray-600 dark:text-gray-300 font-medium">
+        <label className="flex items-center gap-1 cursor-pointer">
           <input
-            type="text"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
-            required
-            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
+            type="file"
+            accept="video/*"
+            disabled={imageFiles.length > 0}
+            onChange={handleVideoChange}
+            hidden
           />
-        </div>
+          <span className="flex items-center gap-1">
+            <span className="text-green-600">▶️</span> Video
+          </span>
+        </label>
 
-        <div>
-          <label className="block text-blue-700 font-semibold mb-2">Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            rows={4}
-            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
-          />
-        </div>
-
-        <div>
-          <label className="block text-blue-700 font-semibold mb-2">Tags (comma separated)</label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="e.g., ui, engineering"
-            className="w-full border border-blue-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg"
-          />
-        </div>
-
-        <div>
-          <label className="block text-blue-700 font-semibold mb-2">Upload Images (up to 3)</label>
+        <label className="flex items-center gap-1 cursor-pointer">
           <input
             type="file"
             accept="image/*"
             multiple
             disabled={!!videoFile}
             onChange={handleImageChange}
-            className="w-full"
+            hidden
           />
-        </div>
+          <span className="flex items-center gap-1">
+            <span className="text-blue-600">🖼️</span> Photo
+          </span>
+        </label>
+      </div>
 
-        <div>
-          <label className="block text-blue-700 font-semibold mb-2">Or Upload Video</label>
+      {/* Expanded Post Form */}
+      {post.trim() !== "" && (
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4 text-sm">
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Write your post description..."
+            required
+            rows="4"
+            className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-white p-3 rounded-md"
+          />
+
           <input
-            type="file"
-            accept="video/*"
-            disabled={imageFiles.length > 0}
-            onChange={handleVideoChange}
-            className="w-full"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Tags (comma separated)"
+            className="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-white p-3 rounded-md"
           />
-        </div>
 
-        {imageFiles.length > 0 && (
-          <div className="flex flex-wrap gap-4 mt-4">
-            {imageFiles.map((file, idx) => (
-              <img
-                key={idx}
-                src={URL.createObjectURL(file)}
-                alt="preview"
-                className="w-28 h-28 object-cover rounded-lg border"
+          {imageFiles.length > 0 && (
+            <div className="flex flex-wrap gap-3">
+              {imageFiles.map((file, idx) => (
+                <img
+                  key={idx}
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  className="w-24 h-24 object-cover rounded-md border"
+                />
+              ))}
+            </div>
+          )}
+
+          {videoFile && (
+            <div>
+              <video
+                src={URL.createObjectURL(videoFile)}
+                controls
+                className="w-full max-w-md rounded-md border"
               />
-            ))}
-          </div>
-        )}
+            </div>
+          )}
 
-        {videoFile && (
-          <div className="mt-4">
-            <video
-              src={URL.createObjectURL(videoFile)}
-              controls
-              className="w-full max-w-lg rounded-lg border"
-            />
-          </div>
-        )}
+          {error && <p className="text-red-500 font-medium">{error}</p>}
+          {success && <p className="text-green-500 font-medium">{success}</p>}
 
-        {error && <p className="text-red-600 text-base font-medium">{error}</p>}
-        {success && <p className="text-green-600 text-base font-medium">{success}</p>}
-
-        <button
-          type="submit"
-          className="w-full py-3 rounded-lg text-white font-bold text-lg bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 hover:brightness-110 transition"
-        >
-          🚀 Share Post
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="w-full py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-semibold"
+          >
+            Post
+          </button>
+        </form>
+      )}
     </div>
   );
 };

@@ -137,6 +137,9 @@ const ProgressAnalytics = () => {
   const { totalPlans, totalTasks, completedTasks, completionRate } = getStats();
 
   return (
+
+
+    
     <div className="bg-gradient-to-br from-indigo-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen">
       <Navbar />
       <div className="max-w-6xl mx-auto px-6 py-12">

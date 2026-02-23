@@ -49,43 +49,61 @@ public class LearningPlanController {
     }
 
     // 🟢 Update existing plan by ID
-    @PutMapping("/{id}")
-    public ResponseEntity<LearningPlan> updatePlan(@PathVariable String id, @RequestBody LearningPlan updatedPlan) {
-        Optional<LearningPlan> optional = learningPlanRepository.findById(id);
-        if (!optional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        LearningPlan plan = optional.get();
-
-        if (updatedPlan.getUserId() != null) {
-            plan.setUserId(updatedPlan.getUserId());
-        }
-
-        if (updatedPlan.getPlans() != null && !updatedPlan.getPlans().isEmpty()) {
-            plan.setPlans(updatedPlan.getPlans());
-        }
-
-        if (updatedPlan.getType() != null) {
-            plan.setType(updatedPlan.getType());
-        }
-
-        if (updatedPlan.getImage() != null) {
-            plan.setImage(updatedPlan.getImage());
-        }
-
-        if (updatedPlan.getBadge() != null) {
-            plan.setBadge(updatedPlan.getBadge());
-        }
-
-        if (updatedPlan.getParentId() != null) {
-            plan.setParentId(updatedPlan.getParentId());
-        }
-
-        plan.setUpdatedAt(new Date());
-
-        return ResponseEntity.ok(learningPlanRepository.save(plan));
+   @PutMapping("/{id}")
+public ResponseEntity<LearningPlan> updatePlan(@PathVariable String id, @RequestBody LearningPlan updatedPlan) {
+    Optional<LearningPlan> optional = learningPlanRepository.findById(id);
+    if (!optional.isPresent()) {
+        return ResponseEntity.notFound().build();
     }
+
+    LearningPlan plan = optional.get();
+
+    if (updatedPlan.getUserId() != null) {
+        plan.setUserId(updatedPlan.getUserId());
+    }
+
+    if (updatedPlan.getPlans() != null && !updatedPlan.getPlans().isEmpty()) {
+        plan.setPlans(updatedPlan.getPlans());
+
+        // ✅ Check if all tasks are marked as "Done" and update type to "completed"
+        boolean allTasksCompleted = true;
+        for (LearningPlan.PlanItem item : updatedPlan.getPlans()) {
+            if (item.getTasks() != null) {
+                for (LearningPlan.TodoTask task : item.getTasks()) {
+                    if (!"done".equalsIgnoreCase(task.getStatus())) {
+                        allTasksCompleted = false;
+                        break;
+                    }
+                }
+            }
+            if (!allTasksCompleted) break;
+        }
+
+        if (allTasksCompleted) {
+            plan.setType("completed");
+        }
+    }
+
+    if (updatedPlan.getType() != null) {
+        plan.setType(updatedPlan.getType());
+    }
+
+    if (updatedPlan.getImage() != null) {
+        plan.setImage(updatedPlan.getImage());
+    }
+
+    if (updatedPlan.getBadge() != null) {
+        plan.setBadge(updatedPlan.getBadge());
+    }
+
+    if (updatedPlan.getParentId() != null) {
+        plan.setParentId(updatedPlan.getParentId());
+    }
+
+    plan.setUpdatedAt(new Date());
+
+    return ResponseEntity.ok(learningPlanRepository.save(plan));
+}
 
     // 🔴 Delete a plan
     @DeleteMapping("/{id}")

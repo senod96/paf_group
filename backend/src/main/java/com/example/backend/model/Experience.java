@@ -10,9 +10,11 @@ public class Experience implements Serializable {
     private Date startDate;
     private Date endDate;
     private String description;
+    private String[] badges; 
 
     public Experience() {}
 
+    
     public String getCompany() { return company; }
     public void setCompany(String company) { this.company = company; }
 
@@ -27,4 +29,7 @@ public class Experience implements Serializable {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String[] getBadges() { return badges; }
+    public void setBadges(String[] badges) { this.badges = badges; }
 }

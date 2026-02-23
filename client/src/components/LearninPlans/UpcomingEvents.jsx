@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../Navbar';
 
 const UpcomingTasks = ({ currentUserId, profileUserId }) => {
   const [upcomingTasks, setUpcomingTasks] = useState([]);
@@ -41,8 +40,6 @@ const UpcomingTasks = ({ currentUserId, profileUserId }) => {
   if (currentUserId !== profileUserId) return null;
 
   return (
-    <div className=''>
-      <Navbar />
     <div className="mt-8 bg-gray-50 dark:bg-gray-700 rounded-lg shadow p-6">
       <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-100">🕑 Upcoming Tasks</h2>
 
@@ -64,7 +61,6 @@ const UpcomingTasks = ({ currentUserId, profileUserId }) => {
           No upcoming tasks in the next 7 days.
         </p>
       )}
-    </div>
     </div>
   );
 };
